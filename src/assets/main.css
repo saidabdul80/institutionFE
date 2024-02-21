@@ -1,0 +1,192 @@
+@import './base.css';
+
+:root{
+  --primary: "#F3F6FF"
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.bounce-enter-active {
+  animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+/* HTML:*/
+.loader {
+  width: fit-content;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 20px;
+  background: radial-gradient(circle closest-side,#000 94%,#0000) right/calc(200% - 1em) 100%;
+  animation: l24 1s infinite alternate linear;
+}
+.loader::before {
+  content: "Please wait...";
+  line-height: 1em;
+  color: #0000;
+  background: inherit;
+  background-image: radial-gradient(circle closest-side,#fff 94%,#000);
+  -webkit-background-clip:text;
+          background-clip:text;
+}
+
+@keyframes l24{
+  100%{background-position: left}
+}
+
+
+
+
+
+.cmodal{
+  animation-duration: 0.07s;
+    animation-timing-function: linear;
+    animation-name: elasticZoomIn;
+}
+  /* CSS for modal appearance */
+@keyframes elasticZoomIn {
+
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  
+  80% {
+    transform: scale(1);
+
+  }
+  
+  100% {
+    opacity: .8;
+    /* transform: scale(1); */
+  }
+}
+
+/* CSS for modal disappearance */
+@keyframes elasticZoomOut {
+  0% {
+    transform: scale(0);
+  }
+  30% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.modal-content {
+  border-radius: 9px;
+  animation-duration: 0.15s;
+  animation-timing-function:linear;
+  animation-name: elasticZoomIn;
+  background: wheat;
+}
+.text-xs{
+  font-size: 0.75rem !important; /* 12px */
+  line-height: 1rem; /* 16px */
+}	
+.text-sm{
+  font-size: 0.875rem !important; /* 14px */
+  line-height: 1.25rem; /* 20px */
+}	
+.text-base{
+  font-size: 1rem !important; /* 16px */
+  line-height: 1.5rem; /* 24px */
+}	
+.text-lg{
+  font-size: 1.125rem !important; /* 18px */
+  line-height: 1.75rem; /* 28px */
+}	
+.text-xl{
+  font-size: 1.25rem !important; /* 20px */
+  line-height: 1.75rem; /* 28px */
+}	
+.text-2xl{
+  font-size: 1.5rem !important; /* 24px */
+  line-height: 2rem; /* 32px */
+}	
+.text-3xl{
+  font-size: 1.875rem !important; /* 30px */
+  line-height: 2.25rem; /* 36px */
+}	
+.text-4xl{
+  font-size: 2.25rem !important; /* 36px */
+  line-height: 2.5rem; /* 40px */
+}	
+.text-5xl{
+  font-size: 3rem !important; /* 48px */
+  line-height: 1;
+}	
+.text-6xl{
+  font-size: 3.75rem !important; /* 60px */
+  line-height: 1;
+}	
+.text-7xl{
+  font-size: 4.5rem !important; /* 72px */
+  line-height: 1;
+}	
+.text-8xl{
+  font-size: 6rem !important; /* 96px */
+  line-height: 1;
+}	
+.text-9xl{
+  font-size: 8rem !important; /* 128px */
+  line-height: 1;
+}	
+/* 
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+ *//* 
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+} */
