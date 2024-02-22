@@ -1,6 +1,4 @@
 <template>
-
-
     <div>
         <div class="mb-4  place-content-center flex items-center justify-center px-3 py-4 transform transition">
                 <div class="mr-2"><img src="@/assets/logo.jpg" class="w-10 rounded-md"></div>
@@ -19,13 +17,16 @@
               <div class="mt-10">
                 <ul class="pl-3">
                   <li @click="selectMenu($event)" class="p-4 transitionx xmenu cursor-pointer rounded-l-lg"  :class="`text-[${$globals.colors.ap_secondary}]`">
-                    <i class="fa fa-file"></i><span>My Application</span>
+                    <div class="top-0 left-0 absolute  p-4"></div>
+                    <i class="fa fa-address-book mr-2"></i><span>My Application</span>
                   </li>
                   <li @click="selectMenu($event)" class="p-4 transitionx xmenu cursor-pointer rounded-l-lg" :class="`text-[${$globals.colors.ap_secondary}]`" >
-                    <i class="fa fa-file"></i><span>Payments</span>
+                    <div class="top-0 left-0 absolute z-1 rounded-l-lg p-4"></div>
+                    <i class="fa fa-money mr-2"></i><span>Payments</span>
                   </li>
                   <li @click="selectMenu($event)" class="p-4 transitionx xmenu cursor-pointer rounded-l-lg" :class="`text-[${$globals.colors.ap_secondary}]`">
-                    <i class="fa fa-file"></i><span>Faqs</span>
+                    <div class="top-0 left-0 absolute z-1 rounded-l-lg p-4"></div>
+                    <i class="fa fa-question mr-2"></i><span>Faqs</span>
                   </li>
                 </ul>
               </div>
@@ -62,28 +63,81 @@ export default {
 
 <style scoped>
 .transitionx{
-  transition: all .3s;
+  transition: all .2s;
   position:relative;
+  height: 70px;
+}
+/* .transitionx .ont{
+    transition: all .3s;
+} */
+.transitionx > div:first-child{
+    display: inline-block;
+    transition-delay: .3s;
+    transition: all .3s;  
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+  width: 90%;
+  height: 100%;
+  background-color: transparent;
   
 }
-.transitionx::before{
+.apMenuActive > div:first-child{
+    opacity: 0;
+    /* left: 24.1px; */
+    transform: translateX(11%);/* 
+    -webkit-transform:  translateX(24.1px);
+    -moz-transform:  translateX(24.1px);
+    -o-transform:  translateX(24.1px); */
+    opacity: 1;
+}
+.apMenuActive  > div:first-child::before{
+    /* transition: all .3s; */
   content:'';
   position:absolute;
   top:-15px;
   right:0px;
   width:15px;
   height:15px;
-  background:transparent;
+  background:v-bind(bgColor);
   border-bottom-right-radius: 20px;
-  box-shadow: 2px  5px 0px 1px transparent;
+  box-shadow: 2px  5px 0px 1px v-bind(ap_secondary);
   z-index:1;
   transform-origin: bottom right;
 
 }
+
+.apMenuActive  > div:first-child::after{
+  content:'';
+  position:absolute;
+  bottom:-15px;
+  right:0px;
+  width:15px;
+  height:15px;
+  background:v-bind(bgColor);
+  border-top-right-radius: 20px;
+  box-shadow: 2px  -5px 0px 1px v-bind(ap_secondary);
+  z-index:1;
+  transform-origin: bottom right;
+
+} 
+/* .transitionx > div::before{
+  content:'';
+  position:absolute;
+  top:-15px;
+  right:0px;
+  width:15px;
+  height:15px;
+  background:red;
+  border-bottom-right-radius: 20px;
+  box-shadow: 2px  5px 0px 1px transparent;
+  z-index:1;
+  transform-origin: bottom right;
+} */
 .apMenuActive{
   position:relative;
   transition: all .3s;  
-}
+}/* 
 .apMenuActive::before{
   content:'';
   position:absolute;
@@ -112,10 +166,9 @@ export default {
   z-index:1;
   transform-origin: bottom right;
 
-}
+} */
 .transitionx.apMenuActive i{
-  border-radius:9px;
-  
+  border-radius:9px;  
   padding:10px;
   background:v-bind(bgColor);
   color:v-bind(ap_secondary) !important;
