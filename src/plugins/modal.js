@@ -35,24 +35,24 @@ export function showModal(options) {
   modal = document.createElement("div");
   modal.classList.add("custom-modal");
   modal.innerHTML = `
-      <div class="cmodal" style="width: 100vw;height: 100vh;position: fixed;left: 0;top: 0;right: 0;bottom: 0;background-color: rgba(0, 0, 0, 0.5);display: flex;align-items: center;justify-content: center;    z-index: 11005;">
-        <div class="modal-content d-flex align-items-center flex-column px-5 zoom-out-bounce" style="max-width:85%;max-heigh:80vh; position:reletive;">
+      <div class="cmodal" style=" width: 100vw;height: 100vh;position: fixed;left: 0;top: 0;right: 0;bottom: 0;background-color: rgba(0, 0, 0, 0.5);display: flex;align-items: center;justify-content: center;    z-index: 11005;">
+        <div class="modal-content shadow-2xl d-flex align-items-center flex-column px-5 zoom-out-bounce" style="min-width:290px; max-width:85%;max-heigh:80vh; position:reletive;">
         <span style="position: absolute;right: 15px;cursor:pointer;top: -1px;font-weight: 200;font-size: 1.7em;" id="cmodal-close" class='close'>&times</span>
         <div id="cmodal-ico"  class="pt-4 pb-2"></div>
         ${options?.title? "<h4 class='mb-1 text-center'><b>"+ options?.title + "</b></h4>":""}
         ${options?.text? "<p class='text-center w-100'>"+ options?.text + "</p>":""}        
         ${options?.selectOptions? "<select id='modal-select-option' class='form-control mb-2 w-75'><option value=''>-</option>"+ options.selectOptions?.map(item=> "<option value="+item+">"+item+"</option>" ) + "</select>":""}        
            <div id='modal-error-x' style='display:none' class="text-warning mb-2">Please select an option</div> 
-          <div class=" mb-4 flex mt-2" style="justify-content:${options.cancelText?'space-between':'space-around'}">
+          <div class=" mb-4 mt-4 flex mt-2" style="justify-content:${options.cancelText?'space-between':'space-around'}">
           ${
             options.cancelText || false?
-              `<button class="btn-cancel text-center py-2  ripple" style="border-radius: 10px;width:45%;background:${cancelBackgroundColor}; border:1px solid ${cancelOutlineColor}">${
+              `<button class="btn-cancel text-center py-1  ripple" style="border-radius: 10px;width:45%;background:${cancelBackgroundColor}; border:1px solid ${cancelOutlineColor}">${
                   options.cancelText || "Cancel"
              }</button>`
             :''
             }
             ${ 
-              confirmButton?`<button class="btn-confirm text-center py-2 ripple" style="border-radius: 10px;width:45%;background:${confirmBackgroundColor}; border:1px solid ${confirmOutlineColor}">${
+              confirmButton?`<button class="btn-confirm text-center py-1 ripple" style="border-radius: 10px;width:45%;background:${confirmBackgroundColor}; border:1px solid ${confirmOutlineColor}">${
               options.confirmText || "Ok"
               }</button>`:''
             }          

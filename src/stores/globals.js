@@ -20,6 +20,29 @@ export const globals ={
         'message':[],
         'total_unread':0
     },
+    school_info:1,
     reloadNotification:0,
-    loading:false
+    loading:false,
+    route:{},
+    updateMessage:'Updated Successfuly',
+    createMessage:'Created Successfuly',
+    deleteMessage:'Deleted Successfuly',
+    failMessage:'Action cannot be completed',
+    defaultMessageTimeout: 4000,
+    messageTimeoutFunc:null,
+    message: {text:'',type:'warning'},
+    showMessage(msg,type='warning') {
+        this.message.text = msg;
+        this.message.type = type;
+        try{
+            clearTimeout(this.messageTimeoutFunc);
+           this.messageTimeoutFunc = setTimeout(() => {
+                this.message.text = '';
+                this.message.type = 'warning';
+            }, this.defaultMessageTimeout);
+        }catch(e){
+
+        }
+    }
+
 }

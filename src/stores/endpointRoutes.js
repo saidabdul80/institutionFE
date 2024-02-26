@@ -1,5 +1,6 @@
 
 export const endpointRoutes = {        
+        schoolInfo:'api/school-info',
         staff:{
             login: { url: 'api/staff/login', method: 'post' },
             logout: { url: 'api/staff/logout', method: 'post' },
@@ -132,7 +133,7 @@ export const endpointRoutes = {
             updateInvoiceType: { url: 'api/staff/invoice_type/update', method: 'post' },
             deleteInvoiceType: { url: 'api/staff/invoice_type/delete', method: 'post' },
             updateInvoiceTypeStatus: { url: 'api/staff/invoice_type/update_status', method: 'post' },
-            getInvoiceTypes: { url: 'api/staff/invoice_type/all/{session_id?}', method: 'get' },
+            getInvoiceTypes: { url: 'api/staff/invoice_type/all', method: 'get' },
             manualConfirmation: { url: 'api/staff/invoice/manual_confirmation', method: 'post' },
             exportInvoices: { url: 'api/staff/invoice/export', method: 'post' },
             saveConfiguration: { url: 'api/staff/configuration/save', method: 'post' },

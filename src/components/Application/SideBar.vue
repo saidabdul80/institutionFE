@@ -11,22 +11,30 @@
                 <div :class="`bg-[${$globals.colors.ap_secondary}]`" class="rounded-full flex justify-center items-center w-[65px] h-[65px] py-5">
                     <span class=" font-bold text-5xl mb-2">A</span>
                 </div>
-                <p class="font-bold text-white">Abdulkareem Abdullahi</p>
+                <p class="font-bold text-white leading-4 text-center">Abdulkareem Abdullahi</p>
               </div>
 
               <div class="mt-10">
                 <ul class="pl-3">
                   <li @click="selectMenu($event)" class="p-4 transitionx xmenu cursor-pointer rounded-l-lg"  :class="`text-[${$globals.colors.ap_secondary}]`">
                     <div class="top-0 left-0 absolute  p-4"></div>
-                    <i class="fa fa-address-book mr-2"></i><span>My Application</span>
+                    <div class="flex items-center leading-4">
+                        <i class="fa fa-address-book mr-2"></i>
+                        <span class="line-clamp-2"> My App<span class="hidden md:inline">lication</span></span>
+                    </div>
                   </li>
                   <li @click="selectMenu($event)" class="p-4 transitionx xmenu cursor-pointer rounded-l-lg" :class="`text-[${$globals.colors.ap_secondary}]`" >
                     <div class="top-0 left-0 absolute z-1 rounded-l-lg p-4"></div>
-                    <i class="fa fa-money mr-2"></i><span>Payments</span>
+                    <div class="flex items-center leading-4">
+                        <i class="fa fa-money mr-2"></i><span>Pay<span class="hidden md:inline">ments</span></span>
+                    </div>
                   </li>
                   <li @click="selectMenu($event)" class="p-4 transitionx xmenu cursor-pointer rounded-l-lg" :class="`text-[${$globals.colors.ap_secondary}]`">
                     <div class="top-0 left-0 absolute z-1 rounded-l-lg p-4"></div>
-                    <i class="fa fa-question mr-2"></i><span>Faqs</span>
+                    <div class="flex items-center leading-4">
+
+                        <i class="fa fa-question mr-2"></i><span>Faqs</span>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -72,20 +80,21 @@ export default {
 } */
 .transitionx > div:first-child{
     display: inline-block;
-    transition-delay: .3s;
-    transition: all .3s;  
-    -moz-transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-    -webkit-transition: all 0.3s ease-in-out;
-  width: 90%;
-  height: 100%;
-  background-color: transparent;
+    transition-delay: .1s;
+    transition: all 0.2s ;  
+    -moz-transition: all 0.2s ;
+    -o-transition: all 0.3s ;
+    -webkit-transition: all 0.3s ;
+    width: 95%;
+    height: 100%;
+    opacity: 0;
+    background-color: transparent;
   
 }
 .apMenuActive > div:first-child{
     opacity: 0;
     /* left: 24.1px; */
-    transform: translateX(11%);/* 
+    transform: translateX(5.5%);/* 
     -webkit-transform:  translateX(24.1px);
     -moz-transform:  translateX(24.1px);
     -o-transform:  translateX(24.1px); */
@@ -100,7 +109,7 @@ export default {
   width:15px;
   height:15px;
   background:v-bind(bgColor);
-  border-bottom-right-radius: 20px;
+  border-bottom-right-radius: 10px;
   box-shadow: 2px  5px 0px 1px v-bind(ap_secondary);
   z-index:1;
   transform-origin: bottom right;
@@ -115,7 +124,7 @@ export default {
   width:15px;
   height:15px;
   background:v-bind(bgColor);
-  border-top-right-radius: 20px;
+  border-top-right-radius: 10px;
   box-shadow: 2px  -5px 0px 1px v-bind(ap_secondary);
   z-index:1;
   transform-origin: bottom right;

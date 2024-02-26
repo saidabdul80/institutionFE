@@ -1,33 +1,58 @@
 <template>
-  <div class="flex h-screen bg-sky-100/25">
+  <div class="flex h-screen">
     <!-- Sidebar -->
-    <Sidebar />  
+    <Sidebar />
     <!-- Main content area -->
-    <div class="w-full h-[100vh] shadow-2xl" style="background-image:url('/src/assets/background.jpg') !important; background-size:cover">
-      
+    <div class="w-full h-[100vh]">
+
       <!-- Hamburger toggle button -->
-      <div class="p-8" style="background-image:url('/src/assets/background.jpg') !important; background-size:cover">
+
+      <Transition name="fade">
+        <div v-if="$globals.message.text !== ''"s :class="[
+          'text-white', 'text-center', 'w-full', 'h-[3vh]', 'px-3', 'mb-0',
+          $globals.message.type === 'success' ? 'bg-green-500' :
+            $globals.message.type === 'error' ? 'bg-red-500' :
+              'bg-orange-500/75'
+        ]">
+          {{ $globals.message.text }}
+        </div>
+      </Transition>
+
+      <div class="px-8 bg-gray-100/25 h-[97vh] mt-0">
+        <Breadcrumb class="py-6" :home="$globals.route" :model="[$globals.route?.child || {}]"
+          :pt="{ root: { class: 'bg-transparent' } }" separator="/" />
         <router-view></router-view>
         <!-- Add your main content here -->
       </div>
-    </div>    
+    </div>
   </div>
-</template>
+</template> 
 
 <script>
 import SideBar from '@/components/Staff/SideBar.vue'
+
+import Breadcrumb from 'primevue/breadcrumb';
+import { useAuthStore } from '@/stores/auth';
 export default {
-  name: 'SidebarDrawer', 
-  components:{
-    Sidebar:SideBar
+  name: 'SidebarDrawer',
+  components: {
+    Sidebar: SideBar,
+    Breadcrumb
   },
   data() {
     return {
-      
+      current: { icon: 'fa fa-address-book', label: 'Applicant' },
+      items: [{ label: 'Dashboard' }],
+      store: useAuthStore()
     }
   },
   methods: {
-   
+
+  },
+  created() {
+    this.current = this.$globals.route
+    this.current.icon = this.current.icon + ' mr-1'
+    this.items = [this.$globals.route?.child]
   }
 }
 </script>

@@ -12,5 +12,5 @@ export function user(){
 }
 
 export function token(){
-    return !!localStorage.getItem(AUTH_TOKEN_KEY);
+    return localStorage.getItem(AUTH_TOKEN_KEY);
 }

@@ -16,7 +16,7 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue')
-    },     
+    },
     // Group routes for application user
     {
       path: '/application',
@@ -31,7 +31,7 @@ const router = createRouter({
         {
           path: '',
           name: 'application-home',
-          component: () => import('../views/Application/Home.vue'),
+          component: () => import('@/components/Application/Announcement.vue'),
           meta: { user_type: 'applicant' }
         },
         // Add more routes for application user as needed
@@ -62,23 +62,71 @@ const router = createRouter({
     // Group routes for staff user
     {
       path: '/staff',
-      component: StafIndex, // Empty component for grouping
+      component: StafIndex, // Empty component for grouping     
       children: [
-        {
-          path: 'login',
-          name: 'staff-login',
-          component: () => import('../views/Staff/Login.vue'),
-          meta: { user_type: 'staff' }
-        },
         {
           path: '',
           name: 'staff-home',
           component: () => import('../views/Staff/Home.vue'),
           meta: { requiresStaffAuth: true }
         },
+        {
+          path: 'invoice_types',
+          name: 'staff-invoice-types',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'faculty',
+          name: 'staff-faculty',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'department',
+          name: 'staff-department',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'courses',
+          name: 'staff-courses',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'programme',
+          name: 'staff-programme',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'programme_courses',
+          name: 'staff-programme-courses',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'signatories',
+          name: 'staff-signatories',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'control',
+          name: 'staff-control',
+          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          meta: { requiresStaffAuth: true }
+        },
         // Add more routes for staff user as needed
       ]
-    }
+    },
+    {
+      path: '/staff/login',
+      name: 'staff-login',
+      component: () => import('../views/Staff/Login.vue'),
+      meta: { user_type: 'staff' }
+    },
   ]
 })
 

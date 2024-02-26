@@ -61,8 +61,9 @@ async function excludeLogin(callback=()=>{}){
 }
 export const get = async (resource,fullPath=false, except= true) => {  
   const authToken  = token();
+  //alert(authToken)
   const store = useAuthStore();
-  store.isLoading = true;
+  //store.isLoading = true;
   /* if(authToken  == ''  && except){
     // console.error('Error: Bad Request from api client')
     store.isLoading = false;
@@ -73,17 +74,8 @@ export const get = async (resource,fullPath=false, except= true) => {
       { headers: {        
         Authorization: authToken  ? `Bearer ${authToken }` : "",
       }});
-    store.isLoading = false;
-    if (response.status === 200 || response.data?.error === false) {
-      return response.data;
-    }
-    showModal({
-      text: response?.message ??
-      response.data?.responseBody ??
-      "Something went wrong!",
-      confirmText: 'Retry',
-      cancelText: 'Cancel',
-    })    
+    //store.isLoading = false;
+    return response.data.data;    
   } catch (e) {
     store.isLoading = false;       
     if (e?.message === "Network Error") {                              
@@ -109,52 +101,33 @@ export const get = async (resource,fullPath=false, except= true) => {
 };
 
 export const post = async (resource, data, fullPath=false, except= true) => {
-  // console.log(resource)
+  
   const authToken  = token();
   const store = useAuthStore();
   store.isLoading = true;
-  if(authToken  == ''  && except){
+  //alert(store.isLoading)
+/*   if(authToken  == ''  && except){
     console.error('Error: Bad Request from api client')
     return false
-  }
-  try {
+  } */
+  try {    
     const response = await HTTP.post(fullPath?resource:window.baseUrl+resource, data,
       { headers: {        
         Authorization: authToken  ? `Bearer ${authToken }` : "",
-      }});
-      
+      }});      
     store.isLoading = false;   
-    let obj = typeof response.data === 'object'?response.data:{}    
-    if (Object.keys(obj)?.includes('data')) 
-    {      
-      return response.data.data.responseBody; //for now    
-    } else if ( Object.keys(obj)?.includes('status') === "success") {      
-      return response.data;
-    } else {
-      return response.data;
-      //throw new Error(response?.data.message ?? "Something went wrong!");
-    }   
+      return response.data
   } catch (e) {    
- 
+  console.log(e.response?.data,43848)
     store.isLoading = false;        
     if (e?.message?.includes("Network Error")) {                            
       displayOk('Network Error')
 
-    }else if(e.response.status === 401 || e.response.status === 302){
+    }else if(e.status === 401 || e.status === 302){
         await excludeLogin(sessionExpired)     
         window.modalOpened = false
-    }else {
-      const message =
-      e.response?.data?.status !== 400
-        ? ["Something went wrong"]
-        : [
-            typeof e.response?.data === "object" ? "" : e.response?.data,
-            e.response?.data?.message,
-            Array.isArray(e.response?.data?.responseBody)
-              ? e.response?.data?.responseBody.join(",\n")
-              : e.response?.data?.responseBody,
-          ];  
-       displayOk(message.join('@').replaceAll('@',' '))
+    }else {            
+       displayOk(e.response?.data?.data)
     }
     return false;
 

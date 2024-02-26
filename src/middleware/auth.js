@@ -6,7 +6,7 @@ const userMiddleware = (to, from, next) => {
     const openRoutes = [];
   
     // Check if the route is in the allowed routes
-    
+    return next(); 
     if (openRoutes.includes(to.name)) {
         next(); 
     }

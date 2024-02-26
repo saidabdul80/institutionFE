@@ -1,14 +1,14 @@
 <script>
 import { useAuthStore } from "@/stores/auth";
+import { get } from '@/api/client'
 export default {
   data(){
     return {
       store:useAuthStore()
     }
   },
-  created(){      
-    const styleElement = document.createElement('style');
-
+  async created(){      
+    const styleElement = document.createElement('style');        
     const cssRules = `
     .apMenuActive {
       color:${this.$globals.colors.ap_primary} !important;
