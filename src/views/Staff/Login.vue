@@ -1,32 +1,37 @@
 <template>
-    <div class="h-100 w-full bg-gray-100 flex justify-center items-center h-[100vh]">            
-        <Card class="bg-white w-[300px]">
-            <template #title>
-                <div class="flex justify-between">
-                   <p>Staff Login</p> 
-                    <div class="col-span-1"><img src="@/assets/logo.jpg" class="w-10 rounded-md"></div>
-                </div>
-            </template>
-            <template #content>
-                <div  class="">                    
-                    <div class="mb-1">
-                        <FloatLabel>
-                            <label for="username">Username</label>
-                            <InputText :class="validationErrors.username?'border border-[red]/50':''" id="username" v-model="user.username" class="w-full" />
-                        </FloatLabel>
-                        <div  class="h-[19px] text-red-500 text-sm">{{ validationErrors.username }}</div>
-                    </div>    
-                    <div class="mb-1">
-                        <FloatLabel>
-                            <label for="password">Password</label>
-                            <InputText :class="validationErrors.password?'border border-[red]/50':''" id="password" v-model="user.password" type="password" class="w-full" />
-                        </FloatLabel>
-                        <div  class="h-[19px] text-red-500 text-sm">{{ validationErrors.password }}</div>
+    <div class="h-100 w-full bg-gray-100 grid md:grid-cols-3 grid-cols-1 h-[100vh]">                    
+        <div></div>
+        <div class=" flex flex-col justify-center">        
+            <h3 class="text-xl text-center shadow-xl text-white font-bold bg-sky-500/70 p-5 rounded-t-full">{{ $globals?.school_info?.school_name }}</h3>
+            <Card class="bg-white w-full shadow-xl " :pt="{root:{class:'rounded-t-0 rounded-b-xl'}}">
+                <template #title>
+                    <div class="flex justify-between">
+                    <p>Staff Login</p> 
+                        <div class="col-span-1"><img src="@/assets/logo.jpg" class="w-10 rounded-md"></div>
                     </div>
-                    <Button @click="handleLogin" label="Login" class="mt-4 w-full" />
-                </div>
-            </template>
-        </Card> 
+                </template>
+                <template #content>
+                    <div  class="">                    
+                        <div class="mb-1">
+                            <FloatLabel>
+                                <label for="username">Username</label>
+                                <InputText :class="validationErrors.username?'border border-[red]/50':''" id="username" v-model="user.username" class="w-full" />
+                            </FloatLabel>
+                            <div  class="h-[19px] text-red-500 text-sm">{{ validationErrors.username }}</div>
+                        </div>    
+                        <div class="mb-1">
+                            <FloatLabel>
+                                <label for="password">Password</label>
+                                <InputText :class="validationErrors.password?'border border-[red]/50':''" id="password" v-model="user.password" type="password" class="w-full" />
+                            </FloatLabel>
+                            <div  class="h-[19px] text-red-500 text-sm">{{ validationErrors.password }}</div>
+                        </div>
+                        <Button @click="handleLogin" label="Login" class="mt-4 w-full" />
+                    </div>
+                </template>
+            </Card> 
+        </div>
+        <div></div>
     </div>
 </template>
 
@@ -69,9 +74,11 @@ export default {
             }
             
             if (Object.keys(this.validationErrors).length === 0) {                
-                //console.log("Logging in:", this.user);                
+                //console.log("Logging in:", this.user);            
+                this.$globals.loading = true    
                 //alert(this.$endpoints.staff.login.url)
                 const res  = await this.store.login(this.user.username, this.user.password,this.$endpoints.staff.login.url)
+                this.$globals.loading = false
                //const res =  await post(, this.user)
                //console.log(res);
                if(res){

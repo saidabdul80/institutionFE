@@ -12,9 +12,9 @@
      <div class="p-0 m-0">        
        <ul class="m-0 transition-transform" :style="sidebarOpen ? 'transform: translateX(0);':'transform: translateX(-300px);' ">
            <li v-for="(menuItem, i) in menuItems" :key="i">
-               <a @click="selectMenu($event, menuItem.route, menuItem)" href="#" class="grid grid-cols-6 p-4 xmenu font-semibold border-b-[1px] border-gray-200/50" :class="`text-${$globals.colors.primary} hover:bg-[${$globals.colors.active}] ${$router.currentRoute.name == menuItem.route ? 'bg-active' : ''}`"><i :class="`${menuItem.icon} text-2xl`"></i><span class="col-span-4 ml-2">{{ menuItem.label }}</span><i class="ml-4 fa fa-chevron-right place-self-end"></i></a>
+               <a @click="selectMenu($event, menuItem.route, menuItem)" href="#" class="hover:bg-gray-200/20 grid grid-cols-6 p-4 xmenu font-semibold border-b-[1px] border-gray-200/50" :class="`text-${$globals.colors.primary} hover:bg-[${$globals.colors.active}] ${$router.currentRoute.name == menuItem.route ? 'bg-active' : ''}`"><i :class="`${menuItem.icon} text-2xl`"></i><span class="col-span-4 ml-2">{{ menuItem.label }}</span><i class="ml-4 fa fa-chevron-right place-self-end"></i></a>
                <ul class="hidden xxmenu px-4">
-                   <li class="px-2 py-1 cursor-pointer" v-for="(subMenu, index) in menuItem.children" :key="`subMenu-${index}`" @click="navigateTo(subMenu)"><i class="fa fa-caret-right"></i> {{subMenu.label}}</li>
+                   <li class="px-2 py-1 cursor-pointer text-gray-600 hover:underline" v-for="(subMenu, index) in menuItem.children" :key="`subMenu-${index}`" @click="navigateTo(subMenu)"><i class="fa fa-caret-right"></i> {{subMenu.label}}</li>
                </ul>
            </li>       
        </ul>
@@ -90,9 +90,10 @@ export default {
            icon: 'fa fa-cog',
            children:[
             {label:"Types", route:"/staff/invoice_types"},
-            {label:"Faculty ", route:"/staff/faculty "},
+            {label:"Faculty ", route:"/staff/faculty"},
             {label:"Department", route:"/staff/department"},
-            {label:"Courses", route:"/staff/courses"},
+            {label:"Course Categories", route:"/staff/course_category"},
+            {label:"Courses", route:"/staff/courses"},            
             {label:"Programme", route:"/staff/programme"},
             {label:"Programme Courses", route:"/staff/programme_courses"},
             {label:"Signatories", route:"/staff/signatories"},

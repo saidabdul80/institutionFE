@@ -4,7 +4,7 @@ export default {
             // Display and Position
             'inline-flex',
             'relative',
-
+            
             // Shape
             'rounded-md',
 
@@ -94,7 +94,7 @@ export default {
             'shadow-md',
 
             // Color
-            'bg-surface-0 dark:bg-surface-800',
+            'bg-white dark:bg-surface-800',
             'text-surface-800 dark:text-white/80',
             'dark:border-surface-700'
         ]
@@ -127,7 +127,7 @@ export default {
             // Spacing
             'm-0',
             'py-3 px-5',
-
+            'hover:bg-gray-200/50',
             // Color
             { 'text-surface-700 dark:text-white/80': !context.focused && !context.selected && !context.disabled },
             { 'text-surface-600 dark:text-white/70': !context.focused && !context.selected && context.disabled },
@@ -208,7 +208,7 @@ export default {
             'leading-none',
 
             // Sizing
-            'pr-7 py-3 px-3',
+            'pr-7 py-2 px-3',
             '-mr-7',
             'w-full',
 

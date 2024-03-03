@@ -8,8 +8,8 @@
       <!-- Hamburger toggle button -->
 
       <Transition name="fade">
-        <div v-if="$globals.message.text !== ''"s :class="[
-          'text-white', 'text-center', 'w-full', 'h-[3vh]', 'px-3', 'mb-0',
+        <div v-if="$globals.message.text !== ''" :class="[
+          'text-white absolute top-0', 'text-center', 'w-full', 'h-[3vh]', 'px-3', 'mb-0',
           $globals.message.type === 'success' ? 'bg-green-500' :
             $globals.message.type === 'error' ? 'bg-red-500' :
               'bg-orange-500/75'

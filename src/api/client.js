@@ -100,11 +100,13 @@ export const get = async (resource,fullPath=false, except= true) => {
   }
 };
 
-export const post = async (resource, data, fullPath=false, except= true) => {
+export const post = async (resource, data, fullPath=false, loader= false) => {
   
   const authToken  = token();
   const store = useAuthStore();
-  store.isLoading = true;
+  if(loader){
+    store.isLoading = true;
+  }
   //alert(store.isLoading)
 /*   if(authToken  == ''  && except){
     console.error('Error: Bad Request from api client')
@@ -118,7 +120,7 @@ export const post = async (resource, data, fullPath=false, except= true) => {
     store.isLoading = false;   
       return response.data
   } catch (e) {    
-  console.log(e.response?.data,43848)
+  //console.log(e.response?.data,43848)
     store.isLoading = false;        
     if (e?.message?.includes("Network Error")) {                            
       displayOk('Network Error')
@@ -126,8 +128,9 @@ export const post = async (resource, data, fullPath=false, except= true) => {
     }else if(e.status === 401 || e.status === 302){
         await excludeLogin(sessionExpired)     
         window.modalOpened = false
-    }else {            
-       displayOk(e.response?.data?.data)
+    }else {      
+      localStorage.setItem('error', e.response?.data?.data)
+      //displayOk(e.response?.data?.data)
     }
     return false;
 

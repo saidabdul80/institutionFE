@@ -15,16 +15,16 @@ export default {
             // Position
             'absolute',
             'top-0 left-0',
-            'z-20',
+            'z-[90]',
 
             // Flex & Alignment
             'flex items-center justify-center',
 
             // Size
             'w-full h-full',
-
+            'rounded-2xl',
             // Color
-            'bg-surface-100/40 dark:bg-surface-800/40',
+            'bg-[black]/40 dark:bg-surface-800/40',
 
             // Transition
             'transition duration-200'
@@ -115,7 +115,7 @@ export default {
                 'border-0 border-b border-solid',
 
                 // Spacing
-                context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
+                context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-4' : 'p-2',
 
                 // Color
                 (props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-50 text-primary-700' : 'bg-surface-50 text-surface-700',
@@ -150,7 +150,7 @@ export default {
 
                 // Alignment
                 'text-left',
-
+                
                 // Shape
                 'border-0 border-b border-solid',
                 { 'first:border-l border-r border-b': context?.showGridlines },
@@ -158,8 +158,8 @@ export default {
 
                 // Spacing
                 { 'p-2': context?.size === 'small' && !state['d_editing'] },
-                { 'p-5': context?.size === 'large' && !state['d_editing'] },
-                { 'p-4': context?.size !== 'large' && context?.size !== 'small' && !state['d_editing'] },
+                { 'p-4': context?.size === 'large' && !state['d_editing'] },
+                { 'p-2': context?.size !== 'large' && context?.size !== 'small' && !state['d_editing'] },
                 { 'py-[0.6rem] px-2': state['d_editing'] },
 
                 // Color
@@ -1104,6 +1104,7 @@ export default {
     bodyrow: ({ context, props }) => ({
         class: [
             // Color
+            'hover:bg-gray-100',
             'dark:text-white/80',
             { 'bg-primary-50 text-primary-700 dark:bg-primary-400/30': context.selected },
             { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },

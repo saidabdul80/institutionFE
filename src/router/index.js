@@ -79,19 +79,25 @@ const router = createRouter({
         {
           path: 'faculty',
           name: 'staff-faculty',
-          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          component: () => import('../views/Staff/Preference/FacultyPage.vue'),
           meta: { requiresStaffAuth: true }
         },
         {
           path: 'department',
           name: 'staff-department',
-          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          component: () => import('../views/Staff/Preference/DepartmentPage.vue'),
           meta: { requiresStaffAuth: true }
         },
         {
+          path: 'course_category',
+          name: 'staff-course-category',
+          component: () => import('../views/Staff/Preference/CourseCategory.vue'),
+          meta: { requiresStaffAuth: true }
+        },        
+        {
           path: 'courses',
           name: 'staff-courses',
-          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          component: () => import('../views/Staff/Preference/CoursePage.vue'),
           meta: { requiresStaffAuth: true }
         },
         {

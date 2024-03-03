@@ -1,6 +1,8 @@
 
 export const endpointRoutes = {        
         schoolInfo:'api/school-info',
+        getStates:{url:'api/states', method:'post'},
+        getLgas:{url:'api/lgas', method:'post'},
         staff:{
             login: { url: 'api/staff/login', method: 'post' },
             logout: { url: 'api/staff/logout', method: 'post' },

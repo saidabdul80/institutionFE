@@ -5,7 +5,7 @@ export default {
             'rounded-lg',
             'shadow-lg',
             'border-0',
-
+            'bg-white',
             // Size
             'max-h-[90vh]',
             'w-[50vw]',
