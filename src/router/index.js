@@ -99,17 +99,23 @@ const router = createRouter({
           name: 'staff-courses',
           component: () => import('../views/Staff/Preference/CoursePage.vue'),
           meta: { requiresStaffAuth: true }
-        },
+        }, 
         {
           path: 'programme',
           name: 'staff-programme',
-          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          component: () => import('../views/Staff/Preference/ProgramPage.vue'),
           meta: { requiresStaffAuth: true }
         },
         {
           path: 'programme_courses',
           name: 'staff-programme-courses',
-          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          component: () => import('../views/Staff/Preference/ProgramCourse.vue'),
+          meta: { requiresStaffAuth: true }
+        },        
+        {
+          path: 'staff',
+          name: 'staff-staff',
+          component: () => import('../views/Staff/Staff.vue'),
           meta: { requiresStaffAuth: true }
         },
         {

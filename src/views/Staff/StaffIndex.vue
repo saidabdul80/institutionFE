@@ -3,7 +3,7 @@
     <!-- Sidebar -->
     <Sidebar />
     <!-- Main content area -->
-    <div class="w-full h-[100vh]">
+    <div class="w-full h-[100vh] relative">
 
       <!-- Hamburger toggle button -->
 

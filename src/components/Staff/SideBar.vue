@@ -8,8 +8,7 @@
              <p :class="`hover:bg-[${$globals.colors.active}]/75 hover:ps-3`" class="m-0 transition rounded-md underline text-sky-600">First Semester</p>
          </div>
        </div>
-
-     <div class="p-0 m-0">        
+     <div class="p-0 m-0 overflow-y-auto h-[86vh]" style="transition: all .3s;">         
        <ul class="m-0 transition-transform" :style="sidebarOpen ? 'transform: translateX(0);':'transform: translateX(-300px);' ">
            <li v-for="(menuItem, i) in menuItems" :key="i">
                <a @click="selectMenu($event, menuItem.route, menuItem)" href="#" class="hover:bg-gray-200/20 grid grid-cols-6 p-4 xmenu font-semibold border-b-[1px] border-gray-200/50" :class="`text-${$globals.colors.primary} hover:bg-[${$globals.colors.active}] ${$router.currentRoute.name == menuItem.route ? 'bg-active' : ''}`"><i :class="`${menuItem.icon} text-2xl`"></i><span class="col-span-4 ml-2">{{ menuItem.label }}</span><i class="ml-4 fa fa-chevron-right place-self-end"></i></a>
@@ -67,8 +66,14 @@ export default {
            ]
        },
        { 
-           label: 'Manage Students', 
+           label: 'Manage Stud. ', 
            route: 'staff-student',
+           icon: 'fa fa-user', 
+           children:[]
+       },       
+       { 
+           label: 'Manage Staff', 
+           route: 'staff-staff',
            icon: 'fa fa-user', 
            children:[]
        },
@@ -93,7 +98,8 @@ export default {
             {label:"Faculty ", route:"/staff/faculty"},
             {label:"Department", route:"/staff/department"},
             {label:"Course Categories", route:"/staff/course_category"},
-            {label:"Courses", route:"/staff/courses"},            
+            {label:"Courses", route:"/staff/courses"},          
+            {label:"Grade Settings", route:"/staff/grade_settings"},                        
             {label:"Programme", route:"/staff/programme"},
             {label:"Programme Courses", route:"/staff/programme_courses"},
             {label:"Signatories", route:"/staff/signatories"},

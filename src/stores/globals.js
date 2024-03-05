@@ -47,6 +47,20 @@ export const globals ={
         }
         return false
     },
+    currentSession(){
+        const config = this.school_info.configurations.find((config)=> config.name == 'current_session');
+        if(config){
+            return config.value
+        }
+        return 0;
+    },
+    getConfigurationValue(name){
+        const config = this.school_info.configurations.find((config)=> config.name == name);
+        if(config){
+            return config.value
+        }
+        return 0;
+    },
     getStatus(status, value) {
         switch (status) {
             case value:

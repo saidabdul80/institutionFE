@@ -3,10 +3,9 @@ import { isLoggedIn, user } from '@/services/auth';
 
 const userMiddleware = (to, from, next) => {
     const loginRoutes = ['applicant-login', 'staff-login', 'student-login'];
-    const openRoutes = [];
-  
+    const openRoutes = [];    
     // Check if the route is in the allowed routes
-    return next(); 
+    //return next(); 
     if (openRoutes.includes(to.name)) {
         next(); 
     }
@@ -15,12 +14,12 @@ const userMiddleware = (to, from, next) => {
         if (!isLoggedIn()) {
             next(); // Allow navigation
         }else{            
-            next(getLoginPage(user))
+            next(getLoginPage(user, to))
         }
     } else {
         //alert(getLoginPage(user))
         if (!isLoggedIn()) {            
-            next(getLoginPage(user))
+            next(getLoginPage(user, to))
         } else {
             if(user.user_type == to.meta.user_type) {                
                 next();
@@ -29,8 +28,9 @@ const userMiddleware = (to, from, next) => {
     }
 };
 
-function getLoginPage(user){
-    if(user.user_type == 'staff'){
+function getLoginPage(user, to){
+    
+    if(user.user_type == 'staff' || to.name.includes('staff')){        
         return 'staff/login';
     }else if(user.user_type == 'applicant'){
         return 'application/login';

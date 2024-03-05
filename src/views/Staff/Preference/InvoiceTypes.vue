@@ -7,7 +7,7 @@
         </div>             
         <div class="bg-white  relative">                        
             <DataTable ref="dtable" v-model:editingRows="editingRows" :value="invoice_types.data" editMode="row" dataKey="id" class="w-full mt-4 bg-white rounded-2xl shadow-lg"
-                :paginator="true" :rows="6" :totalRecords="invoice_types.total" :loading="tableloading"                    
+                :paginator="true" :rows="6" :totalRecords="invoice_types.total" :loading="tableloading" lazy                    
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"            
                 @page="onPage($event)" :currentPageReportTemplate="`${invoice_types.from} to ${invoice_types.to} of ${invoice_types.total}`"
                 scrollable scrollHeight="400px" style="position:absolute !important; min-height: 70vh;" @row-edit-save="updateRecord">

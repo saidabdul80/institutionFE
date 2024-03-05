@@ -2,15 +2,15 @@
     <div>
         <div class="grid grid-cols-2 gap-4 place-content-between w-full" >
             <div></div>
-            <Button label="New Faculty" icon="fa fa-plus" @click="openNewFacultyDialog" class="p-mb-3 place-self-end" />
+            <Button label="New grading" icon="fa fa-plus" @click="openNewGradingDialog" class="p-mb-3 place-self-end" />
         </div>
         <div class="bg-white  relative">
-            <DataTable ref="dtable" v-model:editingRows="editingRows" :value="faculties.data" editMode="row" dataKey="id"
+            <DataTable ref="dtable" v-model:editingRows="editingRows" :value="gradings.data" editMode="row" dataKey="id"
                 class="w-full mt-4 bg-white rounded-2xl shadow-lg" lazy
-                :paginator="true" :rows="6" :totalRecords="faculties.total" :loading="tableloading"
+                :paginator="true" :rows="6" :totalRecords="gradings.total" :loading="tableloading"
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                @page="onPage($event)" :currentPageReportTemplate="`${faculties.from} to ${faculties.to} of ${faculties.total}`" scrollable
-                scrollHeight="400px" style="position:absolute !important; min-height: 70vh;" @row-edit-save="updateFaculty">
+                @page="onPage($event)" :currentPageReportTemplate="`${gradings.from} to ${gradings.to} of ${gradings.total}`" scrollable
+                scrollHeight="400px" style="position:absolute !important; min-height: 70vh;" @row-edit-save="updateGrading">
                 <template #header>
                     <div style="text-align: left">
                         <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
@@ -19,29 +19,45 @@
                 <template #paginatorstart>
                     <Button @click="refresh()" type="button" icon="fa fa-refresh" text />
                 </template>
-                <Column header="Name">
+                <Column header="Grade">
                     <template #body="slotProps">
-                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.name }}</span>
+                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.grade }}</span>
                     </template>
                     <template #editor="{ data, field }">
-                        <InputText v-model="data.name" />
+                        <InputText v-model="data.grade" />
                     </template>
                 </Column>
-                <Column header="Abbreviation">
+                <Column header="Minimum Score">
                     <template #body="slotProps">
-                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.abbr }}</span>
+                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.min_score }}</span>
                     </template>
                     <template #editor="{ data, field }">
-                        <InputText v-model="data.abbr" />
+                        <InputText v-model="data.min_score" />
+                    </template>
+                </Column>
+                <Column header="Maximum Score">
+                    <template #body="slotProps">
+                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.max_score }}</span>
+                    </template>
+                    <template #editor="{ data, field }">
+                        <InputText v-model="data.max_score" />
+                    </template>
+                </Column>
+                <Column header="Grade Point">
+                    <template #body="slotProps">
+                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.grade_point }}</span>
+                    </template>
+                    <template #editor="{ data, field }">
+                        <InputText v-model="data.grade_point" />
                     </template>
                 </Column>
                 <Column header="Status">
                     <template #body="slotProps">
-                        <Tag :value="slotProps.data.deleted_at == null ? 'Active' : 'Inactive'"
-                            :severity="$globals.getStatus(slotProps.data.deleted_at == null, true)" />
+                        <Tag :value="slotProps.data.status"
+                            :severity="$globals.getStatus(slotProps.data.status, 'pass')" />
                     </template>
                     <template #editor="{ data, field }">
-                        <Dropdown v-model="data.status" :options="['Active', 'Inactive']" placeholder="Change Status ">
+                        <Dropdown v-model="data.status" :options="['pass', 'fail']" placeholder="Change Status ">
                         </Dropdown>
                     </template>
                 </Column>
@@ -58,22 +74,22 @@
                 </Column>
             </DataTable>
         </div>
-        <Dialog header="New Faculty" v-model:visible="newFacultyDialog" class="w-[45%]" :modal="true">
+        <Dialog header="New grading" v-model:visible="newGradingDialog" class="w-[45%]" :modal="true">
             <div class="p-fluid">
                 <div class="p-field mb-3">
                     <label for="name">Name</label>
-                    <InputText id="name" v-model="faculty.name" :class="{ 'p-invalid': validation.name,'w-full':true }" />
+                    <InputText id="name" v-model="grading.name" :class="{ 'p-invalid': validation.name,'w-full':true }" />
                     <small class="p-error" v-if="validation.name">Name is required.</small>
                 </div>
                 <div class="p-field mb-3">
                     <label for="abbr">Abbreviation</label>
-                    <InputText id="abbr" v-model="faculty.abbr" :class="{ 'p-invalid': validation.abbr,'w-full':true }" />
+                    <InputText id="abbr" v-model="grading.abbr" :class="{ 'p-invalid': validation.abbr,'w-full':true }" />
                     <small class="p-error" v-if="validation.abbr">Abbreviation is required.</small>
                 </div>
             </div>
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" @click="newFacultyDialog = false" class="p-button-text" />
-                <Button label="Save" icon="pi pi-check" @click="createFaculty" />
+                <Button label="Cancel" icon="pi pi-times" @click="newGradingDialog = false" class="p-button-text" />
+                <Button label="Save" icon="pi pi-check" @click="createGrading" />
             </template>
         </Dialog>
     </div>
@@ -90,10 +106,10 @@ import { showModal } from '@/plugins/modal';
 export default {
     data() {
         return {
-            faculties: [],
-            faculty: {},
-            newFacultyDialog: false,
-            editFacultyDialog: false,
+            gradings: [],
+            grading: {},
+            newGradingDialog: false,
+            editGradingDialog: false,
             tableloading: true,
             validation: {},
             dataTableloading: false,
@@ -110,76 +126,84 @@ export default {
     methods: {
         async fetchRecords() {
             this.tableloading = true;
-            const res = await get(`${this.$endpoints.staff.getFaculties.url}`);
-            this.faculties = res;
+            const res = await get(`${this.$endpoints.staff.getGradings.url}`);
+            this.gradings = res;
             this.tableloading = false;
         },
-        async updateFaculty(event) {
+        async updateGrading(event) {
             let { newData, index } = event;
             this.validation = {};                    
-            const res = await post(this.$endpoints.staff.updateFaculty.url, newData);
+            const res = await post(this.$endpoints.staff.updateGrading.url, newData);
             if (res) {
                 this.fetchRecords();
-                this.editFacultyDialog = false;
+                this.editGradingDialog = false;
                 this.$globals.showMessage(this.$globals.updateMessage, 'success');
             } else {
                 const err = localStorage.getItem('error');
                 this.$globals.showMessage(err, 'error');
             }
         },
-        async createFaculty() {
+        async createGrading() {
             this.validation = {};
-            if (!this.faculty.name) {
-                this.validation.name = true;
+            if (!this.grading.min_score) {
+                this.validation.min_score = true;
                 return;
             }
-            if (!this.faculty.abbr) {
-                this.validation.abbr = true;
+            if (!this.grading.max_score) {
+                this.validation.max_score = true;
                 return;
             }
-            const res = await post(this.$endpoints.staff.createFaculty.url, this.faculty);
-            this.openNewFacultyDialog = false
+            if (!this.grading.grade) {
+                this.validation.grade = true;
+                return;
+            }
+            if (!this.grading.grade_point) {
+                this.validation.grade_point = true;
+                return;
+            }
+            const res = await post(this.$endpoints.staff.createGrading.url, this.grading);
+            this.openNewradingDialog = false
             if (res) {
                 this.fetchRecords();
-                this.newFacultyDialog = false;
-                this.$globals.showMessage('Faculty created successfully', 'success');
+                this.newGradingDialog = false;
+                this.$globals.showMessage('grading created successfully', 'success');
             } else {
                 const err = localStorage.getItem('error');
                 this.$globals.showMessage(err, 'error');
-                //this.$globals.showMessage('Failed to create faculty', 'error');
+                //this.$globals.showMessage('Failed to create grading', 'error');
             }
         },
-        async deactivateFaculty(faculty) {
-            const confirm = await showModal({ title: 'Confirm Deactivation', text: 'Are you sure you want to deactivate this faculty?', confirmText: 'Yes', cancelText: 'No' });
+        async deactivateGrading(grading) {
+            const confirm = await showModal({ title: 'Confirm Deactivation', text: 'Are you sure you want to deactivate this grading?', confirmText: 'Yes', cancelText: 'No' });
             if (!confirm) return;
-            const res = await post(this.$endpoints.staff.deactivateFaculty.url, { id: faculty.id });
+            const res = await post(this.$endpoints.staff.deactivateGrading.url, { id: grading.id });
             if (res) {
                 this.fetchRecords();
-                this.$globals.showMessage('Faculty deactivated successfully', 'success');
+                this.$globals.showMessage('grading deactivated successfully', 'success');
             } else {
                 const err = localStorage.getItem('error');
                 this.$globals.showMessage(err, 'error');
             }
         },
-        async activateFaculty(faculty) {
-            const confirm = await showModal({ title: 'Confirm Activation', text: 'Are you sure you want to activate this faculty?', confirmText: 'Yes', cancelText: 'No' });
+        async activateGrading(grading) {
+            const confirm = await showModal({ title: 'Confirm Activation', text: 'Are you sure you want to activate this grading?', confirmText: 'Yes', cancelText: 'No' });
             if (!confirm) return;
-            const res = await post(this.$endpoints.staff.activateFaculty.url, { id: faculty.id });
+            const res = await post(this.$endpoints.staff.activateGrading.url, { id: grading.id });
             if (res) {
                 this.fetchRecords();
-                this.$globals.showMessage('Faculty activated successfully', 'success');
+                this.$globals.showMessage('grading activated successfully', 'success');
             } else {
                 const err = localStorage.getItem('error');
                 this.$globals.showMessage(err, 'error');
             }
         },
-        openNewFacultyDialog() {
-            this.faculty = {}; // Reset faculty object
-            this.newFacultyDialog = true;
+        openNewGradingDialog() {
+            this.grading = {}; // Reset grading object
+            this.newGradingDialog = true;
         },
-        duplicateRecord(faculty) {
-            this.faculty = Object.assign({}, faculty); // Clone faculty object
-            this.newFacultyDialog = true;
+        duplicateRecord(grading) {
+            this.grading = Object.assign({}, grading); // Clone grading object
+            this.newGradingDialog = true;
         },
         exportCSV() {
             this.$refs.dtable.exportCSV();

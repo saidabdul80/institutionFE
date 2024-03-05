@@ -2,13 +2,13 @@ export default {
     root: {
         class: [
             // Flexbox
-            'flex lg:flex-row flex-col'
+            'flex md:flex-row '
         ]
     },
     sourcecontrols: {
         class: [
             // Flexbox & Alignment
-            'flex lg:flex-col justify-center gap-2',
+            'flex md:flex-col justify-center gap-2',
 
             // Spacing
             'p-5'
@@ -18,28 +18,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -60,28 +60,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -102,28 +102,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -144,28 +144,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -183,22 +183,22 @@ export default {
         }
     },
     sourcewrapper: {
-        class: 'grow shrink basis-2/4'
+        class: 'grow shrink basis-2/4 border rounded-md'
     },
     sourceheader: {
         class: [
             'font-bold',
 
             // Shape
-            'border-b-0 rounded-t-md',
+            'rounded-t-md',
 
             // Spacing
-            'p-5',
+            'px-5 py-2',
 
             // Color
-            'text-surface-700 dark:text-white/80',
+            'text-gray-400 dark:text-white/80',
             'bg-surface-50 dark:bg-surface-800',
-            'border border-surface-200 dark:border-surface-700'
+            'border-surface-200 dark:border-surface-700'
         ]
     },
     sourcelist: {
@@ -207,7 +207,7 @@ export default {
             'list-none m-0 p-0',
 
             // Size
-            'min-h-[12rem] max-h-[24rem]',
+            'min-h-[5rem] max-h-[12rem]',
 
             // Shape
             'rounded-b-md',
@@ -215,7 +215,7 @@ export default {
             // Color
             'text-surface-600 dark:text-white/80',
             'bg-surface-0 dark:bg-surface-800',
-            'border border-surface-200 dark:border-surface-700',
+            'border-surface-200 dark:border-surface-700',
 
             // Spacing
             'py-3 px-0',
@@ -243,12 +243,12 @@ export default {
 
             // Color
             'text-surface-700 dark:text-white/80',
-            { 'bg-primary-500/20 dark:bg-primary-300/20': context.active && !context.focused },
-            { 'bg-primary-500/30 dark:bg-primary-400/30': context.active && context.focused },
+            { 'bg-sky-500/20 dark:bg-sky-300/20': context.active && !context.focused },
+            { 'bg-sky-500/30 dark:bg-sky-400/30': context.active && context.focused },
             { 'bg-surface-100 dark:bg-surface-700/70': !context.active && context.focused },
 
             // State
-            'hover:bg-surface-100 dark:hover:bg-surface-700',
+            'hover:bg-sky-100/70 focus:outline focus:outline-offset-2 focus:outline-cyan-500 dark:hover:bg-surface-700',
 
             // Misc
             'cursor-pointer overflow-hidden'
@@ -261,28 +261,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -303,28 +303,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -345,28 +345,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -387,28 +387,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -432,28 +432,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
-
+                'fill-gray-500 relative inline-flex items-center  justify-center',
+                
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -474,28 +474,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -516,28 +516,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
                 // Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -558,28 +558,28 @@ export default {
         root: ({ context }) => ({
             class: [
                 // Flexbox & Alignment
-                'relative inline-flex items-center justify-center',
+                'fill-gray-500 relative inline-flex items-center  justify-center',
 
-                // Shape
+                //Shape
                 'rounded-md',
 
                 // Color
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // Spacing & Size
-                'w-12',
+                'w-6',
                 'm-0',
-                'px-0 py-3',
+                'px-0 py-1',
 
                 // Transitions
                 'transition duration-200 ease-in-out',
 
                 // State
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50',
                 { 'cursor-default pointer-events-none opacity-60': context.disabled },
 
                 // Interactivity
@@ -597,22 +597,20 @@ export default {
         }
     },
     targetwrapper: {
-        class: 'grow shrink basis-2/4'
+        class: 'grow shrink basis-2/4 border rounded-md'
     },
     targetheader: {
         class: [
             'font-bold',
-
-            // Shape
-            'border-b-0 rounded-t-md',
+            // Shape            
 
             // Spacing
-            'p-5',
+            'px-5 py-2',
 
             // Color
-            'text-surface-700 dark:text-white/80',
+            'text-gray-400 dark:text-white/80',
             'bg-surface-50 dark:bg-surface-800',
-            'border border-surface-200 dark:border-surface-700'
+            'border-surface-200 dark:border-surface-700'
         ]
     },
     targetlist: {
@@ -621,7 +619,7 @@ export default {
             'list-none m-0 p-0',
 
             // Size
-            'min-h-[12rem] max-h-[24rem]',
+            'min-h-[5rem] max-h-[12rem]',
 
             // Shape
             'rounded-b-md',
@@ -629,7 +627,7 @@ export default {
             // Color
             'text-surface-600 dark:text-white/80',
             'bg-surface-0 dark:bg-surface-800',
-            'border border-surface-200 dark:border-surface-700',
+            ' border-surface-200 dark:border-surface-700',
 
             // Spacing
             'py-3 px-0',

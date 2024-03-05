@@ -46,7 +46,7 @@ export default {
             'font-bold',
 
             // Shape
-            props.showGridlines ? 'border-x border-t border-b-0' : 'border-b border-x-0',
+            props.showGridlines ? 'border-x border-t border-b-0' : ' border-x-0',
 
             // Spacing
             'p-4',
@@ -77,14 +77,15 @@ export default {
     tfoot: ({ context }) => ({
         class: [
             {
-                'bg-surface-50 bottom-0 z-0': context.scrollable
+                'bg-surface-50 bottom-0 z-0': context.scrollable,
+                
             }
         ]
     }),
     footer: {
         class: [
             'font-bold',
-
+            
             // Shape
             'border-t-0 border-b border-x-0',
 
@@ -112,7 +113,7 @@ export default {
 
                 // Shape
                 { 'first:border-l border-b border-r': context?.showGridlines },
-                'border-0 border-b border-solid',
+                'border-0 border-b border-t-0  border-solid',
 
                 // Spacing
                 context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-4' : 'p-2',

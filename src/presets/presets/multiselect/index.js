@@ -4,6 +4,7 @@ export default {
             // Display and Position
             'inline-flex',
             'relative',
+            'bg-white',
 
             // Shape
             'rounded-md',
@@ -111,7 +112,7 @@ export default {
         class: [
             // Position
             'absolute top-0 left-0',
-
+            'bg-white',
             // Shape
             'border-0 dark:border',
             'rounded-md',
@@ -251,7 +252,7 @@ export default {
                 'h-4',
 
                 // Colors
-                'text-white dark:text-surface-900',
+                'text-sky-500 dark:text-surface-900',
 
                 // Transitions
                 'transition-all',
@@ -352,7 +353,7 @@ export default {
                 'h-4',
 
                 // Colors
-                'text-white dark:text-surface-900',
+                'text-sky-500 dark:text-surface-900',
 
                 // Transitions
                 'transition-all',

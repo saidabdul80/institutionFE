@@ -6,7 +6,7 @@
         </div>
         <div class="bg-white  relative">
             <DataTable ref="dtable" v-model:editingRows="editingRows" :value="course_categories.data" editMode="row" dataKey="id"
-                class="w-full mt-4 bg-white rounded-2xl shadow-lg" 
+                class="w-full mt-4 bg-white rounded-2xl shadow-lg" lazy
                 :paginator="true" :rows="6" :totalRecords="course_categories.total" :loading="tableloading"
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                 @page="onPage($event)" :currentPageReportTemplate="`${course_categories.from} to ${course_categories.to} of ${course_categories.total}`" scrollable

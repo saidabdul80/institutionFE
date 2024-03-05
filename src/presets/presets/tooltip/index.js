@@ -1,10 +1,10 @@
 export default {
     root: ({ context, props }) => ({
+        
         class: [
             // Position and Shadows
-            'absolute',
-            'shadow-md',
-            'p-fadein',
+            'absolute',            
+            'p-fadein',        
             // Spacing
             {
                 'py-0 px-1': context?.right || context?.left || (!context?.right && !context?.left && !context?.top && !context?.bottom),
@@ -21,7 +21,7 @@ export default {
             // Size
             'w-0',
             'h-0',
-
+            
             // Shape
             'border-transparent',
             'border-solid',
@@ -41,6 +41,6 @@ export default {
         ]
     }),
     text: {
-        class: ['p-3', 'bg-surface-600 dark:bg-surface-700', 'text-white', 'leading-none', 'rounded-md', 'whitespace-pre-line', 'break-words']
+        class: ['p-3', 'bg-[black]/70 dark:bg-surface-700', 'text-white', 'leading-none', 'rounded-md', 'whitespace-pre-line', 'break-words']
     }
 };

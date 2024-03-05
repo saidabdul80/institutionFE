@@ -9,6 +9,8 @@ const HTTP = axios.create({
     "x-tenant": location.hostname
   },
 });
+
+
 function requestLogout(){
   if(!window.modalOpened){
       showModal({    
@@ -100,7 +102,7 @@ export const get = async (resource,fullPath=false, except= true) => {
   }
 };
 
-export const post = async (resource, data, fullPath=false, loader= false) => {
+export const post = async (resource, data, fullPath=false, loader= false, type={}) => {
   
   const authToken  = token();
   const store = useAuthStore();
@@ -116,6 +118,7 @@ export const post = async (resource, data, fullPath=false, loader= false) => {
     const response = await HTTP.post(fullPath?resource:window.baseUrl+resource, data,
       { headers: {        
         Authorization: authToken  ? `Bearer ${authToken }` : "",
+        ...type
       }});      
     store.isLoading = false;   
       return response.data
@@ -185,6 +188,26 @@ export const postFormData = async (resource, data, except= true) => {
       })
     }
 
+    return false;
+  }
+  // axios.defaults.baseURL = "http://localhost:3333/api";
+};
+
+
+//except is used to ignore authToken  check
+export const postDownload = async (resource, data, except= true) => {
+  const authToken  = token();
+  try {
+    
+    const response = await HTTP.post(window.baseUrl+resource, data,
+      {
+        headers: {
+          Authorization: authToken  ? `Bearer ${authToken }` : "",          
+        },
+      });   
+    return response.data;
+  } catch (e) {
+   
     return false;
   }
   // axios.defaults.baseURL = "http://localhost:3333/api";

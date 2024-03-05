@@ -6,7 +6,7 @@
         </div>
         <div class="bg-white  relative">
             <DataTable ref="dtable" v-model:editingRows="editingRows" :value="courses.data" editMode="row" dataKey="id"
-                class="w-full mt-4 bg-white rounded-2xl shadow-lg" 
+                class="w-full mt-4 bg-white rounded-2xl shadow-lg" lazy
                 :paginator="true" :rows="6" :totalRecords="courses.total" :loading="tableloading"
                 paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                 @page="onPage($event)" :currentPageReportTemplate="`${courses.from} to ${courses.to} of ${courses.total}`" scrollable
@@ -50,6 +50,10 @@
                 <Column header="Level" style="min-width: 200px">
                     <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.level}}</span></template>
                     <template #editor="{ data, field }"><Dropdown  v-model="data.level_id" :options="levels" optionLabel="title" optionValue="id" placeholder="Select Payment Type"></Dropdown></template>            
+                </Column>
+                <Column header="TP" style="min-width: 200px">
+                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.tp}}</span></template>
+                    <template #editor="{ data, field }"><Dropdown  v-model="data.tp" :options="['yes','no']" placeholder="TP"></Dropdown></template>            
                 </Column>
                 <Column header="Status">
                     <template #body="slotProps">
@@ -105,6 +109,11 @@
                     <label for="credit_unit">Course Credit Unit</label>
                     <InputText id="credit_unit" v-model="course.credit_unit" :class="{ 'p-invalid': validation.credit_unit,'w-full':true }" />
                     <small class="p-error" v-if="validation.code">Course Credit Unit is required.</small>
+                </div>
+                <div class="p-field mb-3">
+                    <label for="tp">TP</label>                    
+                    <Dropdown  v-model="data.tp" :options="['yes','no']" placeholder="TP"></Dropdown>
+                    <small class="p-error" v-if="validation.code"></small>
                 </div>
             </div>
             <template #footer>
