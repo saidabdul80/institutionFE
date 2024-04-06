@@ -100,10 +100,12 @@ export default {
             {label:"Course Categories", route:"/staff/course_category"},
             {label:"Courses", route:"/staff/courses"},          
             {label:"Grade Settings", route:"/staff/grade_settings"},                        
+            {label:"Level", route:"/staff/level"},                        
             {label:"Programme", route:"/staff/programme"},
             {label:"Programme Courses", route:"/staff/programme_courses"},
             {label:"Signatories", route:"/staff/signatories"},
-            {label:"Control Manager", route:"/staff/control manager"}
+            {label:"Session", route:"/staff/sessions"},
+            {label:"Control Manager", route:"/staff/controls"}
            ]
        },        
      ], 

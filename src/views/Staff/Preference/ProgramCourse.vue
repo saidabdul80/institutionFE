@@ -114,9 +114,9 @@
 </template>
 <script>
 
-import MultiSelect from 'primevue/multiselect';
 import Button from 'primevue/button'; 
 import InputText from 'primevue/inputtext';
+import MultiSelect from 'primevue/multiselect';
 import Dropdown from 'primevue/dropdown';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';

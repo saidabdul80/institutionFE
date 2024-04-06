@@ -36,8 +36,8 @@ function sessionExpired(){
     cancelText: 'Cancel',
   }).then(function(){   
     window.modalOpened = false; 
-    const store = useAuthStore();
-    store.logout()
+    localStorage.clear();
+    window.dispatchEvent(window.EmtyStorageEvent);
   });
 }
 }

@@ -10,7 +10,7 @@ export default {
             { 'w-full': props.multiple },
 
             // Color
-            'text-surface-900 dark:text-surface-0',
+            'text-surface-900 dark:text-surface-0 bg-white',
 
             //States
             {
@@ -41,14 +41,14 @@ export default {
             // Color
             'text-surface-700 dark:text-white/80',
             'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-            'bg-surface-0 dark:bg-surface-900',
+            'bg-white dark:bg-white-900',
             'border border-surface-300 dark:border-surface-700',
 
             // States
-            'hover:border-primary-500 dark:hover:border-primary-400',
+            'hover:border-sky-500 dark:hover:border-sky-400',
             'focus:outline-none focus:outline-offset-0',
-            { 'ring ring-primary-400/50 dark:ring-primary-300/50': state.focused },
-            { 'ring ring-primary-400/50 dark:ring-primary-300/50': state.hovered },
+            { 'ring ring-sky-400/50 dark:ring-sky-300/50': state.focused },
+            { 'ring ring-sky-400/50 dark:ring-sky-300/50': state.hovered },
             // Transition
             'transition duration-200 ease-in-out',
 
@@ -85,7 +85,7 @@ export default {
             },
 
             // States
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50 dark:focus:ring-primary-300/50': !props.multiple },
+            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-sky-400/50 dark:focus:ring-sky-300/50': !props.multiple },
 
             // Transition
             'transition-colors duration-200'
@@ -147,13 +147,13 @@ export default {
 
                 // Colors
                 'text-white dark:text-surface-900',
-                'bg-primary-500 dark:bg-primary-400',
-                'border border-primary-500 dark:border-primary-400',
+                'bg-sky-500 dark:bg-sky-400',
+                'border border-sky-500 dark:border-sky-400',
 
                 // States
                 'focus:outline-none focus:outline-offset-0 focus:ring',
-                'hover:bg-primary-600 dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300',
-                'focus:ring-primary-400/50 dark:focus:ring-primary-300/50'
+                'hover:bg-sky-600 dark:hover:bg-sky-300 hover:border-sky-600 dark:hover:border-sky-300',
+                'focus:ring-sky-400/50 dark:focus:ring-sky-300/50'
             ]
         }
     },
@@ -163,7 +163,7 @@ export default {
     panel: {
         class: [
             // Colors
-            'bg-surface-0 dark:bg-surface-800',
+            'bg-white dark:bg-surface-800',
             'text-surface-700 dark:text-white/80',
 
             // Shape
@@ -197,10 +197,10 @@ export default {
                 'bg-surface-200 dark:bg-surface-600/60': context.focused && !context.selected,
                 'text-surface-700 dark:text-white/80': context.focused && !context.selected,
 
-                'text-primary-700 dark:text-white/80': context.focused && context.selected,
-                'bg-primary-100 dark:bg-primary-400': context.focused && context.selected,
-                'text-primary-700 dark:text-white/80': !context.focused && context.selected,
-                'bg-primary-50 dark:bg-primary-300': !context.focused && context.selected
+                'text-sky-700 dark:text-white/80': context.focused && context.selected,
+                'bg-sky-100 dark:bg-sky-400': context.focused && context.selected,
+                'text-sky-700 dark:text-white/80': !context.focused && context.selected,
+                'bg-sky-50 dark:bg-sky-300': !context.focused && context.selected
             },
 
             //States
@@ -222,7 +222,7 @@ export default {
             'm-0 p-3',
 
             // Colors
-            'bg-surface-0 dark:bg-surface-700',
+            'bg-white dark:bg-surface-700',
             'text-surface-800 dark:text-white/80',
 
             // Misc

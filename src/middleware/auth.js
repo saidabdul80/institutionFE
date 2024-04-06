@@ -6,11 +6,11 @@ const userMiddleware = (to, from, next) => {
     const openRoutes = [];    
     // Check if the route is in the allowed routes
     //return next(); 
-    if (openRoutes.includes(to.name)) {
+    if (openRoutes?.includes(to.name)) {
         next(); 
     }
 
-    if (loginRoutes.includes(to.name)) {
+    if (loginRoutes?.includes(to.name)) {
         if (!isLoggedIn()) {
             next(); // Allow navigation
         }else{            
@@ -30,7 +30,7 @@ const userMiddleware = (to, from, next) => {
 
 function getLoginPage(user, to){
     
-    if(user.user_type == 'staff' || to.name.includes('staff')){        
+    if(user.user_type == 'staff' || to.name?.includes('staff')){        
         return 'staff/login';
     }else if(user.user_type == 'applicant'){
         return 'application/login';

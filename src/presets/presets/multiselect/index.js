@@ -27,9 +27,13 @@ export default {
             { 'opacity-60': props.disabled, 'pointer-events-none': props.disabled, 'cursor-default': props.disabled }
         ]
     }),
-    labelContainer: {
-        class: 'overflow-hidden flex flex-auto cursor-pointer '
-    },
+    labelContainer:({ props }) => ( {
+        class:{
+
+            'min-h-[32px] p-2': props.display === 'chip' && props?.modelValue?.length < 1 ,
+            'overflow-hidden flex flex-auto cursor-pointer': true
+        },
+    }),
     label: ({ props }) => ({
         class: [
             'leading-none',
@@ -38,8 +42,8 @@ export default {
             // Spacing
             {
                 'p-3': props.display !== 'chip',
-                'py-3 px-3': props.display === 'chip' && !props?.modelValue?.length,
-                'py-1.5 px-3': props.display === 'chip' && props?.modelValue?.length > 0
+                'py-1 px-1 m-1 bg-gray-200 rounded-md': props.display === 'chip' && !props?.modelValue?.length,
+                'py-1 px-1 m-1 bg-gray-200 rounded-md': props.display === 'chip' && props?.modelValue?.length > 0
             },
 
             // Color

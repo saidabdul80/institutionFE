@@ -16,6 +16,8 @@ import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 
+import Card from 'primevue/card';
+
 import Tooltip from 'primevue/tooltip';
 
 
@@ -35,7 +37,8 @@ function initializeApp() {
     // Registering components globally
     app.component('Dropdown', Dropdown);
     app.component('Button', Button);
-    app.component('Dialog', Dialog);
+    app.component('Dialog', Dialog);    
+    app.component('Card', Card);    
 
     // Setting up global properties
     app.config.globalProperties.$endpoints = endpointRoutes;
@@ -66,5 +69,5 @@ function initializeApp() {
         }
     })
 }
-
+window.EmtyStorageEvent = new CustomEvent('EmtyStorage', { detail: { message: 'Storage is empty!' } });
 initializeApp();

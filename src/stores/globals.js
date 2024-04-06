@@ -41,14 +41,14 @@ export const globals ={
         }
     },    
     getConfiguration(name){
-        const config = this.school_info.configurations.find((config)=> config.name == name);
+        const config = this.school_info.configurations?.find((config)=> config.name == name);
         if(config){
             return config.value == 'true';
         }
         return false
     },
     currentSession(){
-        const config = this.school_info.configurations.find((config)=> config.name == 'current_session');
+        const config = this.school_info.configurations?.find((config)=> config.name == 'current_session');
         if(config){
             return config.value
         }

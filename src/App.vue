@@ -20,6 +20,14 @@ export default {
       }`;
       styleElement.textContent = cssRules;
       document.head.appendChild(styleElement);
+  }, 
+  methods:{
+    easylogout(){
+      this.$router.push(store.loginPath())
+    }
+  },
+  mounted(){
+    window.addEventListener('EmtyStorage',this.easylogout())
   }
 }
 </script>

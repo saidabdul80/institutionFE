@@ -135,12 +135,12 @@
                         <Dropdown :class="{'ring-1 ring-[red]':validation?.level_id}" class="w-full" v-model="invoice_type.level_id" :options="levels" optionLabel="title" optionValue="id" />            
                         <span class="text-[red]" v-if="validation?.level_id">Field is required</span>
                     </div>
-                    <div class="">
+                    <div class="" v-if="$globals.getConfiguration('enable_faculty')">
                         <label class="block">Faculty</label>
                         <Dropdown :class="{'ring-1 ring-[red]':validation?.faculty_id}" class="w-full" v-model="invoice_type.faculty_id" @change="onSelectFaculty($event)" :options="faculties" optionLabel="name" optionValue="id" />            
                         <span class="text-[red]" v-if="validation?.faculty_id">Field is required</span>
                     </div>
-                    <div class="">
+                    <div v-if="$globals.getConfiguration('enable_department')">
                         <label class="block">Department</label>
                         <Dropdown :class="{'ring-1 ring-[red]':validation?.department_id}" class="w-full" v-model="invoice_type.department_id" @change="onSelectDepartment($event)"  :options="departments" optionLabel="name" optionValue="id" />            
                         <span class="text-[red]" v-if="validation?.department_id">Field is required</span>

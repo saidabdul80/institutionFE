@@ -39,16 +39,14 @@
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import FloatLabel from 'primevue/floatlabel';
-import Card from 'primevue/Card';
+
 //import { post } from '@/api/client';
 //import { showModal } from '@/plugins/modal';
 import { useAuthStore } from '@/stores/auth';
 
-export default {
-    components: {
-        Button,
-        InputText,
-        Card,
+export default { 
+    components: {        
+        InputText,        
         FloatLabel
     },
     data() { 

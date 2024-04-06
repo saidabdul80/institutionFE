@@ -61,7 +61,7 @@
                 </Column>
                 <Column header="Gender" field="gender">                    
                     <template #editor="{ data, field }">
-                        <Dropdown v-model="data.status" :options="['male', 'female']" placeholder="gender ">
+                        <Dropdown v-model="data.gender" :options="['male', 'female']" placeholder="gender ">
                         </Dropdown>
                     </template>
                 </Column>
@@ -73,12 +73,27 @@
                         <InputText v-model="data.phone_number" />
                     </template>
                 </Column>        
-              
-                <Column :rowEditor="true" style="width: 10%; min-width: 20px" bodyStyle="text-align:center" class="bg-white"></Column>
+                <Column v-if="$globals.getConfiguration('enable_faculty')" header="Faculty" style="min-width: 200px">
+                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.faculty}}</span></template>
+                    <template #editor="{ data, field }"><Dropdown  v-model="data.faculty_id" @change="onSelectFaculty($event)" :options="faculties" optionLabel="name" optionValue="id" placeholder="Select faculty Type"></Dropdown></template>            
+                </Column>
+                <Column v-if="$globals.getConfiguration('enable_department')" header="Department" style="min-width: 200px">
+                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.department}}</span></template>
+                    <template #editor="{ data, field }"><Dropdown  v-model="data.department_id"  :options="departments" optionLabel="name" optionValue="id" placeholder="Select department Type"></Dropdown></template>            
+                </Column>
+                <Column :rowEditor="true" style="width: 10%; min-width: 20px" v-tooltip.top="'Edit'" bodyStyle="text-align:center" class="bg-white"></Column>
                 <Column style="width: 100px; min-width: 100px" bodyStyle="text-align:center" class="bg-white">
                     <template #body="slotProps">
                         <div class="flex justify-between">
+                            
                             <Button
+                                v-tooltip.top="'reset password'"
+                                :pt="{ root: { class: 'h-8  w-8 rounded-full flex justify-center items-center hover:ring-[green] hover:bg-[green]/25 hover:text-[green] hover:ring-1 ' } }"
+                                outlined rounded severity="danger"
+                                :icon="loadingStates[slotProps.data.id] ? 'pi pi-spin pi-spinner' : 'pi pi-key'" 
+                                @click="resetPassword(slotProps.data)" />
+                            <Button
+                                v-tooltip.top="'Clone staff'"
                                 :pt="{ root: { class: 'h-8  w-8 rounded-full flex justify-center items-center hover:ring-[green] hover:bg-[green]/25 hover:text-[green] hover:ring-1 ' } }"
                                 icon="fa fa-clone" outlined rounded severity="danger"
                                 @click="duplicateRecord(slotProps.data)" />
@@ -125,19 +140,59 @@
         <Dialog header="New staff" v-model:visible="newStaffDialog" class="w-[45%]" :modal="true">
             <div class="p-fluid">
                 <div class="p-field mb-3">
-                    <label for="name">Name</label>
-                    <InputText id="name" v-model="staff.name" :class="{ 'p-invalid': validation.name,'w-full':true }" />
-                    <small class="p-error" v-if="validation.name">Name is required.</small>
+                    <label for="name">Email</label>
+                    <InputText id="name" v-model="staff.email" :class="{ 'p-invalid': validation.email,'w-full':true }" />
+                    <small class="p-error" v-if="validation.email">Email is required.</small>
                 </div>
                 <div class="p-field mb-3">
-                    <label for="abbr">Abbreviation</label>
-                    <InputText id="abbr" v-model="staff.abbr" :class="{ 'p-invalid': validation.abbr,'w-full':true }" />
-                    <small class="p-error" v-if="validation.abbr">Abbreviation is required.</small>
+                    <label for="name">First Name</label>
+                    <InputText id="name" v-model="staff.first_name" :class="{ 'p-invalid': validation.first_name,'w-full':true }" />
+                    <small class="p-error" v-if="validation.first_name">First Name is required.</small>
+                </div>
+                <div class="p-field mb-3">
+                    <label for="name">Middle Name</label>
+                    <InputText id="name" v-model="staff.middle_name" :class="{ 'p-invalid': validation.middle_name,'w-full':true }" />
+                    <small class="p-error" v-if="validation.middle_name">Middle Name is required.</small>
+                </div>
+                <div class="p-field mb-3">
+                    <label for="name">Surname</label>
+                    <InputText id="name" v-model="staff.surname" :class="{ 'p-invalid': validation.surname,'w-full':true }" />
+                    <small class="p-error" v-if="validation.surname">surname is required.</small>
+                </div>
+                <div class="p-field mb-3">
+                    <label for="name">Gender</label>
+                    <Dropdown v-model="staff.gender" :options="['male', 'female']" placeholder="gender ">
+                        </Dropdown>
+                    <small class="p-error" v-if="validation.gender">Gender is required.</small>
+                </div>                
+                <div class="p-field mb-3">
+                    <label for="abbr">Phone Number</label>
+                    <InputText id="abbr" v-model="staff.phone_number" :class="{ 'p-invalid': validation.phone_number,'w-full':true }" />
+                    <small class="p-error" v-if="validation.phone_number">Phone Number is required.</small>
+                </div>
+                <div class="p-field mb-3">
+                    <label for="name">Type</label>
+                    <Dropdown v-model="staff.type" :options="['academic', 'non-academic']" placeholder="Type ">
+                        </Dropdown>
+                    <small class="p-error" v-if="validation.type">Type is required.</small>
+                </div>
+                <div class="" v-if="$globals.getConfiguration('enable_faculty')">
+                    <label class="block">Faculty</label>
+                    <Dropdown :class="{'ring-1 ring-[red]':validation?.faculty_id}" class="w-full" v-model="staff.faculty_id" @change="onSelectFaculty($event)" :options="faculties" optionLabel="name" optionValue="id" />            
+                    <span class="text-[red]" v-if="validation?.faculty_id">Field is required</span>
+                </div>
+                <div class="" v-if="$globals.getConfiguration('enable_department')">
+                    <label class="block">Department</label>
+                    <Dropdown :class="{'ring-1 ring-[red]':validation?.department_id}" class="w-full" v-model="staff.department_id"  :options="departments" optionLabel="name" optionValue="id" />            
+                    <span class="text-[red]" v-if="validation?.department_id">Field is required</span>
                 </div>
             </div>
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" @click="newStaffDialog = false" class="p-button-text" />
-                <Button label="Save" icon="pi pi-check" @click="createStaff" />
+                <Button label="Save"
+                :disabled="savingState"
+                :icon="savingState ? 'pi pi-spin pi-spinner' : 'pi pi-check'" 
+                @click="createStaff" />
             </template>
         </Dialog>
     </div>
@@ -172,6 +227,11 @@ export default {
             expandedRows: [],
             staffPermissions:{},
             filters:{ global: { value: null}},
+            search:'',
+            loadingStates:{},
+            savingState: false,
+            faculties:[],
+            departments:[]
         }
     },
     components: {
@@ -222,10 +282,10 @@ export default {
                 }
             });
         },
-        async fetchRecords(search='') {
+        async fetchRecords() {
             this.tableloading = true;
             const res = await post(`${this.$endpoints.staff.staffs.url}`,{
-                search
+                search:this.search
             });            
             this.staffs = res.data;
             this.staffs?.data.forEach(staff => {
@@ -254,23 +314,25 @@ export default {
         },
         async createStaff() {
             this.validation = {};
-            if (!this.staff.min_score) {
-                this.validation.min_score = true;
+            if (!this.staff.first_name) {
+                this.validation.first_name = true;
                 return;
             }
-            if (!this.staff.max_score) {
-                this.validation.max_score = true;
+            if (!this.staff.surname) {
+                this.validation.surname = true;
                 return;
             }
-            if (!this.staff.grade) {
-                this.validation.grade = true;
+            if (!this.staff.gender) {
+                this.validation.gender = true;
                 return;
             }
-            if (!this.staff.grade_point) {
-                this.validation.grade_point = true;
+            if (!this.staff.phone_number) {
+                this.validation.phone_number = true;
                 return;
             }
+            this.savingState = true
             const res = await post(this.$endpoints.staff.createStaff.url, this.staff);
+            this.savingState = false
             this.openNewradingDialog = false
             if (res) {
                 this.fetchRecords();
@@ -312,16 +374,33 @@ export default {
         },
         duplicateRecord(staff) {
             this.staff = Object.assign({}, staff); // Clone staff object
+            delete this.staff.staff_number;
             this.newStaffDialog = true;
+        },
+        async resetPassword(staff){
+            this.loadingStates[staff.id]= true;            
+            const res = await post(`${this.$endpoints.staff.resetPassword.url}`,{
+                id:staff.id
+            });   
+            this.loadingStates[staff.id]= false;    
+            if(res){
+                this.$globals.showMessage('staff activated successfully', 'success');
+            }else{
+                const err = localStorage.getItem('error');
+                this.$globals.showMessage(err, 'error');
+            }
         },
         exportCSV() {
             this.$refs.dtable.exportCSV();
-        },        
+        },   
+        onSelectFaculty(e){
+            this.departments =  this.departments.filter(department=>department.faculty_id == e.value);
+        },     
         refresh(){            
             this.fetchRecords()
         },
         searchStaff(e){
-        const search = e.target.value;
+        this.search = e.target.value;
         setTimeout(() => {
             
             this.fetchRecords(search);
@@ -331,6 +410,10 @@ export default {
     async created() {
         this.getPermissions();
         this.fetchRecords();
+        const schoolInfo = this.$globals?.school_info;
+            if (schoolInfo) {
+                this.faculties = schoolInfo.faculties || [];                              
+            }
     },
   
 }

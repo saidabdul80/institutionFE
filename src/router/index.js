@@ -125,9 +125,21 @@ const router = createRouter({
           meta: { requiresStaffAuth: true }
         },
         {
-          path: 'control',
+          path: 'sessions',
+          name: 'staff-session',
+          component: () => import('../views/Staff/Preference/SessionPage.vue'),
+          meta: { requiresStaffAuth: true }
+        },  
+        {
+          path: 'level',
+          name: 'staff-level',
+          component: () => import('../views/Staff/Preference/LevelPage.vue'),
+          meta: { requiresStaffAuth: true }
+        },
+        {
+          path: 'controls',
           name: 'staff-control',
-          component: () => import('../views/Staff/Preference/InvoiceTypes.vue'),
+          component: () => import('../views/Staff/Preference/ControlPage.vue'),
           meta: { requiresStaffAuth: true }
         },
         // Add more routes for staff user as needed
