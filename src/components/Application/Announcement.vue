@@ -9,10 +9,10 @@
                     <li>- Direct Entry candidates must be holders of OND/HND/First Degree and A'Level in relevant disciplines and subjects.</li>
                     <li>- Those who did not choose FUTO as their First Choice University but scored a minimum of 160 can also apply on the condition that they visit the JAMB website for a change of Institution to FUTO as their First Choice University.</li>
                 </ul>
-                <p class="flex items-center text-md"><span>Application commences on September 1, 2023 and closes on September 30, 2023</span> <Button label="More..." severity="secondary" link /></p>
+                <p class="flex items-center text-md"><span>Application commences on September 1, 2023 and closes on September 30, 2023</span> <Button label="More..." severity="primary" link /></p>
             </div>
-            <div class="mt-3 p-0"><Button class="m-0 p-0" severity="secondary" link label="Apply Now"  /></div>
-            <div class="m-0 p-0"><Button class="m-0 p-0" severity="secondary" link label="Download Application Form"  />        </div>
+            <div class="mt-3 p-0"><Button class="m-0 p-0" severity="primary" link label="Apply Now"  /></div>
+            <div class="m-0 p-0"><Button class="m-0 p-0" severity="primary" link label="Download Application Form"  />        </div>
         </div>
     </div>
 </template>

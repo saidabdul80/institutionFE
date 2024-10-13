@@ -1,5 +1,5 @@
 
-export const endpointRoutes = {        
+export default {        
         schoolInfo:'api/school-info',
         getStates:{url:'api/states', method:'post'},
         getLgas:{url:'api/lgas', method:'post'},
@@ -174,7 +174,110 @@ export const endpointRoutes = {
 
         },
         applicant:{
-
+          applicantLoginPost: {
+            url: "api/applicants/login",
+            method: "post"
+          },
+          applicantLoginGet: {
+            url: "api/applicants/login",
+            method: "get"
+          },
+          applicantCreate: {
+            url: "api/applicants/create",
+            method: "post"
+          },
+          registrationProgress: {
+            url: "api/applicants/registration_progress/{applicant_id}",
+            method: "get"
+          },
+          aLevelResult: {
+            url: "api/applicants/alevel/{id}",
+            method: "get"
+          },
+          getDocuments: {
+            url: "api/applicants/get_documents",
+            method: "get"
+          },
+          updateApplicant: {
+            url: "api/applicants/update",
+            method: "post"
+          },
+          applicantLogout: {
+            url: "api/applicants/logout",
+            method: "post"
+          },
+          uploadPicture: {
+            url: "api/applicants/uploadPicture",
+            method: "post"
+          },
+          getApplicants: {
+            url: "api/applicants/applicants",
+            method: "post"
+          },
+          getOLevelResults: {
+            url: "api/applicants/get_olevel_results",
+            method: "post"
+          },
+          updateOLevelResults: {
+            url: "api/applicants/olevel_results",
+            method: "post"
+          },
+          updateDocument: {
+            url: "api/applicants/update_documents",
+            method: "post"
+          },
+          updateALevel: {
+            url: "api/applicants/alevel",
+            method: "post"
+          },
+          getWallet: {
+            url: "api/applicants/wallet",
+            method: "post"
+          },
+          storePayment: {
+            url: "api/applicants/payment",
+            method: "post"
+          },
+          getPayment: {
+            url: "api/applicants/get_payment",
+            method: "post"
+          },
+          getApplicantInvoices: {
+            url: "api/applicants/invoices",
+            method: "get"
+          },
+          generateInvoice: {
+            url: "api/applicants/invoices/generate",
+            method: "post"
+          },
+          initiatePayment: {
+            url: "api/applicants/invoices/initiate_payment",
+            method: "post"
+          },
+          paymentDetails: {
+            url: "api/applicants/payments/details",
+            method: "post"
+          },
+          getApplicantPayments: {
+            url: "api/applicants/payments/{invoice_id}",
+            method: "get"
+          },
+          requeryPayment: {
+            url: "api/applicants/payments/requery/{payment_reference?}",
+            method: "post"
+          },
+          payPayment: {
+            url: "api/applicants/payments/pay",
+            method: "post"
+          },
+          distinctPaymentDetails: {
+            url: "api/applicants/payments/distinct_payment_details",
+            method: "post"
+          },
+          getAllInvoiceTypes: {
+            url: "api/applicants/payments/all_invoice_types",
+            method: "post"
+          }
         }
     }
 

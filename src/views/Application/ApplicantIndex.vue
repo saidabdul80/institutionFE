@@ -35,7 +35,6 @@
 import SideBar from '@/components/Application/SideBar.vue'
 import Announcement from '@/components/Application/Announcement.vue'
 import jquery from "jquery";
-import 'primevue/resources/themes/aura-light-green/theme.css'
 import Button from 'primevue/button';
 
 

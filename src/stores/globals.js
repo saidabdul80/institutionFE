@@ -1,4 +1,10 @@
-export const globals ={   
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { useClient } from "./client";
+
+export const useGlobalsStore = defineStore("global-store", {
+    state: () => ({
+
     icons:{
       },
     colors:{
@@ -27,6 +33,22 @@ export const globals ={
     defaultMessageTimeout: 4000,
     messageTimeoutFunc:null,
     message: {text:'',type:'warning'},
+    refresh: false,
+    programmes:[],
+    abilities: ref([]),
+    alert: {
+        show: false,
+        text: '',
+        title: '',
+        imgpath: null,
+        cancelBtnText: '',
+        confirmBtnText: '',
+        loading: false,
+      },
+      alertPromiseResolve: null,
+}),
+actions:{
+
     showMessage(msg,type='warning') {
         this.message.text = msg;
         this.message.type = type;
@@ -71,5 +93,20 @@ export const globals ={
     },
     formatCurrency(value){
         return value.toLocaleString('en-US', { style: 'currency', currency: 'NGN' });
-    }
+    },
+    async fetchProgrammes(programme_type_id) {
+        this.programmesLoading = true;
+        const response = await useClient().http({ method: 'get', path: 'api/programmes?programme_type_id='+ programme_type_id });
+        this.programmes = response.data;
+        this.programmesLoading = false;
+      },
+      async fetchDepartmentsByFaculty(faculty_id) {
+        this.departmentLoading = true;
+        const response = await useClient().http({ method: 'get', path: 'api/departments?faculty_id='+ faculty_id });
+        this.programmes = response.data;
+        this.departmentLoading = false;
+      },
+      
+
 }
+})

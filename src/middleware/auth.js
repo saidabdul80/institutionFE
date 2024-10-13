@@ -1,41 +1,42 @@
-
 import { isLoggedIn, user } from '@/services/auth';
 
 const userMiddleware = (to, from, next) => {
-    const loginRoutes = ['applicant-login', 'staff-login', 'student-login'];
-    const openRoutes = [];    
-    // Check if the route is in the allowed routes
-    //return next(); 
-    if (openRoutes?.includes(to.name)) {
-        next(); 
-    }
+  const loginRoutes = ['applicant-login', 'staff-login', 'student-login'];
+  const openRoutes = []; 
 
-    if (loginRoutes?.includes(to.name)) {
-        if (!isLoggedIn()) {
-            next(); // Allow navigation
-        }else{            
-            next(getLoginPage(user, to))
-        }
+  // Check if the route is in the allowed routes
+  if (!to.meta?.required) {
+     next();
+     return;
+  }
+
+  if (loginRoutes.includes(to.name)) {
+    if (!isLoggedIn()) {
+      return next(); // Allow navigation
     } else {
-        //alert(getLoginPage(user))
-        if (!isLoggedIn()) {            
-            next(getLoginPage(user, to))
-        } else {
-            if(user.user_type == to.meta.user_type) {                
-                next();
-            }
-        }
+      return next(getLoginPage(user, to));
     }
+  } else {
+    if (!isLoggedIn()) {
+      return next(getLoginPage(user, to));
+    } else {
+      if (user.user_type === to.meta.user_type) {
+        return next();
+      } else {
+        return next(getLoginPage(user, to));
+      }
+    }
+  }
 };
 
-function getLoginPage(user, to){
-    
-    if(user.user_type == 'staff' || to.name?.includes('staff')){        
-        return 'staff/login';
-    }else if(user.user_type == 'applicant'){
-        return 'application/login';
-    }else{
-        return 'student/login';
-    }
+function getLoginPage(user, to) {
+  if (user.user_type === 'staff' || to.name?.includes('staff')) {
+    return { name: 'staff-login' };
+  } else if (user.user_type === 'applicant') {
+    return { name: 'applicant-login' };
+  } else {
+    return { name: 'student-login' };
+  }
 }
+
 export default userMiddleware;

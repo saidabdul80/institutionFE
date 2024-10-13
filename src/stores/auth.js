@@ -40,24 +40,23 @@ export const useAuthStore = defineStore("auth", {
     loginPath() { 
       try {
         const currentPath = location.pathname;
+        const roleSegment = currentPath.split('/')[1]?.toLowerCase();
+        
+        let loginPath;
+        if (roleSegment === 'staff') {
+          loginPath = 'staff/login';
+        } else if (roleSegment === 'student') {
+          loginPath = 'student/login';
+        } else {
+          loginPath = 'applicant/login'; 
+        }
+        
+        return loginPath;
       } catch (error) {
         console.error("Error getting current path:", error);
         return null;
       }
-          
-      const roleSegment = currentPath.split('/')[1]?.toLowerCase();
-          
-      let loginPath;
-      if (roleSegment === 'staff') {
-        loginPath = 'staff/login';
-      } else if (roleSegment === 'student') {
-        loginPath = 'student/login';
-      } else {
-        loginPath = 'applicant/login'; 
-      }
-    
-      return loginPath;
-    },
+    },    
     async logout(route) {
       //set authToken in pinia state to null
       const res = await post(route?.url);
