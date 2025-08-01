@@ -12,5 +12,8 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+   optimizeDeps: {
+    include: ['@fortawesome/fontawesome-free/css/all.min.css']
   }
 })

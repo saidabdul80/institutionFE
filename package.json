@@ -12,11 +12,13 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "@primevue/themes": "^4.1.0",
     "@vueuse/core": "^10.8.0",
     "flowbite": "^2.3.0",
     "fontawesome-4.7": "^4.7.0",
     "jquery": "^3.7.1",
+    "mitt": "^3.0.1",
     "pinia": "^2.1.7",
     "primeicons": "^6.0.1",
     "primevue": "^4.1.0",

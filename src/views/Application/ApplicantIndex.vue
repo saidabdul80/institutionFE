@@ -1,45 +1,66 @@
 <template>
-  <div>
-    <div class="hidden md:block  application-bg fixed top-0" style="background-image:url('/src/assets/bg2.jpg');background-repeat:no-repeat; background-position:right top; background-size:-31%; background-size:contain">
+  <div class="min-h-screen bg-gray-50">
+    <!-- Background Elements -->
+    <!-- <div class="hidden lg:block application-bg fixed top-0 w-full h-full opacity-10"
+         style="background-image:url('/src/assets/bg2.jpg');background-repeat:no-repeat; background-position:right top; background-size:contain">
+    </div> -->
 
-    </div>
-    <div class="grid grid-cols-5 md:w-[90%] place-content-center w-full md:mx-auto h-[100vh] relative z-[3]">
-      <div class="hidden md:block col-span-1 h-[80vh] shadow-2xl rounded-l-3xl border-l-4 border-t-4 border-r-0 border-b-4 border-white" :style="`background:${bgColor}`">
-        <Sidebar />
+    <!-- Main Layout Container -->
+    <div class="flex flex-col lg:flex-row min-h-screen">
+      <!-- Desktop Sidebar -->
+      <div class="hidden lg:block lg:w-80 xl:w-96 bg-white shadow-2xl border-r border-gray-200"
+           :style="`background:${bgColor}`">
+        <div class="sticky top-0 h-screen overflow-y-auto">
+          <Sidebar />
+        </div>
       </div>
-      <div class=" col-span-5 md:col-span-4 md:h-[80vh] h-[100vh] shadow-lg md:rounded-r-3xl relative w-full"
-        :style="`background:${$globals.colors.ap_secondary}` ">
-        <div class="block top-0 left-0 md:hidden  z-[50000] fixed w-full">
-          <div class="top-0 flex  navigation absolute ">
-            <div class=" inline-block  h-[100vh] shadow-md " :style="`background:${bgColor}`">
-              <Sidebar />
-            </div>
-            <div  class="nav hidden:block inline-block relative top-3 left-12 ">
-              <div id="menuToggle" class="nav-btn mb-3"></div>
-            </div>
+
+      <!-- Mobile Header -->
+      <div class="lg:hidden bg-white shadow-md border-b border-gray-200 sticky top-0 z-50"
+           :style="`background:${bgColor}`">
+        <div class="flex items-center justify-between px-4 py-3">
+          <div class="flex items-center">
+            <img src="@/assets/logo.jpg" class="w-8 h-8 rounded-full mr-3">
+            <h1 class="text-white text-lg font-bold">{{ $globals.school_info?.name || 'Institution Portal' }}</h1>
+          </div>
+          <button @click="toggleMobileMenu" class="text-white p-2 rounded-md hover:bg-white/10">
+            <i :class="showMobileMenu ? 'fa fa-times' : 'fa fa-bars'" class="text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Sidebar Overlay -->
+      <div v-if="showMobileMenu" class="lg:hidden fixed inset-0 z-50 flex">
+        <div class="fixed inset-0 bg-black bg-opacity-50" @click="toggleMobileMenu"></div>
+        <div class="relative w-80 max-w-xs bg-white shadow-xl" :style="`background:${bgColor}`">
+          <div class="h-full overflow-y-auto">
+            <Sidebar @navigate="closeMobileMenu" />
           </div>
         </div>
-        <div class="md:mt-0 md:px-0 px-4 overflow-auto h-[99vh]">
-          <!-- <Button label="Submit" class="p-button-success" /> -->
-          <!-- <Announcement /> -->
-          <router-view></router-view>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="flex-1 lg:flex-grow">
+        <div class="h-full lg:h-screen overflow-y-auto" :style="`background:${$globals.colors.ap_secondary}`">
+          <!-- Content Container -->
+          <div class="min-h-full">
+            <router-view></router-view>
+          </div>
         </div>
-        <!-- Add your main content here -->
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import SideBar from '@/components/Application/SideBar.vue'
 import Announcement from '@/components/Application/Announcement.vue'
-import jquery from "jquery";
 import Button from 'primevue/button';
-
+import { useAuthStore } from '@/stores/auth';
+import { get } from '@/api/client';
 
 export default {
-  name: 'SidebarDrawer',
+  name: 'ApplicantIndex',
   components: {
     Sidebar: SideBar,
     Button,
@@ -48,23 +69,55 @@ export default {
   data() {
     return {
       bgColor: '',
-      ap_secondary: ''
+      ap_secondary: '',
+      showMobileMenu: false,
+      authStore: useAuthStore(),
+      isLoadingUser: false
     }
   },
   created() {
     this.bgColor = this.$globals.colors.ap_primary;
     this.ap_secondary = this.$globals.colors.ap_secondary;
-
-
   },
   methods: {
+    toggleMobileMenu() {
+      this.showMobileMenu = !this.showMobileMenu;
+    },
+    closeMobileMenu() {
+      this.showMobileMenu = false;
+    },
+    async fetchUserData() {
+      if (this.isLoadingUser || !this.authStore.isAuthenticated) return;
 
+      this.isLoadingUser = true;
+      try {
+        // Fetch fresh user data from backend
+        const response = await get(this.$endpoints.applicant.applicantSelf.url);
+        if (response && response.data) {
+          // Update auth store with fresh user data
+          this.authStore.$state.userInfo = response.data.applicant;
+          console.log('User data refreshed:', response.data.applicant);
+        }
+      } catch (error) {
+        // console.error('Error fetching user data:', error);
+        // // If token is invalid, logout user
+        // if (error.response?.status === 401) {
+        //   await this.authStore.logout(this.authStore.getLogoutRoute());
+        //   this.$router.push({ name: 'applicant-login' });
+        // }
+      } finally {
+        this.isLoadingUser = false;
+      }
+    }
   },
-  mounted() {
-    const menuToggler = document.querySelector("#menuToggle");
-    const navigation = document.querySelector(".navigation");
-    menuToggler.onclick = function (params) {
-      navigation.classList.toggle('showSidebar');
+  async mounted() {
+    // Fetch user data when component mounts
+    await this.fetchUserData();
+  },
+  watch: {
+    // Watch for route changes and refresh user data
+    '$route'() {
+      this.fetchUserData();
     }
   }
 }

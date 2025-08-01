@@ -112,7 +112,7 @@
                 </div>
                 <div class="p-field mb-3">
                     <label for="tp">TP</label>                    
-                    <Dropdown  v-model="data.tp" :options="['yes','no']" placeholder="TP"></Dropdown>
+                    <Dropdown  v-model="course.tp" :options="['yes','no']" placeholder="TP"></Dropdown>
                     <small class="p-error" v-if="validation.code"></small>
                 </div>
             </div>
@@ -131,8 +131,10 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';     
 import { get, post } from '@/api/client';
 import { showModal } from '@/plugins/modal';
+import userDataMixin from '@/mixins/userDataMixin';
 
 export default {
+    mixins: [userDataMixin],
     data() {
         return {
             newCourseDialog: false,
@@ -237,11 +239,15 @@ export default {
         },
     },
     async created() {
-        this.departments = this.$globals.school_info?.departments
+        
         this.course_categories = this.$globals.school_info?.course_categories
         this.levels = this.$globals.school_info?.levels
         this.fetchRecords();         
+    },
+    mounted(){
+        this.departments = this.schoolDepartments
     }
+
 }
 </script>
   

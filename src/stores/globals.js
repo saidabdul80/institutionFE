@@ -22,7 +22,7 @@ export const useGlobalsStore = defineStore("global-store", {
         'message':[],
         'total_unread':0
     },
-    school_info:1,
+    school_info:{},
     reloadNotification:0,
     loading:false,
     route:{},
@@ -44,7 +44,7 @@ export const useGlobalsStore = defineStore("global-store", {
         cancelBtnText: '',
         confirmBtnText: '',
         loading: false,
-      },
+    },
       alertPromiseResolve: null,
 }),
 actions:{

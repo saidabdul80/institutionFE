@@ -284,15 +284,18 @@ export default {
         },
         async fetchRecords() {
             this.tableloading = true;
-            const res = await post(`${this.$endpoints.staff.staffs.url}`,{
+            const res = await post(`${this.$endpoints.staff.staffs.url}?paginate`,{
                 search:this.search
             });            
-            this.staffs = res.data;
-            this.staffs?.data.forEach(staff => {
-                this.staffPermissions[staff.staff_number] = [ 
-                    this.permissions.filter(perm=> !staff.permissions.map(item=>item.name).includes(perm.name)), staff.permissions
-                ]            
-            }); 
+            if(res){
+                this.staffs = res.data;
+
+                    // this.staffs?.forEach(staff => {
+                    //     this.staffPermissions[staff.staff_number] = [ 
+                    //         this.permissions.filter(perm=> !staff.permissions.map(item=>item.name).includes(perm.name)), staff.permissions
+                    //     ]            
+                    // }); 
+            }
             this.tableloading = false;
         },
         async getPermissions(){

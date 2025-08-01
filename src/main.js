@@ -18,14 +18,15 @@ import Card from 'primevue/card';
 
 import Aura from '@primevue/themes/aura';
 import Tooltip from 'primevue/tooltip';
-
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 
 import endpointRoutes  from './stores/endpointRoutes.js';
 import { useGlobalsStore } from './stores/globals';
+import mitt from 'mitt';
 
 window.baseUrl = `http://localhost:8000/`;
-
+const emitter = mitt();
 function initializeApp() {
     const app = createApp(App);
     app.use(createPinia());
@@ -46,7 +47,7 @@ function initializeApp() {
 
     // Setting up global properties
     app.config.globalProperties.$endpoints = endpointRoutes;
- 
+    app.config.globalProperties.emitter = emitter;
     const global = useGlobalsStore();
     app.config.globalProperties.$globals = global;
 
@@ -62,7 +63,7 @@ function initializeApp() {
     }
 
     axios.get(`${window.baseUrl}${endpointRoutes.schoolInfo}`, {
-        headers: { "x-tenant": location.hostname, "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" }
     }).then((res)=>{
 
         if (res?.data?.data) {

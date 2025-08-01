@@ -3,12 +3,62 @@ import { useAuthStore } from "@/stores/auth";
 
 import {showModal} from '@/plugins/modal'
 import {token } from "@/services/auth";
-const HTTP = axios.create({ 
+import { useGlobalsStore } from "@/stores/globals";
+const HTTP = axios.create({
   headers: {
-    "Content-Type": "application/json",    
-    "x-tenant": location.hostname
+    "Content-Type": "application/json"
   },
 });
+
+// Request interceptor to add auth token
+HTTP.interceptors.request.use(
+  (config) => {
+    let token = localStorage.getItem('authToken');
+    if (token) {
+      // Remove quotes if present (localStorage sometimes adds them)
+      try {
+        // Try to parse as JSON first (in case it's stored as JSON)
+        token = JSON.parse(token);
+      } catch (e) {
+        // If parsing fails, use as is
+      }
+      const cleanToken = String(token).replace(/"/g, '');
+      config.headers.Authorization = `Bearer ${cleanToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle auth errors
+HTTP.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Only handle 401 errors for authenticated routes, not login attempts
+    if (error.response?.status === 401 && !error.config?.url?.includes('/login')) {
+      console.log('401 error on authenticated route, logging out');
+      // Token expired or invalid
+      const store = useAuthStore();
+      store.logout();
+      // Redirect to appropriate login page
+      const currentPath = window.location.pathname;
+      const userType = currentPath.split('/')[1];
+
+      if (userType === 'staff') {
+        window.location.href = '/staff/login';
+      } else if (userType === 'student') {
+        window.location.href = '/student/login';
+      } else {
+        window.location.href = '/application/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 
 function requestLogout(){
@@ -65,6 +115,13 @@ export const get = async (resource,fullPath=false, except= true) => {
   const authToken  = token();
   //alert(authToken)
   const store = useAuthStore();
+  const globals = useGlobalsStore();
+  const session_id = globals.getConfiguration('current_session');
+    let url = fullPath ? resource : window.baseUrl + resource;
+    if (session_id && !url.includes('session_id')) {
+      url += (url.includes('?') ? '&' : '?') + `session_id=${session_id}`;
+    }
+
   //store.isLoading = true;
   /* if(authToken  == ''  && except){
     // console.error('Error: Bad Request from api client')
@@ -72,7 +129,7 @@ export const get = async (resource,fullPath=false, except= true) => {
     return false
   } */
   try {
-    const response = await HTTP.get(fullPath?resource :window.baseUrl+resource,
+    const response = await HTTP.get(url,
       { headers: {        
         Authorization: authToken  ? `Bearer ${authToken }` : "",
       }});
@@ -109,12 +166,15 @@ export const post = async (resource, data, fullPath=false, loader= false, type={
   if(loader){
     store.isLoading = true;
   }
-  //alert(store.isLoading)
-/*   if(authToken  == ''  && except){
-    console.error('Error: Bad Request from api client')
-    return false
-  } */
+
+
   try {    
+     const globals = useGlobalsStore();
+      const session_id = globals.getConfigurationValue('current_session');
+      console.log(globals,session_id)
+     if (session_id && !data?.session_id) {
+        data.session_id = session_id;
+    }
     const response = await HTTP.post(fullPath?resource:window.baseUrl+resource, data,
       { headers: {        
         Authorization: authToken  ? `Bearer ${authToken }` : "",
@@ -139,6 +199,99 @@ export const post = async (resource, data, fullPath=false, loader= false, type={
 
   }
 };
+
+export const put = async (resource, data, fullPath=false, loader= false) => {
+  const authToken = token();
+  const store = useAuthStore();
+  if(loader){
+    store.isLoading = true;
+  }
+
+  try {
+    const response = await HTTP.put(fullPath ? resource : window.baseUrl + resource, data, {
+      headers: {
+        Authorization: authToken ? `Bearer ${authToken}` : "",
+      },
+    });
+    store.isLoading = false;
+    return response.data.responseBody;
+  } catch (e) {
+    store.isLoading = false;
+    if(e.response?.status === 401 || e.response?.status === 302){
+      sessionExpired()
+      window.modalOpened = true
+    } else if (e?.message === "Network Error") {
+      showModal({
+        text:"Network Error!",
+        confirmText: 'Ok',
+        cancelText: 'Cancel',
+      });
+    } else {
+      const message =
+      e.response?.data?.status !== 400
+      ? ['Something went wrong']
+      : [
+        typeof e.response?.data === 'object' ? '' : e.response?.data,
+        e.response?.data?.message,
+        Array.isArray(e.response?.data?.responseBody) ? e.response?.data?.responseBody.join(',\n') : e.response?.data?.responseBody
+        ];
+
+       showModal({
+        text:message.join('@').replaceAll('@',' '),
+        confirmText: 'Ok',
+        cancelText: 'Cancel',
+      })
+    }
+    return false;
+  }
+};
+
+export const del = async (resource, fullPath=false, loader= false) => {
+  const authToken = token();
+  const store = useAuthStore();
+  if(loader){
+    store.isLoading = true;
+  }
+
+  try {
+    const response = await HTTP.delete(fullPath ? resource : window.baseUrl + resource, {
+      headers: {
+        Authorization: authToken ? `Bearer ${authToken}` : "",
+      },
+    });
+    store.isLoading = false;
+    return response.data.responseBody;
+  } catch (e) {
+    store.isLoading = false;
+    if(e.response?.status === 401 || e.response?.status === 302){
+      sessionExpired()
+      window.modalOpened = true
+    } else if (e?.message === "Network Error") {
+      showModal({
+        text:"Network Error!",
+        confirmText: 'Ok',
+        cancelText: 'Cancel',
+      });
+    } else {
+      const message =
+      e.response?.data?.status !== 400
+      ? ['Something went wrong']
+      : [
+        typeof e.response?.data === 'object' ? '' : e.response?.data,
+        e.response?.data?.message,
+        Array.isArray(e.response?.data?.responseBody) ? e.response?.data?.responseBody.join(',\n') : e.response?.data?.responseBody
+        ];
+
+       showModal({
+        text:message.join('@').replaceAll('@',' '),
+        confirmText: 'Ok',
+        cancelText: 'Cancel',
+      })
+    }
+    return false;
+  }
+};
+
 //except is used to ignore authToken  check
 export const postFormData = async (resource, data, except= true) => {
   const authToken  = token();

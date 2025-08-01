@@ -12,5 +12,14 @@ export function user(){
 }
 
 export function token(){
-    return localStorage.getItem(AUTH_TOKEN_KEY);
+    let token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (token) {
+        try {
+            // Try to parse as JSON first (in case it's stored as JSON)
+            token = JSON.parse(token);
+        } catch (e) {
+            // If parsing fails, use as is
+        }
+    }
+    return token;
 }

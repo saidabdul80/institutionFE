@@ -148,10 +148,106 @@ export default {
             saveConfiguration: { url: 'api/staff/configuration/save', method: 'post' },
             getAllConfigurations: { url: 'api/staff/configuration/all', method: 'get' },
             getConfiguration: { url: 'api/staff/configuration/{name}', method: 'get' },
+
+            // Result Management Endpoints
+            computeResults: { url: 'api/staff/results/compute', method: 'post' },
+            computeIndividualResult: { url: 'api/staff/results/compute_individual', method: 'post' },
+            bulkUploadResults: { url: 'api/staff/results/bulk_upload', method: 'post' },
+            getStudentsForComputation: { url: 'api/staff/results/students_for_computation', method: 'get' },
+
+            // Score Management Endpoints
+            saveScore: { url: 'api/staff/scores/save', method: 'post' },
+            saveBatchScores: { url: 'api/staff/scores/save_batch', method: 'post' },
+            batchUploadScores: { url: 'api/staff/scores/batch_upload', method: 'post' },
+            getStudentsWithScores: { url: 'api/staff/scores/students_with_scores', method: 'get' },
+            getCoursesByProgram: { url: 'api/staff/courses/by_program', method: 'get' },
+
+            // Grade Settings Endpoints
+            getGradeSettings: { url: 'api/staff/grade_settings/all', method: 'get' },
+            createGrade: { url: 'api/staff/grade_settings/create_grade', method: 'post' },
+            updateGrade: { url: 'api/staff/grade_settings/update_grade', method: 'post' },
+            deleteGrade: { url: 'api/staff/grade_settings/delete_grade', method: 'post' },
+            createDegreeClass: { url: 'api/staff/grade_settings/create_degree_class', method: 'post' },
+            updateDegreeClass: { url: 'api/staff/grade_settings/update_degree_class', method: 'post' },
+            deleteDegreeClass: { url: 'api/staff/grade_settings/delete_degree_class', method: 'post' },
+
+            // Student Management Endpoints
+            getStudentStats: { url: 'api/staff/students/stats', method: 'get' },
+            createStudent: { url: 'api/staff/students/create', method: 'post' },
+            bulkUploadStudents: { url: 'api/staff/students/bulk_upload', method: 'post' },
+
+            // Additional Level and Program Endpoints
+            getAllLevels: { url: 'api/staff/level', method: 'get' },
+            getAllPrograms: { url: 'api/programmes/all', method: 'get' },
+
+            // Student Profile Endpoints
+            getStudentById: { url: 'api/staff/students', method: 'get' },
+            getStudentCourses: { url: 'api/staff/students/courses', method: 'get' },
+            getStudentResults: { url: 'api/staff/students/results', method: 'get' },
+
+            // Applicant Management Endpoints
+            getApplicants: { url: 'api/staff/applicants/all', method: 'post' },
+            getApplicantStats: { url: 'api/staff/applicants/stats', method: 'get' },
+            updateApplicantStatus: { url: 'api/staff/applicants/update_status', method: 'post' },
+            processApplication: { url: 'api/staff/applicants/process', method: 'post' },
+            bulkUpdateApplicantStatus: { url: 'api/staff/applicants/bulk_update_status', method: 'post' },
+
+            // Result Management Endpoints (These exist in backend)
+            computeResults: { url: 'api/staff/results/compute', method: 'post' },
+            computeIndividualResult: { url: 'api/staff/results/compute_individual', method: 'post' },
+            getStudentsForComputation: { url: 'api/staff/results/students_for_computation', method: 'get' },
+            getStudentsWithResults: { url: 'api/staff/results/students_with_results', method: 'get' },
+            saveBatchResults: { url: 'api/staff/results/save_batch', method: 'post' },
+            bulkUploadResults: { url: 'api/staff/results/bulk_upload', method: 'post' },
+
+            // Enhanced Result Management
+            compileAdvancedResults: { url: 'api/staff/results/compile-advanced', method: 'post' },
+            getStudentSemesterGpa: { url: 'api/staff/results/semester-gpa', method: 'get' },
+            getResultCompilationLogs: { url: 'api/staff/results/compilation-logs', method: 'get' },
+
+            // Staff Course Allocations
+            getStaffCourseAllocations: { url: 'api/staff/staff-course-allocations', method: 'get' },
+            createStaffCourseAllocation: { url: 'api/staff/staff-course-allocations', method: 'post' },
+            updateStaffCourseAllocation: { url: 'api/staff/staff-course-allocations', method: 'put' },
+            deleteStaffCourseAllocation: { url: 'api/staff/staff-course-allocations', method: 'delete' },
+
+            // Student Management Endpoints (These exist in backend)
+            getStudentStats: { url: 'api/staff/students/stats', method: 'get' },
+            createStudent: { url: 'api/staff/students/create', method: 'post' },
+            bulkUploadStudents: { url: 'api/staff/students/bulk_upload', method: 'post' },
+            getStudentById: { url: 'api/staff/students/{id}', method: 'get' },
+            getStudentCourses: { url: 'api/staff/students/courses', method: 'get' },
+            getStudentResults: { url: 'api/staff/students/results', method: 'get' },
+            searchStudents: { url: 'api/staff/students/search', method: 'post' },
+            getStudentAcademicRecords: { url: 'api/staff/students/academic_records/{id}', method: 'get' },
+
+            // Transcript Generation Endpoints (These exist in backend)
+            generateTranscript: { url: 'api/staff/transcripts/generate', method: 'post' },
+            emailTranscript: { url: 'api/staff/transcripts/email', method: 'post' },
+
+            // Staff Course Management Endpoints (These exist in backend)
+            getStaffCoursesByStaffID: { url: 'api/staff/staff/staff_courses', method: 'get' },
+            getAllStaffWithCourses: { url: 'api/staff/staff/staff_courses/all', method: 'get' },
+            assignCourses: { url: 'api/staff/staff/assign_course', method: 'post' },
+            unAssignCourses: { url: 'api/staff/staff/unassign_course', method: 'post' },
+            getStaffCourses: { url: 'api/staff/courses', method: 'get' },
             givePermission: { url: 'api/staff/permission/give', method: 'post' },
             revokePermission: { url: 'api/staff/permission/revoke', method: 'post' },
             getPermissions: { url: 'api/staff/permission/permissions', method: 'get' },
             getStaffPermissions: { url: 'api/staff/permission/staff_permissions/{staff_id}', method: 'get' },
+
+            // Admission Management Endpoints
+            getPaidApplicants: { url: 'api/staff/admission/paid_applicants', method: 'post' },
+            admitApplicants: { url: 'api/staff/admission/admit', method: 'post' },
+            bulkAdmitApplicants: { url: 'api/staff/admission/admit_csv', method: 'post' },
+            rejectApplicants: { url: 'api/staff/admission/reject_applicants', method: 'post' },
+            activateStudent: { url: 'api/staff/admission/activate', method: 'post' },
+            updateQualifiedStatus: { url: 'api/staff/admission/update_qualified_status', method: 'post' },
+            updateAdmissionStatus: { url: 'api/staff/admission/update_admission_status', method: 'post' },
+            getAdmissionApplicants: { url: 'api/staff/admission/applicants', method: 'post' },
+            getAdmissionBatches: { url: 'api/staff/admission/get_batches', method: 'post' },
+            getAdmissionTemplate: { url: 'api/staff/admission/template', method: 'get' },
+            changeApplicantProgramme: { url: 'api/staff/admission/change_programme', method: 'post' },
             createRole: { url: 'api/staff/role/create', method: 'post' },
             deleteRole: { url: 'api/staff/role/delete', method: 'post' },
             assignRoleToStaff: { url: 'api/staff/role/assign_role_to_staff', method: 'post' },
@@ -171,7 +267,31 @@ export default {
             updateSchoolInfo: { url: 'api/staff/update_school_info', method: 'post' },
           },
         student:{
-
+            login: { url: 'api/studentportal/login', method: 'post' },
+            logout: { url: 'api/studentportal/logout', method: 'post' },
+            getStudents: { url: 'api/studentportal/student/students', method: 'post' },
+            updateStudent: { url: 'api/studentportal/student/update', method: 'post' },
+            uploadPicture: { url: 'api/studentportal/student/uploadPicture', method: 'post' },
+            uploadSignature: { url: 'api/studentportal/student/upload_signature', method: 'post' },
+            registerCourses: { url: 'api/studentportal/student/register_courses', method: 'post' },
+            unregisterCourses: { url: 'api/studentportal/student/unregister_courses', method: 'post' },
+            generateInvoice: { url: 'api/studentportal/student/generate_invoice', method: 'post' },
+            storePayment: { url: 'api/studentportal/student/payment', method: 'post' },
+            getPayments: { url: 'api/studentportal/student/get_payments', method: 'post' },
+            requeryPayment: { url: 'api/studentportal/student/requery/{payment_reference?}', method: 'post' },
+            getStudentById: { url: 'api/studentportal/student/', method: 'get' },
+            getInvoiceTypesByCategory: { url: 'api/studentportal/student/by_payment_category', method: 'post' },
+            getPaymentStatus: { url: 'api/studentportal/student/payment_status', method: 'post' },
+            getAllInvoiceTypes: { url: 'api/studentportal/student/invoice_types/all', method: 'post' },
+            getRegisteredCourses: { url: 'api/studentportal/student/registered_courses', method: 'post' },
+            getResult: { url: 'api/studentportal/student/result', method: 'post' },
+            getCoursesResult: { url: 'api/studentportal/student/courses_result', method: 'post' },
+            getStudentInvoices: { url: 'api/studentportal/student/get_student_invoices/{session_id}', method: 'get' },
+            getProgrammeCourses: { url: 'api/studentportal/student/programme_courses/{session_id}', method: 'get' },
+            paymentDetails: { url: 'api/studentportal/student/payment_details', method: 'post' },
+            initiatePayment: { url: 'api/studentportal/student/initiate_payment', method: 'post' },
+            getWallet: { url: 'api/studentportal/student/wallet', method: 'get' },
+            pay: { url: 'api/studentportal/student/pay', method: 'post' }
         },
         applicant:{
           applicantLoginPost: {
@@ -185,6 +305,10 @@ export default {
           applicantCreate: {
             url: "api/applicants/create",
             method: "post"
+          },
+          applicantSelf: {
+            url: "api/applicants/self",
+            method: "get"
           },
           registrationProgress: {
             url: "api/applicants/registration_progress/{applicant_id}",
@@ -201,6 +325,22 @@ export default {
           updateApplicant: {
             url: "api/applicants/update",
             method: "post"
+          },
+          uploadPicture: {
+            url: "api/applicants/uploadPicture",
+            method: "post"
+          },
+          getExamTypes: {
+            url: "api/exam_types",
+            method: "get"
+          },
+          getCertificateTypes: {
+            url: "api/certificate_types",
+            method: "get"
+          },
+          getOLevelGrades: {
+            url: "api/olevel_grades",
+            method: "get"
           },
           applicantLogout: {
             url: "api/applicants/logout",
@@ -240,6 +380,10 @@ export default {
           },
           getPayment: {
             url: "api/applicants/get_payment",
+            method: "post"
+          },
+          getInvoiceTypes: {
+            url:  "api/applicants/payments/details",
             method: "post"
           },
           getApplicantInvoices: {
