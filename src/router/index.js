@@ -257,6 +257,12 @@ const router = createRouter({
           component: () => import('../views/Staff/Applicants/QualificationManagement.vue'),
           meta: { user_type: 'staff', require: true }
         },
+        {
+          path: 'applicants/import',
+          name: 'staff-applicant-import',
+          component: () => import('../views/Staff/Applicants/ApplicantImportManagement.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
         // Result Management Routes
         {
           path: 'results',

@@ -248,6 +248,12 @@ export default {
             getAdmissionBatches: { url: 'api/staff/admission/get_batches', method: 'post' },
             getAdmissionTemplate: { url: 'api/staff/admission/template', method: 'get' },
             changeApplicantProgramme: { url: 'api/staff/admission/change_programme', method: 'post' },
+
+            // Applicant Import Endpoints
+            uploadApplicantFile: { url: 'api/staff/applicant-import/upload', method: 'post' },
+            processApplicantImport: { url: 'api/staff/applicant-import/process', method: 'post' },
+            getImportHistory: { url: 'api/staff/applicant-import/history', method: 'get' },
+            downloadImportTemplate: { url: 'api/staff/applicant-import/template', method: 'get' },
             createRole: { url: 'api/staff/role/create', method: 'post' },
             deleteRole: { url: 'api/staff/role/delete', method: 'post' },
             assignRoleToStaff: { url: 'api/staff/role/assign_role_to_staff', method: 'post' },
