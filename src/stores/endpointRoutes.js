@@ -150,10 +150,10 @@ export default {
             getConfiguration: { url: 'api/staff/configuration/{name}', method: 'get' },
 
             // Result Management Endpoints
-            computeResults: { url: 'api/staff/results/compute', method: 'post' },
-            computeIndividualResult: { url: 'api/staff/results/compute_individual', method: 'post' },
-            bulkUploadResults: { url: 'api/staff/results/bulk_upload', method: 'post' },
-            getStudentsForComputation: { url: 'api/staff/results/students_for_computation', method: 'get' },
+            computeResults: { url: 'api/results/compute', method: 'post' },
+            computeIndividualResult: { url: 'api/results/compute_individual', method: 'post' },
+            bulkUploadResults: { url: 'api/results/bulk_upload', method: 'post' },
+            getStudentsForComputation: { url: 'api/results/students_for_computation', method: 'get' },
 
             // Score Management Endpoints
             saveScore: { url: 'api/staff/scores/save', method: 'post' },
@@ -193,17 +193,22 @@ export default {
             bulkUpdateApplicantStatus: { url: 'api/staff/applicants/bulk_update_status', method: 'post' },
 
             // Result Management Endpoints (These exist in backend)
-            computeResults: { url: 'api/staff/results/compute', method: 'post' },
-            computeIndividualResult: { url: 'api/staff/results/compute_individual', method: 'post' },
-            getStudentsForComputation: { url: 'api/staff/results/students_for_computation', method: 'get' },
-            getStudentsWithResults: { url: 'api/staff/results/students_with_results', method: 'get' },
-            saveBatchResults: { url: 'api/staff/results/save_batch', method: 'post' },
-            bulkUploadResults: { url: 'api/staff/results/bulk_upload', method: 'post' },
+            computeResults: { url: 'api/results/compute', method: 'post' },
+            computeIndividualResult: { url: 'api/results/compute_individual', method: 'post' },
+            getStudentsForComputation: { url: 'api/results/students_for_computation', method: 'get' },
+            getStudentsWithResults: { url: 'api/results/students_with_results', method: 'get' },
+            saveBatchResults: { url: 'api/results/save_batch', method: 'post' },
+            bulkUploadResults: { url: 'api/results/bulk_upload', method: 'post' },
 
             // Enhanced Result Management
-            compileAdvancedResults: { url: 'api/staff/results/compile-advanced', method: 'post' },
-            getStudentSemesterGpa: { url: 'api/staff/results/semester-gpa', method: 'get' },
-            getResultCompilationLogs: { url: 'api/staff/results/compilation-logs', method: 'get' },
+            compileAdvancedResults: { url: 'api/results/compile-advanced', method: 'post' },
+            getStudentSemesterGpa: { url: 'api/results/semester-gpa', method: 'get' },
+            getResultCompilationLogs: { url: 'api/results/compilation-logs', method: 'get' },
+
+            // Grade Settings Management
+            getGradeSettings: { url: 'api/grade-settings', method: 'get' },
+            getGeneralGradeSettings: { url: 'api/grade-settings/general', method: 'get' },
+            saveGradeSetting: { url: 'api/grade-settings', method: 'post' },
 
             // Staff Course Allocations
             getStaffCourseAllocations: { url: 'api/staff/staff-course-allocations', method: 'get' },
