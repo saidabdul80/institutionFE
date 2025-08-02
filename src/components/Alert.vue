@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <Dialog @hide="handleCancel"  v-model:visible="internalModel" header="" :style="{ maxWidth: '579px' }" :pt="{root:{class:'px-5'},content:{class:'px-0'}, header:{style:'flex-direction: row-reverse; padding-bottom: 0px;padding-right:0px'}}">
+    <Dialog @hide="handleCancel" modal :draggable="false"  v-model:visible="internalModel" header="" :style="{ maxWidth: '579px', minWidth:'300px' }" :pt="{root:{class:'px-5'},content:{class:'px-0'}, header:{style:'flex-direction: row-reverse; padding-bottom: 0px;padding-right:0px'}}">
         <div class=" mt-1">
             <div class="pb-6" v-if="imgPath">
                 <img :src="getImageUrl()" width="148px" class="mx-auto" />
@@ -9,7 +9,7 @@
                 <v-icon  class="text-[80px]  mx-auto" :class="icon"> </v-icon>
             </div>
             <h1 class="text-[32px] font-semibold px-2 text-center"
-            :class="`text-[${$constants.secondary}]`">
+            :class="`text-[${$constants?.secondary}]`">
             {{ title }}</h1>
         </div>
 

@@ -1080,17 +1080,32 @@ export default {
         checkPaymentStatusFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status');
-            
+
             if (status === 'successful' || status === 'failed') {
                 this.paymentStatus = status;
-                
+
                 // Clear the status from URL without reloading
                 const newUrl = window.location.pathname;
                 window.history.replaceState({}, document.title, newUrl);
-                
+
                 // Reload data to reflect payment changes
                 this.loadInvoices();
                 this.loadPayments();
+
+                if (status === 'successful') {
+                    // Emit payment status update
+                    this.emitter.emit('payment-status-updated', { application_fee_paid: true });
+                    this.emitter.emit('user-data-refreshed');
+
+                    // Check if there's an intended route to redirect to
+                    const intendedRoute = sessionStorage.getItem('intended_route');
+                    if (intendedRoute) {
+                        sessionStorage.removeItem('intended_route');
+                        setTimeout(() => {
+                            this.$router.push({ name: intendedRoute });
+                        }, 2000); // Give time for success message to show
+                    }
+                }
             }
         }
         // async quickPayApplicationFee() {
@@ -1137,6 +1152,20 @@ export default {
         await this.loadInvoicesTypes();
         this.checkApplicationFeeRequirement();
         this.checkPaymentStatusFromUrl();
+
+        // Check for query parameters and show message
+        if (this.$route.query.message) {
+            this.$globals.message = {
+                text: this.$route.query.message,
+                type: this.$route.query.type || 'info'
+            };
+            setTimeout(() => {
+                this.$globals.message.text = '';
+            }, 5000);
+
+            // Clear query parameters
+            this.$router.replace({ name: this.$route.name });
+        }
     }
 }
 </script>

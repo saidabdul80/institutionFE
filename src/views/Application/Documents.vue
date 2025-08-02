@@ -14,22 +14,24 @@
         </div>
 
         <!-- Document Requirements -->
+         
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h3 class="text-lg font-semibold mb-4">Required Documents</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div v-for="requirement in documentRequirements" :key="requirement.id" 
                      class="flex items-center justify-between p-4 border rounded-lg">
                     <div class="flex items-center">
-                        <i :class="requirement.uploaded ? 'fa fa-check-circle text-green-500' : 'fa fa-circle-o text-gray-400'" 
+
+                        <i :class="uploadedDocuments?.includes(requirement.value) ? 'fa fa-check-circle text-green-500' : 'fa fa-circle-o text-gray-400'" 
                            class="text-xl mr-3"></i>
                         <div>
                             <p class="font-medium">{{ requirement.name }}</p>
                             <p class="text-sm text-gray-500">{{ requirement.description }}</p>
                         </div>
                     </div>
-                    <span :class="requirement.uploaded ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
+                    <span :class="uploadedDocuments?.includes(requirement.value)? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
                           class="px-2 py-1 rounded-full text-xs font-medium">
-                        {{ requirement.uploaded ? 'Uploaded' : 'Required' }}
+                        {{ uploadedDocuments?.includes(requirement.value)? 'Uploaded' : 'Required' }}
                     </span>
                 </div>
             </div>
@@ -126,6 +128,17 @@
             </div>
         </div>
 
+        <!-- Add this near the bottom of your template -->
+        <Dialog v-model:visible="showPreviewModal" modal header="Document Preview" :style="{width: '80vw', maxWidth: '800px'}">
+            <div class="p-4 text-center">
+                <img :src="previewImage" class="max-h-[70vh] mx-auto" alt="Document Preview">
+                <div class="mt-4">
+                    <Button label="Download" @click="downloadDocument({url: previewImage})" class="mr-2" />
+                    <Button label="Close" severity="secondary" @click="showPreviewModal = false" />
+                </div>
+            </div>
+        </Dialog>
+
         <!-- Upload Document Modal -->
         <Dialog v-model:visible="showUploadModal" modal header="Upload Document" :style="{width: '600px'}">
             <div class="p-4">
@@ -170,6 +183,8 @@
                             :disabled="!uploadForm.document_type || !uploadForm.name || !selectedFile" />
                 </div>
             </div>
+
+            <span v-show="false" class="text-green-500"></span>
         </Dialog>
     </div>
 </template>
@@ -186,6 +201,8 @@ export default {
     },
     data() {
         return {
+               showPreviewModal: false,
+            previewImage: null,
             loading: false,
             showUploadModal: false,
             documents: [],
@@ -208,13 +225,18 @@ export default {
                 { value: 'other', label: 'Other Document' }
             ],
             documentRequirements: [
-                { id: 1, name: 'Passport Photograph', description: 'Recent passport photograph', uploaded: false },
-                { id: 2, name: 'Birth Certificate', description: 'Original birth certificate', uploaded: false },
-                { id: 3, name: 'O\'Level Result', description: 'WAEC/NECO/NABTEB result', uploaded: false },
-                { id: 4, name: 'JAMB Result', description: 'UTME result slip', uploaded: false },
-                { id: 5, name: 'State of Origin', description: 'Certificate of state of origin', uploaded: false },
-                { id: 6, name: 'Medical Report', description: 'Medical fitness certificate', uploaded: false }
+                {value: 'passport', id: 1, name: 'Passport Photograph', description: 'Recent passport photograph', uploaded: false },
+                {value: 'birth_certificate', id: 2, name: 'Birth Certificate', description: 'Original birth certificate', uploaded: false },
+                {value: 'olevel_result', id: 3, name: 'O\'Level Result', description: 'WAEC/NECO/NABTEB result', uploaded: false },
+                {value: 'jamb_result', id: 4, name: 'JAMB Result', description: 'UTME result slip', uploaded: false },
+                {value: 'state_of_origin', id: 5, name: 'State of Origin', description: 'Certificate of state of origin', uploaded: false },
+                {value: 'medical_report', id: 6, name: 'Medical Report', description: 'Medical fitness certificate', uploaded: false }
             ]
+        }
+    },
+    computed: {
+        uploadedDocuments() {
+            return this.filteredDocuments.map(doc => doc.document_type)
         }
     },
     methods: {
@@ -222,9 +244,9 @@ export default {
             this.loading = true;
             try {
                 const res = await get(this.$endpoints.applicant.getDocuments.url);
-                if (res && res.data) {
-                    this.documents = res.data;
-                    this.filteredDocuments = res.data;
+                if (res) {
+                    this.documents = res;
+                    this.filteredDocuments = res;
                     this.updateRequirements();
                 }
             } catch (error) {
@@ -234,11 +256,11 @@ export default {
             }
         },
         updateRequirements() {
-            this.documentRequirements.forEach(req => {
-                req.uploaded = this.documents.some(doc => 
-                    doc.document_type === req.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
-                );
-            });
+            // this.documentRequirements.forEach(req => {
+            //     req.uploaded = this.documents.some(doc => 
+            //         doc.document_type === req.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
+            //     );
+            // });
         },
         filterDocuments() {
             let filtered = this.documents;
@@ -261,13 +283,13 @@ export default {
         },
         async uploadDocument() {
             if (!this.selectedFile) return;
-            
+
             const formData = new FormData();
             formData.append('file', this.selectedFile);
             formData.append('document_type', this.uploadForm.document_type);
             formData.append('name', this.uploadForm.name);
             formData.append('description', this.uploadForm.description);
-            
+
             try {
                 const res = await postFormData(this.$endpoints.applicant.updateDocument.url, formData);
                 if (res) {
@@ -275,30 +297,93 @@ export default {
                     this.uploadForm = { document_type: '', name: '', description: '' };
                     this.selectedFile = null;
                     await this.loadDocuments();
-                    
-                    this.$globals.message = {
-                        text: 'Document uploaded successfully',
-                        type: 'success'
-                    };
+
+                    // Check if all required documents are now uploaded
+                    const allRequiredUploaded = this.documentRequirements.every(req => req.uploaded);
+
+                    if (allRequiredUploaded) {
+                        this.$globals.message = {
+                            text: 'Document uploaded successfully! All required documents are now complete.',
+                            type: 'success'
+                        };
+
+                        // Emit event to update user data and hide payment guidance
+                        this.emitter.emit('user-data-refreshed');
+                        this.emitter.emit('documents-completed');
+                    } else {
+                        this.$globals.message = {
+                            text: 'Document uploaded successfully',
+                            type: 'success'
+                        };
+                    }
+
                     setTimeout(() => {
                         this.$globals.message.text = '';
                     }, 3000);
                 }
             } catch (error) {
                 console.error('Error uploading document:', error);
+                this.$globals.message = {
+                    text: 'Failed to upload document. Please try again.',
+                    type: 'error'
+                };
+                setTimeout(() => {
+                    this.$globals.message.text = '';
+                }, 3000);
             }
         },
         viewDocument(document) {
-            if (document.file_url) {
-                window.open(document.file_url, '_blank');
+            if (!document.url) return;
+            
+            // For PDFs - open in new tab with PDF viewer
+            if (document.file_type === 'pdf') {
+                window.open(document.url, '_blank');
+            } 
+            // For images - show in modal preview
+            else if (['jpg', 'jpeg', 'png'].includes(document.file_type)) {
+                this.previewImage = document.url;
+                this.showPreviewModal = true;
+            }
+            // For other files - force download
+            else {
+                this.downloadDocument(document);
             }
         },
-        downloadDocument(document) {
-            if (document.file_url) {
-                const link = document.createElement('a');
-                link.href = document.file_url;
-                link.download = document.name;
-                link.click();
+        async downloadDocument(document) {
+            if (!document.url) return;
+            
+            try {
+                // For S3/remote files
+                if (document.url.startsWith('http')) {
+                    const link = document.createElement('a');
+                    link.href = document.url;
+                    link.download = document.name || `document_${document.id}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+                // For local files
+                else {
+                    const response = await fetch(document.url);
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = document.name || `document_${document.id}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    // Cleanup
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                }
+            } catch (error) {
+                console.error('Download failed:', error);
+                this.$globals.message = {
+                    text: 'Failed to download document',
+                    type: 'error'
+                };
             }
         },
         replaceDocument(document) {
@@ -317,16 +402,22 @@ export default {
                 }
             }
         },
-        getFileIcon(fileType) {
+       getFileIcon(fileType) {
             const icons = {
                 'pdf': 'fa fa-file-pdf-o text-red-500',
                 'doc': 'fa fa-file-word-o text-blue-500',
                 'docx': 'fa fa-file-word-o text-blue-500',
                 'jpg': 'fa fa-file-image-o text-green-500',
                 'jpeg': 'fa fa-file-image-o text-green-500',
-                'png': 'fa fa-file-image-o text-green-500'
+                'png': 'fa fa-file-image-o text-green-500',
+                'xls': 'fa fa-file-excel-o text-green-600',
+                'xlsx': 'fa fa-file-excel-o text-green-600',
+                'ppt': 'fa fa-file-powerpoint-o text-orange-500',
+                'pptx': 'fa fa-file-powerpoint-o text-orange-500',
+                'zip': 'fa fa-file-archive-o text-purple-500',
+                'txt': 'fa fa-file-text-o text-gray-500'
             };
-            return icons[fileType] || 'fa fa-file-o text-gray-500';
+            return icons[fileType?.toLowerCase()] || 'fa fa-file-o text-gray-500';
         },
         getStatusColor(status) {
             const colors = {

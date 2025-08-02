@@ -41,8 +41,20 @@
 
       <!-- Main Content Area -->
       <div class="flex-1 lg:flex-grow">
-        <div class="h-full lg:h-screen overflow-y-auto" :style="`background:${$globals.colors.ap_secondary}`">
+        <div class="h-full lg:h-screen overflow-y-auto relative" :style="`background:${$globals.colors.ap_secondary}`">
           <!-- Content Container -->
+           {{ $globals.message.text }}
+             <Transition name="fade">
+              <div v-if="$globals.message.text != ''" :class="[
+                toggleMobileMenu?'w-[86%]':'w-auto',
+                'text-white fixed z-50 top-0', 'text-center', 'h-[3vh]', 'px-3', 'mb-0',
+                $globals.message.type === 'success' ? 'bg-green-500' :
+                  $globals.message.type === 'error' ? 'bg-red-500' :
+                    'bg-orange-500/75'
+              ]">
+                {{ $globals.message.text }}
+              </div>
+            </Transition>
           <div class="min-h-full">
             <!-- Payment Status Banner -->
             <PaymentStatusBanner />

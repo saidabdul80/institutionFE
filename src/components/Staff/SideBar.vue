@@ -196,7 +196,7 @@ export default {
           children:[
             {label:'Dashboard', route:'/staff/applicants/dashboard'},
             {label:'All Applicants', route:'/staff/applicants'},
-            {label:'Import Applicants', route:'/staff/applicants/import'},
+            {label:'UTME Candidates', route:'/staff/applicants/import'},
             {label:'Admission Management', route:'/staff/applicants/admission'},
             {label:'Qualified/Not Qualified', route:'/staff/applicants/qualification'},
           ]

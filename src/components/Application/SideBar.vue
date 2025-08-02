@@ -33,13 +33,23 @@
             <ul class="pl-3">
                 <li v-for="(menuItem, i) in menuItems" :key="i"
                     @click="selectMenu($event, menuItem.route)"
-                    class="p-4 transitionx xmenu cursor-pointer rounded-l-lg"
-                    :class="`text-[${$globals.colors.ap_secondary}] ${$route.name == menuItem.route ? 'apMenuActive' : ''}`"
+                    class="p-4 transitionx xmenu rounded-l-lg relative"
+                    :class="[
+                        `text-[${$globals.colors.ap_secondary}]`,
+                        $route.name == menuItem.route ? 'apMenuActive' : '',
+                        isMenuItemDisabled(menuItem) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                    ]"
                     :ref="`menuItem-${i}`">
                     <div class="top-0 left-0 absolute p-4"></div>
                     <div class="flex items-center leading-4">
                         <i :class="`${menuItem.icon} mr-2`"></i>
                         <span class="line-clamp-2">{{ menuItem.label }}</span>
+                        <i v-if="isMenuItemDisabled(menuItem)" class="fa fa-lock ml-auto text-xs opacity-60"></i>
+                    </div>
+                    <!-- Payment Required Tooltip -->
+                    <div v-if="isMenuItemDisabled(menuItem)"
+                         class="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        Payment required to access
                     </div>
                 </li>
             </ul>
@@ -181,6 +191,12 @@ export default {
                 'rejected': 'bg-red-500 text-white'
             };
             return statusColors[status.toLowerCase()] || 'bg-gray-500 text-white';
+        },
+        isApplicationFeePaid() {
+            return this.userInfo.application_fee_paid === true || this.userInfo.application_fee_paid === 1;
+        },
+        isImportedApplicant() {
+            return this.userInfo.is_imported === true || this.userInfo.is_imported === 1;
         }
     },
     created() {
@@ -188,11 +204,36 @@ export default {
         this.ap_secondary = this.$globals.colors.ap_secondary;
     },
     methods: {
+        isMenuItemDisabled(menuItem) {
+            // If user is imported and hasn't paid application fee, disable all except payments and dashboard
+            if (this.isImportedApplicant && !this.isApplicationFeePaid) {
+                const allowedRoutes = ['applicant-index', 'applicant-payments'];
+                return !allowedRoutes.includes(menuItem.route);
+            }
+            return false;
+        },
         selectMenu(e, routeName) {
             e.preventDefault();
             e.stopPropagation();
 
             if (this.isNavigating) return;
+
+            // Check if menu item is disabled
+            const menuItem = this.menuItems.find(item => item.route === routeName);
+            if (this.isMenuItemDisabled(menuItem)) {
+                // Redirect to payments page with a message
+                this.$globals.message = {
+                    text: 'Please complete your application fee payment to access this feature.',
+                    type: 'warning'
+                };
+                setTimeout(() => {
+                    this.$globals.message.text = '';
+                }, 4000);
+
+                this.$router.push({ name: 'applicant-payments' });
+                return;
+            }
+
             this.isNavigating = true;
 
             setTimeout(() => {

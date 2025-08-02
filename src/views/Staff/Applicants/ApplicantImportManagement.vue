@@ -4,7 +4,7 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Applicant Import Management</h1>
+                    <h1 class="text-3xl font-bold text-gray-900">UTME Applicants Import Management</h1>
                     <p class="text-gray-600 mt-2">Import applicants from Excel files with validation and tracking</p>
                 </div>
                 <div class="flex items-center space-x-4">

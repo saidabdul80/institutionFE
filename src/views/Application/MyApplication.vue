@@ -37,9 +37,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-                            <input v-model="form.first_name"
+                            <input :value="form.first_name"
                                    type="text"
                                    required
+                                   disabled
                                    :class="{'border-red-500': !form.first_name && showValidation}"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <p v-show="!form.first_name && showValidation" class="text-red-500 text-xs mt-1">First name is required</p>
@@ -47,9 +48,10 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-                            <input v-model="form.surname"
+                            <input :value="form.surname"
                                    type="text"
                                    required
+                                   disabled
                                    :class="{'border-red-500': !form.surname && showValidation}"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <p v-show="!form.surname && showValidation" class="text-red-500 text-xs mt-1">Last name is required</p>
@@ -57,7 +59,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
-                            <input v-model="form.middle_name" type="text"
+                            <input :value="form.middle_name" type="text" disabled
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         
@@ -75,13 +77,14 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
-                            <input v-model="form.dob" type="date" required
+                            <input v-model="form.date_of_birth" type="date" required
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Gender *</label>
-                            <select v-model="form.gender" required
+                            <select :value="form.gender" required
+                            disabled
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Gender</option>
                                 <option value="male">Male</option>
@@ -165,7 +168,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Programme Choice *</label>
-                            <select v-model="form.programme_id" required
+                            <select v-if="form.is_imported" :value="form.programme_id" required
+                            disabled
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Programme</option>
+                                <option v-for="programme in safeProgrammes" :key="programme.id" :value="programme.id">
+                                    {{ programme.name }}
+                                </option>
+                            </select>
+                            <select v-else v-model="form.programme_id" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Programme</option>
                                 <option v-for="programme in safeProgrammes" :key="programme.id" :value="programme.id">
@@ -176,7 +187,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Entry Mode *</label>
-                            <select v-model="form.mode_of_entry_id" required
+                            <select :disabled="form.is_imported" v-model="form.mode_of_entry_id" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Entry Mode</option>
                                 <option v-for="mode in modeOfEntryOptions" :key="mode.id" :value="mode.id">
@@ -187,19 +198,22 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">JAMB Registration Number</label>
-                            <input v-model="form.jamb_number" type="text"
+                            <input :disabled="form.is_imported" v-model="form.jamb_number" type="text"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         
                         <div>
+                            
                             <label class="block text-sm font-medium text-gray-700 mb-2">JAMB Score</label>
-                            <input v-model="form.jamb_score" type="number" min="0" max="400"
+                            <input v-if="!form.is_imported" v-model="form.jamb_score" type="number" min="0" max="400"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input disabled :value="Object.values(form.jamb_subject_scores).reduce((a, b) => a + b, 0)" v-else
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
                     
                     <div class="mt-6 flex justify-end">
-                        <button type="submit" :disabled="loading"
+                        <button type="submit" :disabled="loading"  v-if="!form.is_imported"
                                 class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50">
                             <i v-show="loading" class="fa fa-spinner fa-spin mr-2"></i>
                             Save Academic Information
@@ -281,6 +295,7 @@ import { useAuthStore } from '@/stores/auth';
 import OLevelResults from './OLevelResults.vue';
 import ALevelResults from './ALevelResults.vue';
 import userDataMixin from '@/mixins/userDataMixin';
+import { useGlobalsStore } from '@/stores/globals';
 
 export default {
     components: {
@@ -467,6 +482,7 @@ export default {
         async savePersonalInfo() {
             this.loading = true;
             this.showValidation = true;
+            const globals  = useGlobalsStore()
 
             try {
                 // Validate required fields before sending
@@ -518,14 +534,14 @@ export default {
                         await this.$nextTick();
                         this.applicationData = { ...this.applicationData, ...res };
                         this.store.userInfo = { ...this.store.userInfo, ...res };
-
+                        globals.showMessage ( 'Personal information saved successfully','success');
                         setTimeout(() => {
-                            this.$globals.message.text = '';
+                            globals.message.text = '';
                         }, 3000);
                     } catch (domError) {
                         console.error('DOM update error:', domError);
                         // Still show success message even if DOM update fails
-                        this.$globals.message = {
+                        globals.message = {
                             text: 'Personal information saved successfully',
                             type: 'success'
                         };

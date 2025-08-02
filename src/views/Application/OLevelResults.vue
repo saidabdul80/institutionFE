@@ -136,16 +136,23 @@
                             <div v-for="(subject, index) in currentResult.subjects" :key="index"
                                  class="flex items-center space-x-3 bg-gray-50 p-3 rounded-md">
                                 <div class="flex-1">
-                                    <select v-model="subject.name"
+                                    <Select 
+                                    class="w-full"
+                                        :filter="true"
+                                        :options="subjects" 
+                                        option-label="name" 
+                                        option-value="name" 
+                                        v-model="subject.name" />
+                                    <!-- <select v-model="subject.name"
                                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <option value="">Select Subject</option>
                                         <option v-for="subj in subjects" :key="subj.id" :value="subj.name">
                                             {{ subj.name }}
                                         </option>
-                                        <!-- Allow custom subject entry -->
+
                                         <option value="custom">Other (Type custom subject)</option>
-                                    </select>
-                                    <!-- Custom subject input -->
+                                    </select> -->
+
                                     <input v-if="subject.name === 'custom'"
                                            v-model="subject.customName"
                                            @input="subject.name = subject.customName"
@@ -193,6 +200,7 @@
 import { get, post } from '@/api/client';
 import { useAuthStore } from '@/stores/auth';
 import { useGlobalsStore } from '@/stores/globals';
+import Select from 'primevue/select';
 
 export default {
     name: 'OLevelResults',
@@ -200,6 +208,9 @@ export default {
         const authStore = useAuthStore();
         const globalsStore = useGlobalsStore();
         return { authStore, globalsStore };
+    },
+    components: {
+        Select,
     },
     data() {
         return {

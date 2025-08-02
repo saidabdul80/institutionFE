@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import StaffIndex from '../views/Staff/StaffIndex.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useGlobalsStore } from '@/stores/globals';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -398,6 +399,36 @@ router.beforeEach((to, _from, next) => {
         return next({ name: 'applicant-index' });
       }
       return next({ name: 'home' });
+    }
+
+    // Check application fee payment for imported applicants
+    if (authStore.userType === 'applicant' && to.meta.user_type === 'applicant') {
+      const userInfo = authStore.userInfo;
+      const isImported = userInfo?.is_imported === true || userInfo?.is_imported === 1;
+      const hasNotPaid = !(userInfo?.application_fee_paid === true || userInfo?.application_fee_paid === 1);
+
+      if (isImported && hasNotPaid) {
+        // Allow access only to dashboard and payments
+        const allowedRoutes = ['applicant-index', 'applicant-payments'];
+
+        if (!allowedRoutes.includes(to.name)) {
+          useGlobalsStore().showMessage(
+            'Redirecting to payments - application fee not paid',
+            'warning'
+          )
+
+          // Store the intended route for after payment
+          sessionStorage.setItem('intended_route', to.name);
+          
+          return next({
+            name: 'applicant-payments',
+            query: {
+              message: 'Please complete your application fee payment to access this feature.',
+              type: 'warning'
+            }
+          });
+        }
+      }
     }
   }
 

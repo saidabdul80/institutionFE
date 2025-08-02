@@ -88,12 +88,45 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
+
 export default {
     name: 'PaymentGuidance',
     emits: ['dismiss'],
+    data() {
+        return {
+            authStore: useAuthStore()
+        }
+    },
+    mounted() {
+        // Listen for payment status updates
+        this.emitter.on('payment-status-updated', this.handlePaymentStatusUpdate);
+        this.emitter.on('user-data-refreshed', this.checkPaymentStatus);
+
+        // Check payment status on mount
+        this.checkPaymentStatus();
+    },
+    beforeUnmount() {
+        // Clean up event listeners
+        this.emitter.off('payment-status-updated', this.handlePaymentStatusUpdate);
+        this.emitter.off('user-data-refreshed', this.checkPaymentStatus);
+    },
     methods: {
         navigateToPayments() {
             this.$router.push({ name: 'applicant-payments' });
+        },
+        checkPaymentStatus() {
+            const userInfo = this.authStore.userInfo;
+            if (userInfo && userInfo.application_fee_paid) {
+                // Payment is completed, hide the guidance
+                this.$emit('dismiss');
+            }
+        },
+        handlePaymentStatusUpdate(paymentData) {
+            if (paymentData && paymentData.application_fee_paid) {
+                // Payment completed, hide the guidance
+                this.$emit('dismiss');
+            }
         }
     }
 }

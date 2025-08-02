@@ -37,6 +37,15 @@ export default {
     },
     mounted() {
         this.checkPaymentStatus();
+
+        // Listen for payment status updates
+        this.emitter.on('payment-status-updated', this.handlePaymentStatusUpdate);
+        this.emitter.on('user-data-refreshed', this.checkPaymentStatus);
+    },
+    beforeUnmount() {
+        // Clean up event listeners
+        this.emitter.off('payment-status-updated', this.handlePaymentStatusUpdate);
+        this.emitter.off('user-data-refreshed', this.checkPaymentStatus);
     },
     methods: {
         checkPaymentStatus() {
@@ -56,6 +65,13 @@ export default {
         dismissBanner() {
             this.showBanner = false;
             localStorage.setItem('payment_banner_dismissed', 'true');
+        },
+        handlePaymentStatusUpdate(paymentData) {
+            if (paymentData && paymentData.application_fee_paid) {
+                // Payment completed, hide the banner
+                this.showBanner = false;
+                localStorage.removeItem('payment_banner_dismissed'); // Reset dismissal state
+            }
         }
     }
 }
