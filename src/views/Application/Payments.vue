@@ -1,5 +1,25 @@
 <template>
     <div class="p-6">
+        <!-- Application Fee Payment Alert for Imported Applicants -->
+        <div v-if="showApplicationFeeAlert" class="bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-400 p-6 rounded-lg shadow-lg mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-red-100 rounded-full p-3 mr-4">
+                        <i class="fa fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-red-800">Application Fee Payment Required</h3>
+                        <p class="text-red-700 text-sm">You need to pay your application fee to proceed with the application.</p>
+                    </div>
+                </div>
+                <button @click="quickPayApplicationFee"
+                        class="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fa fa-credit-card mr-2"></i>
+                    Pay Application Fee
+                </button>
+            </div>
+        </div>
+
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <div class="flex justify-between items-center">
@@ -104,6 +124,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     ₦{{ formatMoney(invoice.charges || 0) }}
+                                    <div v-if="invoice.charges > 0" class="text-xs text-gray-500">
+                                        Processing fee
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                     ₦{{ formatMoney(invoice.total_amount || (invoice.amount + (invoice.charges || 0))) }}
@@ -259,6 +282,7 @@
                 </div>
 
                 <!-- Payment Gateway Selection -->
+
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-4">Select Payment Gateway</label>
                     <div class="grid grid-cols-1 gap-3">
@@ -411,7 +435,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Payment History -->
                 <div v-if="selectedInvoice.payment && selectedInvoice.payment.length > 0" class="mb-6">
                     <h4 class="font-semibold text-gray-800 mb-3">Payment History</h4>
@@ -442,6 +465,48 @@
                 </div>
             </div>
         </Dialog>
+
+        <!-- Payment Status Alert -->
+        <div v-if="paymentStatus" class="fixed top-4 right-4 z-50 w-96">
+            <div :class="[
+                'p-4 rounded-lg shadow-lg border-l-4',
+                paymentStatus === 'successful' 
+                    ? 'bg-green-50 border-green-500' 
+                    : 'bg-red-50 border-red-500'
+            ]">
+                <div class="flex items-start">
+                    <div :class="[
+                        'flex-shrink-0 p-2 rounded-full',
+                        paymentStatus === 'successful' 
+                            ? 'bg-green-100 text-green-600' 
+                            : 'bg-red-100 text-red-600'
+                    ]">
+                        <i :class="[
+                            'fa text-lg',
+                            paymentStatus === 'successful' 
+                                ? 'fa-check-circle' 
+                                : 'fa-exclamation-circle'
+                        ]"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium">
+                            {{ paymentStatus === 'successful' ? 'Payment Successful' : 'Payment Failed' }}
+                        </h3>
+                        <p class="text-sm mt-1">
+                            {{ paymentStatus === 'successful' 
+                                ? 'Your payment was processed successfully.' 
+                                : 'There was an issue processing your payment. Please try again.' 
+                            }}
+                        </p>
+                        <div class="mt-2">
+                            <button @click="paymentStatus = null" class="text-sm underline">
+                                Dismiss
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -465,6 +530,7 @@ export default {
             activeTab: 'invoices',
             loading: false,
             showPaymentModal: false,
+            showApplicationFeeAlert: false,
             invoices: [],
             payments: [],
             paymentSummary: {
@@ -498,7 +564,8 @@ export default {
                     icon: 'fa-wave-square',
                     color: 'bg-orange-500'
                 }
-            }
+            },
+              paymentStatus: null, 
         }
     },
     computed: {
@@ -522,11 +589,28 @@ export default {
                 this.loading = false;
             }
         },
+        // async loadInvoicesTypes() {
+        //     try {
+        //         const res = await post(this.$endpoints.applicant.paymentDetails.url, {});
+        //         if (res && res.data) {
+        //             this.invoice_types = res.data;
+        //         }
+        //     } catch (error) {
+        //         console.error('Error loading invoice types:', error);
+        //     }
+        // },
         async loadInvoicesTypes() {
             try {
-                const res = await post(this.$endpoints.applicant.getAllInvoiceTypes.url, {});
+                const res = await post(this.$endpoints.applicant.paymentDetails.url, {});
                 if (res && res.data) {
                     this.invoice_types = res.data;
+                    // Check if we have an application fee type
+                    const hasApplicationFee = res.data.some(
+                        type => type.payment_short_name === 'application_fee'
+                    );
+                    if (!hasApplicationFee) {
+                        console.warn("No invoice type with payment_short_name 'application_fee' found");
+                    }
                 }
             } catch (error) {
                 console.error('Error loading invoice types:', error);
@@ -924,12 +1008,135 @@ export default {
                 'failed': 'bg-red-100 text-red-800'
             };
             return colors[status] || 'bg-gray-100 text-gray-800';
+        },
+        checkApplicationFeeRequirement() {
+            const store = useAuthStore();
+            const userInfo = store.userInfo;
+
+            // Check if this is an imported applicant who hasn't paid application fee
+            const isImported = userInfo?.is_imported;
+            const hasNotPaid = !userInfo?.application_fee_paid;
+
+            this.showApplicationFeeAlert = isImported && hasNotPaid;
+        },
+        async quickPayApplicationFee() {
+            try {
+                // Find application fee in invoice types using payment_short_name
+                const applicationFeeType = this.invoice_types.find(type => 
+                    type.payment_short_name === 'application_fee'
+                );
+
+                if (!applicationFeeType) {
+                    this.$globals.message = {
+                        text: "Application fee payment type not found. Please contact support.",
+                        type: "error"
+                    };
+                    return;
+                }
+
+                // Generate the invoice automatically
+                this.paymentForm.loading = true;
+                const res = await post(this.$endpoints.applicant.generateInvoice.url, {
+                    invoice_type_id: applicationFeeType.id
+                });
+
+                if (res && !res.error) {
+                    // Reload invoices to get the newly generated one
+                    await this.loadInvoices();
+                    
+                    // Find the newly generated unpaid application fee invoice
+                    const newInvoice = res.data
+                    
+                    // this.invoices.find(invoice => 
+                    //     invoice.invoice_type_id === applicationFeeType.id && 
+                    //     invoice.status === 'unpaid'
+                    // );
+                    
+                    if (newInvoice) {
+                        // Automatically open payment modal for this invoice
+                        this.payInvoice(newInvoice);
+                    } else {
+                        this.$globals.message = {
+                            text: "Invoice generated but not found. Please check your invoices.",
+                            type: "warning"
+                        };
+                    }
+                } else {
+                    this.$globals.message = {
+                        text: res?.message || "Failed to generate application fee invoice",
+                        type: 'error'
+                    };
+                }
+            } catch (error) {
+                console.error('Error processing application fee payment:', error);
+                this.$globals.message = {
+                    text: "Error processing payment. Please try again.",
+                    type: "error"
+                };
+            } finally {
+                this.paymentForm.loading = false;
+            }
+        },
+        checkPaymentStatusFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            
+            if (status === 'successful' || status === 'failed') {
+                this.paymentStatus = status;
+                
+                // Clear the status from URL without reloading
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+                
+                // Reload data to reflect payment changes
+                this.loadInvoices();
+                this.loadPayments();
+            }
         }
+        // async quickPayApplicationFee() {
+        //     try {
+        //         console.log(this.invoice_types)
+        //         // Find application fee in invoice types
+        //         const applicationFeeType = this.invoice_types.find(type =>
+        //             type.name.toLowerCase().includes('application') ||
+        //             type.name.toLowerCase().includes('form')
+        //         );
+
+        //         if (!applicationFeeType) {
+        //             this.$globals.message = {
+        //                 text: "Application fee payment type not found. Please contact support.",
+        //                 type: "error"
+        //             };
+        //             return;
+        //         }
+
+        //         // Set the selected invoice type and show modal
+        //         this.selectedInvoiceType = applicationFeeType;
+        //         this.showInvoiceTypeModal = true;
+
+        //         // Scroll to the modal or highlight it
+        //         this.$nextTick(() => {
+        //             const modal = document.querySelector('.modal');
+        //             if (modal) {
+        //                 modal.scrollIntoView({ behavior: 'smooth' });
+        //             }
+        //         });
+
+        //     } catch (error) {
+        //         console.error('Error setting up application fee payment:', error);
+        //         this.$globals.message = {
+        //             text: "Error setting up payment. Please try again.",
+        //             type: "error"
+        //         };
+        //     }
+        // }
     },
     async mounted() {
         await this.loadInvoices();
         await this.loadPayments();
         await this.loadInvoicesTypes();
+        this.checkApplicationFeeRequirement();
+        this.checkPaymentStatusFromUrl();
     }
 }
 </script>

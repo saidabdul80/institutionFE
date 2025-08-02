@@ -10,6 +10,10 @@ const HTTP = axios.create({
   },
 });
 
+const TOAST_EVENT = 'APP_TOAST_MESSAGE';
+const SUCCESS_TYPE = 'success';
+const ERROR_TYPE = 'error';
+
 // Request interceptor to add auth token
 HTTP.interceptors.request.use(
   (config) => {
@@ -159,7 +163,14 @@ export const get = async (resource,fullPath=false, except= true) => {
   }
 };
 
-export const post = async (resource, data, fullPath=false, loader= false, type={}) => {
+
+// Helper function to dispatch toast events
+function dispatchToast(type, message) {
+  window.dispatchEvent(new CustomEvent(TOAST_EVENT, {
+    detail: { type, message }
+  }));
+}
+export const post = async (resource, data, fullPath=false, loader= false, type={}, options={}) => {
   
   const authToken  = token();
   const store = useAuthStore();
@@ -171,15 +182,18 @@ export const post = async (resource, data, fullPath=false, loader= false, type={
   try {    
      const globals = useGlobalsStore();
       const session_id = globals.getConfigurationValue('current_session');
-      console.log(globals,session_id)
-     if (session_id && !data?.session_id) {
+    if (session_id && !data?.session_id) {
         data.session_id = session_id;
     }
+
     const response = await HTTP.post(fullPath?resource:window.baseUrl+resource, data,
-      { headers: {        
-        Authorization: authToken  ? `Bearer ${authToken }` : "",
-        ...type
-      }});      
+      { 
+        headers: {        
+          Authorization: authToken  ? `Bearer ${authToken }` : "",
+          ...type
+        },
+        ...options
+    });      
     store.isLoading = false;   
       return response.data
   } catch (e) {    
@@ -192,7 +206,9 @@ export const post = async (resource, data, fullPath=false, loader= false, type={
         await excludeLogin(sessionExpired)     
         window.modalOpened = false
     }else {      
-      localStorage.setItem('error', e.response?.data?.data)
+      //const res = e.response?.data?.data
+      //localStorage.setItem('error', JSON.stringify(Array.isArray(res)? res : [res]))
+      dispatchToast(ERROR_TYPE, e.response?.data?.message || e.response?.data?.data || e.response?.data)
       //displayOk(e.response?.data?.data)
     }
     return false;

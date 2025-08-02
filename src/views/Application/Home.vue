@@ -1,5 +1,8 @@
 <template>
     <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+        <!-- Payment Guidance for Imported Applicants -->
+        <PaymentGuidance v-if="showPaymentGuidance" @dismiss="dismissPaymentGuidance" />
+
         <!-- Welcome Section -->
         <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -183,12 +186,17 @@
 <script>
 import { useAuthStore } from '@/stores/auth';
 import { userDataMixin } from '@/mixins/userDataMixin';
+import PaymentGuidance from '@/components/Application/PaymentGuidance.vue';
 
 export default {
+    components: {
+        PaymentGuidance
+    },
     mixins: [userDataMixin],
     data() {
         return {
             applicantInfo: {},
+            showPaymentGuidance: false,
             progressSteps: {
                 personalInfo: false,
                 documents: false,
@@ -280,6 +288,7 @@ export default {
                     this.applicantInfo = freshData;
                     this.calculateProgress();
                     this.calculateStats();
+                    this.checkPaymentRequirement();
                 }
             } catch (error) {
                 console.error('Error loading applicant data:', error);
@@ -290,6 +299,7 @@ export default {
             this.applicantInfo = userData;
             this.calculateProgress();
             this.calculateStats();
+            this.checkPaymentRequirement();
         },
         calculateProgress() {
             // Check if personal info is complete
@@ -313,6 +323,18 @@ export default {
                 const diffTime = Math.abs(today - applicationDate);
                 this.stats.daysSinceApplication = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             }
+        },
+        checkPaymentRequirement() {
+            // Check if this is an imported applicant who hasn't paid application fee
+            const isImported = this.applicantInfo.is_imported;
+            const hasNotPaid = !this.applicantInfo.application_fee_paid;
+            const isDismissed = localStorage.getItem('payment_guidance_dismissed') === 'true';
+
+            this.showPaymentGuidance = isImported && hasNotPaid && !isDismissed;
+        },
+        dismissPaymentGuidance() {
+            this.showPaymentGuidance = false;
+            localStorage.setItem('payment_guidance_dismissed', 'true');
         }
     },
    // In your component

@@ -310,7 +310,7 @@
                     </div>
 
                     <div v-if="validationResults" class="space-y-4">
-                        <div class="bg-green-50 p-4 rounded-lg">
+                        <div v-if="validationResults.valid_count > 0" class="bg-green-50 p-4 rounded-lg">
                             <div class="flex items-center">
                                 <i class="fa fa-check-circle text-green-500 text-xl mr-3"></i>
                                 <div>
@@ -322,8 +322,26 @@
                             </div>
                         </div>
 
+                         <div v-if="validationResults?.error_count > 0" class="bg-red-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-circle text-red-500 text-xl mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium text-red-800">Validation Errors Found</h4>
+                                    <p class="text-red-700 text-sm">
+                                        {{ validationResults.error_count }} records have errors that need to be fixed
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Error Details -->
+                            <div class="mt-3 pl-9">
+                                <div v-for="(error, index) in validationResults.errors" :key="index" class="text-sm text-red-700 mb-1">
+                                    • {{ error }}
+                                </div>
+                            </div>
+                        </div>
                         <!-- Preview Data -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div v-if="validationResults.valid_count > 0" class="bg-gray-50 p-4 rounded-lg">
                             <h4 class="font-medium text-gray-800 mb-3">Preview (First 5 Records)</h4>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full text-sm">
@@ -438,7 +456,8 @@ export default {
                 totalApplicants: 0,
                 feePaidCount: 0,
                 feePendingCount: 0
-            }
+            },
+
         };
     },
 
@@ -493,17 +512,11 @@ export default {
         async loadImportHistory() {
             try {
                 this.loading = true;
-                const response = await get(this.$endpoints.staff.getImportHistory.url, {
-                    params: {
-                        session_id: this.currentSessionId,
-                        page: this.currentPage,
-                        per_page: this.itemsPerPage
-                    }
-                });
+                const response = await get(this.$endpoints.staff.getImportHistory.url+'?session_id='+this.currentSessionId+'&page='+this.currentPage+'&per_page='+this.itemsPerPage);
 
                 if (response && response.data) {
-                    this.importHistory = response.data.data || [];
-                    this.totalImports = response.data.total || 0;
+                    this.importHistory = response.data || [];
+                    this.totalImports = response.total || 0;
                     this.updateImportStats();
                 }
             } catch (error) {
@@ -583,17 +596,19 @@ export default {
                 const formData = new FormData();
                 formData.append('file', this.selectedFile);
                 formData.append('session_id', this.currentSessionId);
+                window.addEventListener('APP_TOAST_MESSAGE', this.handleImportError);
 
-                const response = await post(this.$endpoints.staff.uploadApplicantFile.url, formData, {
-                    headers: {
+                const response = await post(this.$endpoints.staff.uploadApplicantFile.url, formData, false, false, 
+                    {
                         'Content-Type': 'multipart/form-data'
                     },
+                    {
                     onUploadProgress: (progressEvent) => {
                         this.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                     }
                 });
 
-                if (response && !response.error) {
+                if (response) {
                     this.validationResults = response.data;
                     this.batchId = response.data.batch_id;
                     this.importStep = 2;
@@ -619,7 +634,12 @@ export default {
                 this.uploadProgress = 0;
             }
         },
-
+        handleImportError(event) {
+            const { type, message } = event.detail;
+            console.log('type:', type, 'message:', message);
+            this.validationResults =  message;
+            this.importStep = 2;
+        },
         async processImport() {
             if (!this.batchId) {
                 this.$globals.message = {
@@ -688,7 +708,7 @@ export default {
             try {
                 // Use fetch with proper headers for authenticated download
                 const token = localStorage.getItem('authToken');
-                const response = await fetch(this.$endpoints.staff.downloadImportTemplate.url, {
+                const response = await fetch(window.baseUrl+this.$endpoints.staff.downloadImportTemplate.url, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

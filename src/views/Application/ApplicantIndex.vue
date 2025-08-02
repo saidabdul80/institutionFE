@@ -44,6 +44,8 @@
         <div class="h-full lg:h-screen overflow-y-auto" :style="`background:${$globals.colors.ap_secondary}`">
           <!-- Content Container -->
           <div class="min-h-full">
+            <!-- Payment Status Banner -->
+            <PaymentStatusBanner />
             <router-view></router-view>
           </div>
         </div>
@@ -55,6 +57,7 @@
 <script>
 import SideBar from '@/components/Application/SideBar.vue'
 import Announcement from '@/components/Application/Announcement.vue'
+import PaymentStatusBanner from '@/components/Application/PaymentStatusBanner.vue'
 import Button from 'primevue/button';
 import { useAuthStore } from '@/stores/auth';
 import { get } from '@/api/client';
@@ -64,7 +67,8 @@ export default {
   components: {
     Sidebar: SideBar,
     Button,
-    Announcement
+    Announcement,
+    PaymentStatusBanner
   },
   data() {
     return {

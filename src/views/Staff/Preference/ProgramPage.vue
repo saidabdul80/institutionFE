@@ -225,7 +225,6 @@ export default {
             programmes:[],
             entry_modes:[],            
             departments:[],
-            departments:[],
             lgas:[],
             programmes:[],
             programme:{},  
@@ -244,6 +243,15 @@ export default {
             const res = await get(`${this.$endpoints.staff.getProgrammes.url}?paginateBy=6`);                       
             this.tableloading = false
             this.programmes = res
+        },
+        async fetchDepartments(){
+
+            const res = await get(`${this.$endpoints.staff.getDepartments.url}?withoutPaginate=true`);                       
+            if(res){
+                console.log(res)
+                this.departments = res
+            }
+
         },
         async updateRecord(event){
             let { newData, index } = event;
@@ -319,8 +327,7 @@ export default {
             this.$refs.dtable.exportCSV();
         },
         fetchData(){
-            getFaculties
-            getDepartments
+            //this.getFaculties
         },
         refresh(){
             this.fetchRecords()
@@ -378,7 +385,8 @@ export default {
     },    
     async created(){
         this.updateSchoolInfo();
-        this.fetchRecords()            
+        this.fetchRecords()         
+        this.fetchDepartments()   
         const res = await get(this.$endpoints.subjects.url)
         this.subjects = res;
     }

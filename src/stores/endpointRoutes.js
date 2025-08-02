@@ -254,6 +254,23 @@ export default {
             processApplicantImport: { url: 'api/staff/applicant-import/process', method: 'post' },
             getImportHistory: { url: 'api/staff/applicant-import/history', method: 'get' },
             downloadImportTemplate: { url: 'api/staff/applicant-import/template', method: 'get' },
+            getImportSessions: { url: 'api/staff/applicant-import/sessions', method: 'get' },
+
+            // Permission Management Endpoints
+            getPermissionsList: { url: 'api/staff/permissions/list', method: 'get' },
+            getPermissionRoles: { url: 'api/staff/permissions/roles', method: 'get' },
+            updatePermissions: { url: 'api/staff/permissions/update', method: 'post' },
+            assignUserRole: { url: 'api/staff/permissions/assign-role', method: 'post' },
+            removeUserRole: { url: 'api/staff/permissions/remove-role', method: 'post' },
+            getUsersWithRoles: { url: 'api/staff/permissions/users', method: 'get' },
+            checkUserPermission: { url: 'api/staff/permissions/check', method: 'post' },
+
+            // Payment Category Management Endpoints
+            getPaymentCategories: { url: 'api/staff/payment-categories', method: 'get' },
+            updatePaymentCategoryCharges: { url: 'api/staff/payment-categories/update-charges', method: 'post' },
+            bulkUpdatePaymentCategoryCharges: { url: 'api/staff/payment-categories/bulk-update-charges', method: 'post' },
+            calculatePaymentCharges: { url: 'api/staff/payment-categories/calculate-charges', method: 'post' },
+            getPaymentCategoryByShortName: { url: 'api/staff/payment-categories/get-by-short-name', method: 'post' },
             createRole: { url: 'api/staff/role/create', method: 'post' },
             deleteRole: { url: 'api/staff/role/delete', method: 'post' },
             assignRoleToStaff: { url: 'api/staff/role/assign_role_to_staff', method: 'post' },

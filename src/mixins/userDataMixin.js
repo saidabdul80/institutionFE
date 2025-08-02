@@ -53,8 +53,6 @@ export const userDataMixin = {
           // Emit event for components to react to user data update
           this.$emit('user-data-updated', response.data[userKey]);
           
-          console.log(`${userKey} data refreshed from backend`);
-          
           return response.data[userKey];
         } else {
           console.warn('Invalid response structure:', response);
