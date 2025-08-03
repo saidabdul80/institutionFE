@@ -1,17 +1,18 @@
 <template>
-    <div>
-        <div class="grid grid-cols-2 gap-4 place-content-between w-full" >
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+        <div class="grid grid-cols-2 gap-4 place-content-between w-full mb-6" >
             <div></div>
-            <Button label="New session" icon="fa fa-plus" @click="openNewSessionDialog" class="p-mb-3 place-self-end" />
+            <Button label="New session" icon="fa fa-plus" @click="openNewSessionDialog"
+                    class="p-mb-3 place-self-end bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200" />
         </div>
-        <div class="bg-white relative">
-            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-900">Sessions</h2>
+        <div class="bg-white dark:bg-gray-800 relative rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-200">Sessions</h2>
                 <div class="flex space-x-3">
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)"
-                            class="bg-gray-500 hover:bg-gray-600 text-white" />
+                            class="bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700 text-white transition-colors duration-200" />
                     <Button @click="refresh()" type="button" icon="fa fa-refresh"
-                            class="bg-blue-500 hover:bg-blue-600 text-white" />
+                            class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200" />
                 </div>
             </div>
             <div class="p-6">

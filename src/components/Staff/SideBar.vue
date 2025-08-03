@@ -5,7 +5,7 @@
       'translate-x-0 w-72': sidebarOpen,
       '-translate-x-full w-0': !sidebarOpen
     }"
-    class="fixed md:relative h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-30 transition-all duration-300 ease-in-out overflow-hidden"
+    class="fixed md:relative h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-2xl z-30 transition-all duration-300 ease-in-out overflow-hidden sidebar-theme"
   >
     <!-- Header Section -->
     <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-6">
@@ -143,9 +143,13 @@
 
     <!-- Footer Section -->
     <div class="bg-slate-800/50 px-4 py-3 border-t border-slate-700">
-      <div class="flex items-center justify-between text-xs text-slate-400">
+      <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
         <span>Staff Portal v2.0</span>
         <span>{{ getCurrentTime() }}</span>
+      </div>
+      <!-- Theme Toggle -->
+      <div class="flex items-center justify-center">
+        <ThemeToggle variant="simple" :show-label="false" size="sm" />
       </div>
     </div>
 
@@ -166,6 +170,7 @@
 
 <script>
 import SessionModal from '@/components/SessionModal.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { useAuthStore } from '@/stores/auth';
 import { schoolInfoMixin } from '@/mixins/schoolInfoMixin';
 
@@ -173,7 +178,8 @@ export default {
   name: 'SidebarDrawer',
   mixins: [schoolInfoMixin],
   components: {
-    SessionModal
+    SessionModal,
+    ThemeToggle
   },
   data() {
     return {
@@ -198,6 +204,7 @@ export default {
             {label:'All Applicants', route:'/staff/applicants'},
             {label:'UTME Candidates', route:'/staff/applicants/import'},
             {label:'Admission Management', route:'/staff/applicants/admission'},
+            {label:'Admission Publication', route:'/staff/admission/publication'},
             {label:'Qualified/Not Qualified', route:'/staff/applicants/qualification'},
           ]
         },
@@ -207,9 +214,9 @@ export default {
           icon: 'fa fa-graduation-cap',
           children:[
             {label:'All Students', route:'/staff/students'},
-            {label:'Student Registration', route:'/staff/students/registration'},
-            {label:'Student Promotion', route:'/staff/students/promotion'},
-            {label:'Student Status', route:'/staff/students/status'},
+            // {label:'Student Registration', route:'/staff/students/registration'},
+            // {label:'Student Promotion', route:'/staff/students/promotion'},
+            // {label:'Student Status', route:'/staff/students/status'},
           ]
         },
         {

@@ -1,13 +1,13 @@
 <template>
-    <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
         <!-- Header Section -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1">
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mb-2 transition-colors duration-200">
                         Student Management
                     </h1>
-                    <p class="text-gray-600 text-sm sm:text-base">
+                    <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base transition-colors duration-200">
                         Manage student records, registration, and academic status
                     </p>
                 </div>
@@ -29,13 +29,13 @@
         </div>
 
         <!-- Advanced Search Section -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
-            <h3 class="text-lg font-semibold mb-4 text-gray-800">Advanced Student Search</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white transition-colors duration-200">Advanced Student Search</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Type</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">Search Type</label>
                     <select v-model="advancedSearch.type"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200">
                         <option value="all">All Fields</option>
                         <option value="matric_number">Matric Number</option>
                         <option value="name">Name</option>
@@ -44,11 +44,11 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Query</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-200">Search Query</label>
                     <input v-model="advancedSearch.query"
                            type="text"
                            placeholder="Enter search term..."
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-200"
                            @keyup.enter="performAdvancedSearch">
                 </div>
                 <div class="flex items-end">

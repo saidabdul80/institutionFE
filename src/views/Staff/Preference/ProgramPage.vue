@@ -1,11 +1,13 @@
 <template>
-    <div>
-        <div class="grid grid-cols-2 gap-4 place-content-between w-full">
-            <Button class="w-[100px] "  v-if="editing" @click="newRecordDialog=false" name="Listing" />
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+        <div class="grid grid-cols-2 gap-4 place-content-between w-full mb-6">
+            <Button class="w-[100px] bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700 text-white transition-colors duration-200"
+                    v-if="editing" @click="newRecordDialog=false" name="Listing" />
             <div v-else ></div>
-            <Button class="w-[100px] place-self-end" :pt="button" severity="info" type="button" label="Add" icon="fa fa-plus" @click="newRecordDialog = true" />            
-        </div>             
-        <div class="bg-white  relative">                        
+            <Button class="w-[100px] place-self-end bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200"
+                    :pt="button" severity="info" type="button" label="Add" icon="fa fa-plus" @click="newRecordDialog = true" />
+        </div>
+        <div class="bg-white dark:bg-gray-800 relative rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <DataTable  v-model:filters="filters" ref="dtable" v-model:editingRows="editingRows" :value="programmes.data" editMode="row" dataKey="id" class="w-full mt-4 bg-white rounded-2xl shadow-lg"
                 :paginator="true" :rows="6" :totalRecords="programmes.total" :loading="tableloading"    
                 lazy paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"            

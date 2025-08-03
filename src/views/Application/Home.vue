@@ -1,17 +1,17 @@
 <template>
-    <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
         <!-- Payment Guidance for Imported Applicants -->
         <PaymentGuidance v-if="showPaymentGuidance" @dismiss="dismissPaymentGuidance" />
 
         <!-- Welcome Section -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1">
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mb-2 transition-colors duration-200">
                         Welcome, {{ applicantInfo.first_name || 'Applicant' }}
                     </h1>
-                    <p class="text-gray-600 text-sm sm:text-base">{{ applicantInfo.email }}</p>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                    <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base transition-colors duration-200">{{ applicantInfo.email }}</p>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-200">
                         Application ID: {{ applicantInfo.application_id || 'N/A' }}
                     </p>
                 </div>

@@ -1,109 +1,120 @@
 <template>
-    <div>
-        <div class="grid grid-cols-2 gap-4 place-content-between w-full" >
+    <div class=" max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+        <div class="grid grid-cols-2 gap-4 place-content-between w-full mb-6" >
             <div></div>
-            <Button label="New Faculty" icon="fa fa-plus" @click="openNewFacultyDialog" class="p-mb-3 place-self-end" />
+            <Button label="New Faculty" icon="fa fa-plus" @click="openNewFacultyDialog" class="p-mb-3 place-self-end bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200" />
         </div>
-        <div class="bg-white relative">
-            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-900">Faculties</h2>
+        <div class="bg-white dark:bg-gray-800 relative rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-200">Faculties</h2>
                 <div class="flex space-x-3">
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)"
-                            class="bg-gray-500 hover:bg-gray-600 text-white" />
+                            class="bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700 text-white transition-colors duration-200" />
                     <Button @click="refresh()" type="button" icon="fa fa-refresh"
-                            class="bg-blue-500 hover:bg-blue-600 text-white" />
+                            class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200" />
                 </div>
             </div>
-            <div class="p-6">
-                <Table
-                    :headers="headers"
-                    :paginationData="faculties"
-                    :loading="tableloading"
-                    :showPagination="true"
-                    @page-change="handlePageChange"
-                    @page-length="handlePageLength">
 
-                    <!-- Name Column -->
-                    <template #td-name="{ row }">
-                        <div v-if="editingRows && editingRows[row.id]">
-                            <InputText v-model="row.name" class="w-full" />
-                        </div>
-                        <div v-else>
-                            <SkeletonLoader v-if="dataTableloading" />
-                            <span v-else class="font-medium">{{ row.name }}</span>
-                        </div>
-                    </template>
-
-                    <!-- Abbreviation Column -->
-                    <template #td-abbr="{ row }">
-                        <div v-if="editingRows && editingRows[row.id]">
-                            <InputText v-model="row.abbr" class="w-full" />
-                        </div>
-                        <div v-else>
-                            <SkeletonLoader v-if="dataTableloading" />
-                            <span v-else class="text-gray-600">{{ row.abbr }}</span>
-                        </div>
-                    </template>
-
-                    <!-- Status Column -->
-                    <template #td-status="{ row }">
-                        <div v-if="editingRows && editingRows[row.id]">
-                            <Dropdown v-model="row.status" :options="['Active', 'Inactive']"
-                                     placeholder="Change Status" class="w-full" />
-                        </div>
-                        <div v-else>
-                            <Tag :value="row.deleted_at == null ? 'Active' : 'Inactive'"
-                                 :severity="$globals.getStatus(row.deleted_at == null, true)" />
-                        </div>
-                    </template>
-
-                    <!-- Actions Column -->
-                    <template #td-actions="{ row }">
-                        <div class="flex space-x-2">
-                            <button v-if="!editingRows || !editingRows[row.id]"
-                                    @click="startEdit(row)"
-                                    class="text-blue-600 hover:text-blue-800 p-1 rounded"
-                                    title="Edit">
-                                <i class="fa fa-edit"></i>
+            <Table
+                :headers="headers"
+                :paginationData="faculties"
+                :loading="tableloading"
+                :showPagination="true"
+                @page-change="handlePageChange"
+                @page-length="handlePageLength">
+    
+                <!-- Name Column -->
+                <template #td-name="{ row }">
+                    <div v-if="editingRows && editingRows[row.id]">
+                        <InputText v-model="row.name" class="w-full" />
+                    </div>
+                    <div v-else>
+                        <SkeletonLoader v-if="dataTableloading" />
+                        <span v-else class="font-medium">{{ row.name }}</span>
+                    </div>
+                </template>
+    
+                <!-- Abbreviation Column -->
+                <template #td-abbr="{ row }">
+                    <div v-if="editingRows && editingRows[row.id]">
+                        <InputText v-model="row.abbr" class="w-full" />
+                    </div>
+                    <div v-else>
+                        <SkeletonLoader v-if="dataTableloading" />
+                        <span v-else class="text-gray-600">{{ row.abbr }}</span>
+                    </div>
+                </template>
+    
+                <!-- Status Column -->
+                <template #td-status="{ row }">
+                    <div v-if="editingRows && editingRows[row.id]">
+                        <Dropdown v-model="row.status" :options="['Active', 'Inactive']"
+                                    placeholder="Change Status" class="w-full" />
+                    </div>
+                    <div v-else>
+                        <Tag :value="row.deleted_at == null ? 'Active' : 'Inactive'"
+                                :severity="$globals.getStatus(row.deleted_at == null, true)" />
+                    </div>
+                </template>
+    
+                <!-- Actions Column -->
+                <template #td-actions="{ row }">
+                    <div class="flex space-x-2">
+                        <button v-if="!editingRows || !editingRows[row.id]"
+                                @click="startEdit(row)"
+                                class="text-blue-600 hover:text-blue-800 p-1 rounded"
+                                title="Edit">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <div v-else class="flex space-x-2">
+                            <button @click="saveEdit(row)"
+                                    class="text-green-600 hover:text-green-800 p-1 rounded"
+                                    title="Save">
+                                <i class="fa fa-check"></i>
                             </button>
-                            <div v-else class="flex space-x-2">
-                                <button @click="saveEdit(row)"
-                                        class="text-green-600 hover:text-green-800 p-1 rounded"
-                                        title="Save">
-                                    <i class="fa fa-check"></i>
-                                </button>
-                                <button @click="cancelEdit(row)"
-                                        class="text-red-600 hover:text-red-800 p-1 rounded"
-                                        title="Cancel">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                            <button @click="duplicateRecord(row)"
-                                    class="text-green-600 hover:text-green-800 p-1 rounded ml-2"
-                                    title="Duplicate">
-                                <i class="fa fa-clone"></i>
+                            <button @click="cancelEdit(row)"
+                                    class="text-red-600 hover:text-red-800 p-1 rounded"
+                                    title="Cancel">
+                                <i class="fa fa-times"></i>
                             </button>
                         </div>
-                    </template>
-                </Table>
-            </div>
+                        <button @click="duplicateRecord(row)"
+                                class="text-green-600 hover:text-green-800 p-1 rounded ml-2"
+                                title="Duplicate">
+                            <i class="fa fa-clone"></i>
+                        </button>
+                    </div>
+                </template>
+            </Table>
         </div>
-        <Dialog header="New Faculty" v-model:visible="newFacultyDialog" class="w-[45%]" :modal="true">
+        <Dialog header="New Faculty" v-model:visible="newFacultyDialog" class="w-[45%]" :modal="true"
+                :pt="{
+                    root: { class: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700' },
+                    header: { class: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700' },
+                    content: { class: 'bg-white dark:bg-gray-800' },
+                    footer: { class: 'bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700' }
+                }">
             <div class="p-fluid">
                 <div class="p-field mb-3">
-                    <label for="name">Name</label>
-                    <InputText id="name" v-model="faculty.name" :class="{ 'p-invalid': validation.name,'w-full':true }" />
-                    <small class="p-error" v-if="validation.name">Name is required.</small>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                    <InputText id="name" v-model="faculty.name"
+                              :class="{ 'p-invalid': validation.name,'w-full':true }"
+                              class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white" />
+                    <small class="p-error text-red-600 dark:text-red-400" v-if="validation.name">Name is required.</small>
                 </div>
                 <div class="p-field mb-3">
-                    <label for="abbr">Abbreviation</label>
-                    <InputText id="abbr" v-model="faculty.abbr" :class="{ 'p-invalid': validation.abbr,'w-full':true }" />
-                    <small class="p-error" v-if="validation.abbr">Abbreviation is required.</small>
+                    <label for="abbr" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Abbreviation</label>
+                    <InputText id="abbr" v-model="faculty.abbr"
+                              :class="{ 'p-invalid': validation.abbr,'w-full':true }"
+                              class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white" />
+                    <small class="p-error text-red-600 dark:text-red-400" v-if="validation.abbr">Abbreviation is required.</small>
                 </div>
             </div>
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" @click="newFacultyDialog = false" class="p-button-text" />
-                <Button label="Save" icon="pi pi-check" @click="createFaculty" />
+                <Button label="Cancel" icon="pi pi-times" @click="newFacultyDialog = false"
+                        class="p-button-text bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700 text-white transition-colors duration-200" />
+                <Button label="Save" icon="pi pi-check" @click="createFaculty"
+                        class="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200" />
             </template>
         </Dialog>
     </div>

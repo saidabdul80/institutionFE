@@ -7,10 +7,15 @@
             <p v-html="subtitle" class=" m-0"></p>
         </div>
         <div class="md:col-span-3 place-content-end items-center">
-            <div class="w-full md:flex justify-end items-center">
-                <label class="mr-2 w-[30%] basis-[fit-content] ">Showing data for</label>
-                <div class="md:max-w-[240px] md:w-[70%] w-full">
-                    <DatePicker v-model="dateValue" :range="true" label="" :slim="true"/>
+            <div class="w-full md:flex justify-end items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <label class="mr-2 basis-[fit-content]">Showing data for</label>
+                    <div class="md:max-w-[240px] w-full">
+                        <DatePicker v-model="dateValue" :range="true" label="" :slim="true"/>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <ThemeToggle variant="simple" :show-label="false" size="md" />
                 </div>
             </div>
         </div>
@@ -20,6 +25,7 @@
 <script>
 import Search from "@/components/Search.vue";
 import DatePicker from '@/components/DatePicker.vue';
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
 export default {
     props: {
@@ -48,6 +54,7 @@ export default {
     components: {
         Search,
         DatePicker,
+        ThemeToggle,
     },
     computed: {
         dateValue: {

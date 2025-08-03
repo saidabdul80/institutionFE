@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-md mx-auto">
-        <div class="bg-white rounded-lg shadow-sm">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ title }}</h2>
+        <div class="bg-white dark:bg-gray-800 text-black dark:text-white">
+            <h2 class="text-2xl font-bold mb-2">{{ title }}</h2>
             <p class="text-gray-500 mb-4">{{ description }}</p>
 
             <div @drop.prevent="handleFileDrop" @dragover.prevent

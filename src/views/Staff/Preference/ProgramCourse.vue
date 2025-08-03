@@ -1,14 +1,14 @@
 <template>
-    <div class="programme-courses-container">
+    <div class="programme-courses-container p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
         <!-- Header Section -->
-        <div class="header-section">
-            <div class="header-content">
+        <div class="header-section bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 transition-colors duration-200 mb-6">
+            <div class="header-content p-6">
                 <div class="header-text">
-                    <h1 class="page-title">
+                    <h1 class="page-title text-gray-800 dark:text-white transition-colors duration-200">
                         <i class="fas fa-graduation-cap text-primary"></i>
                         Programme Courses Management
                     </h1>
-                    <p class="page-subtitle">Manage course assignments for academic programmes across different levels and semesters</p>
+                    <p class="page-subtitle text-gray-600 dark:text-gray-300 transition-colors duration-200">Manage course assignments for academic programmes across different levels and semesters</p>
                 </div>
                 <div class="header-actions">
                     <Button
@@ -1118,7 +1118,7 @@ export default {
 }
 
 .stat-number {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #2c3e50;
     line-height: 1;

@@ -1,5 +1,4 @@
 <template>
-    <div>
         <div class="grid grid-cols-2 gap-4 place-content-between w-full">
             <Button class="w-[100px] "  v-if="editing" @click="newRecordDialog=false" name="Listing" />
             <div v-else ></div>
@@ -105,52 +104,7 @@
                             <span v-else>{{ row.level }}</span>
                         </div>
                     </template>
-                <Column v-if="$globals.getConfiguration('enable_faculty')" header="Faculty" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.faculty}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.faculty_id" @change="onSelectFaculty($event)" :options="faculties" optionLabel="name" optionValue="id" placeholder="Select faculty Type"></Dropdown></template>            
-                </Column>
-                <Column v-if="$globals.getConfiguration('enable_department')" header="Department" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.department}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.department_id" @change="onSelectDepartment($event)"  :options="departments" optionLabel="name" optionValue="id" placeholder="Select department Type"></Dropdown></template>            
-                </Column>
-                <Column header="Programme" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.programme}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.programme_id"  :options="programmes" optionLabel="name" optionValue="id" placeholder="Select programme Type"></Dropdown></template>            
-                </Column>
-                <Column v-if="$globals.getConfiguration('enable_entry_mode')" header="Entry Mode" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.entry_mode}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.entry_mode_id" :options="entry_modes" optionLabel="title" optionValue="id" placeholder="Select entry mode Type"></Dropdown></template>            
-                </Column>
-                <Column header="Country" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.country}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.country_id" @change="onSelectCountry($event)" filter :options="countries" optionLabel="name" optionValue="id" placeholder="Select country Type"></Dropdown></template>            
-                </Column> 
-                <Column header="State" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.state}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.state_id" @click="loadStates(null,data)" @change="onSelectState($event)" :loading="Dropdownloading" filter :options="states" optionLabel="name" optionValue="id" placeholder="Select state Type"></Dropdown></template>            
-                </Column>
-                <Column header="LGA" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.lga}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.lga_id" @click="loadLgas(null,data)" :loading="Dropdownloading" filter :options="lgas" optionLabel="name" optionValue="id" placeholder="Select lga Type"></Dropdown></template>            
-                </Column>
-                <Column header="Owner Type" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.owner_type}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.owner_type" :options="['applicant', 'student']"  placeholder="Change owner Type"></Dropdown></template>            
-                </Column>
-                <Column header="Status">
-                    <template #body="slotProps"><Tag :value="slotProps.data.status" :severity="$globals.getStatus(slotProps.data.status,'Active')" /></template><template #editor="{ data, field }">                    
-                        <Dropdown  v-model="data.status" :options="['Active','Inactive']" placeholder="Change Status "></Dropdown></template>            
-                </Column>
-                <Column  :rowEditor="true" style="width: 10%; min-width: 20px" bodyStyle="text-align:center" class="bg-white"></Column>
-                <Column  style="width: 100px; min-width: 100px" bodyStyle="text-align:center" class="bg-white">
-                    <template #body="slotProps" >
-                        <div class="flex justify-between">
-                            <Button :pt="{root:{class:'h-8  w-8 rounded-full flex justify-center items-center hover:ring-[green] hover:bg-[green]/25 hover:text-[green] hover:ring-1 '}}" icon="fa fa-clone" outlined rounded severity="danger" @click="duplicateRecord(slotProps.data)" />
-                            <Button :pt="{root:{class:'h-8 w-8 rounded-full justify-center flex items-center  hover:ring-[red] hover:bg-[red]/25 hover:text-[red] hover:ring-1' }}" icon="fa fa-trash" outlined rounded severity="danger" @click="deleteRecord(slotProps.data)" />
-                        </div>
-                    </template>    
-                </Column>
-        </DataTable>
+        </Table>
         </div>
         <Dialog v-model:visible="newRecordDialog" class="w-[45%]" header="Confirm" :modal="true">
             <template #header>
@@ -282,7 +236,7 @@ export default {
             validation:{}
         }
     },
-    components:{Toast,Tag,InputText,Dropdown,Button,DataTable,Column,Row,Column,SkeletonLoader},
+    components:{Toast,Tag,InputText,Dropdown,Button,SkeletonLoader},
     methods:{
         async fetchRecords(){
             this.tableloading= true;

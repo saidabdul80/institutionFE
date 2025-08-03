@@ -33,40 +33,40 @@
         <!-- Statistics Cards -->
         <div class="stats-section">
             <div class="stats-grid">
-                <div class="stat-card stat-primary">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
                     <div class="stat-icon">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">{{ statistics.totalStaff || 0 }}</div>
-                        <div class="stat-label">Total Staff</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ statistics.totalStaff || 0 }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">Total Staff</div>
                     </div>
                 </div>
-                <div class="stat-card stat-success">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200 stat-success">
                     <div class="stat-icon">
                         <i class="fas fa-link"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">{{ statistics.totalAllocations || 0 }}</div>
-                        <div class="stat-label">Total Allocations</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ statistics.totalAllocations || 0 }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">Total Allocations</div>
                     </div>
                 </div>
-                <div class="stat-card stat-info">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200 stat-info">
                     <div class="stat-icon">
                         <i class="fas fa-book"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">{{ statistics.totalCourses || 0 }}</div>
-                        <div class="stat-label">Available Courses</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ statistics.totalCourses || 0 }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">Available Courses</div>
                     </div>
                 </div>
-                <div class="stat-card stat-warning">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200 stat-warning">
                     <div class="stat-icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">{{ currentSession }}</div>
-                        <div class="stat-label">Current Session</div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white">{{ currentSession }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">Current Session</div>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@
             <div v-if="activeTab === 'create'">
                 <Card class="allocation-form-card">
                     <template #title>
-                        <div class="form-title">
+                        <div class="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200">
                             <i class="fas fa-plus-circle text-primary mr-2"></i>
                             New Course Allocation
                         </div>
@@ -127,14 +127,14 @@
                     <template #content>
                         <form @submit.prevent="createAllocation" class="allocation-form">
                             <!-- Staff Selection Section -->
-                            <div class="form-section">
-                                <h4 class="section-title">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200">
                                     <i class="fas fa-user mr-2"></i>
                                     Staff Information
                                 </h4>
                                 <div class="form-grid">
                                     <div class="form-group">
-                                        <label class="form-label">Staff Member <span class="required">*</span></label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Staff Member <span class="required">*</span></label>
                                         <Dropdown
                                             v-model="allocationForm.staff_id"
                                             :options="staffMembers"
@@ -164,14 +164,14 @@
                             </div>
 
                             <!-- Academic Context Section -->
-                            <div class="form-section">
-                                <h4 class="section-title">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200">
                                     <i class="fas fa-graduation-cap mr-2"></i>
                                     Academic Context
                                 </h4>
                                 <div class="form-grid">
                                     <div class="form-group">
-                                        <label class="form-label">Academic Session <span class="required">*</span></label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Academic Session <span class="required">*</span></label>
                                         <Dropdown
                                             v-model="allocationForm.session_id"
                                             :options="sessions"
@@ -184,7 +184,7 @@
                                         <small class="p-error" v-if="validation?.session_id">{{ validation.session_id[0] }}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">Programme</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Programme</label>
                                         <Dropdown
                                             v-model="allocationForm.programme_id"
                                             :options="programmes"
@@ -197,7 +197,7 @@
                                         <small class="p-error" v-if="validation?.programme_id">{{ validation.programme_id[0] }}</small>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">Semester</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Semester</label>
                                         <Dropdown
                                             v-model="allocationForm.semester_id"
                                             :options="semesters"
@@ -213,13 +213,13 @@
                             </div>
 
                             <!-- Course Selection Section -->
-                            <div class="form-section">
-                                <h4 class="section-title">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200">
                                     <i class="fas fa-book mr-2"></i>
                                     Course Selection
                                 </h4>
                                 <div class="form-group">
-                                    <label class="form-label">Courses <span class="required">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Courses <span class="required">*</span></label>
 
                                     <MultiSelect
                                         v-model="allocationForm.course_ids"
@@ -574,12 +574,12 @@
                                     </h4>
                                     <div class="courses-summary-stats">
                                         <div class="stat-item">
-                                            <div class="stat-number">{{ selectedStaff.total_courses || 0 }}</div>
-                                            <div class="stat-label">Total Courses</div>
+                                            <div class="text-2xl font-bold dark:text-white">{{ selectedStaff.total_courses || 0 }}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">Total Courses</div>
                                         </div>
                                         <div class="stat-item">
-                                            <div class="stat-number">{{ getActiveCourses(selectedStaff).length }}</div>
-                                            <div class="stat-label">Active Courses</div>
+                                            <div class="text-2xl font-bold dark:text-white">{{ getActiveCourses(selectedStaff).length }}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">Active Courses</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1235,7 +1235,7 @@ export default {
 /* Course Allocation Container */
 .course-allocation-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
     padding: 20px;
 }
 
@@ -1286,7 +1286,7 @@ export default {
     gap: 20px;
 }
 
-.stat-card {
+.bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200 {
     background: white;
     border-radius: 15px;
     padding: 25px;
@@ -1297,7 +1297,7 @@ export default {
     border-left: 5px solid;
 }
 
-.stat-card:hover {
+.bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
@@ -1322,14 +1322,14 @@ export default {
     flex: 1;
 }
 
-.stat-number {
+.text-2xl font-bold dark:text-white {
     font-size: 1.8rem;
     font-weight: 700;
     color: #2c3e50;
     line-height: 1;
 }
 
-.stat-label {
+.text-sm text-gray-500 dark:text-gray-400 {
     font-size: 1rem;
     color: #6c757d;
     font-weight: 500;
@@ -1376,7 +1376,7 @@ export default {
     overflow: hidden;
 }
 
-.form-title {
+.text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200 {
     display: flex;
     align-items: center;
     font-size: 1.5rem;
@@ -1388,7 +1388,7 @@ export default {
     padding: 20px;
 }
 
-.form-section {
+.bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200 {
     margin-bottom: 25px;
     padding: 20px;
     background: #f8f9fa;
@@ -1396,7 +1396,7 @@ export default {
     border-left: 4px solid #667eea;
 }
 
-.section-title {
+.text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200 {
     font-size: 1.1rem;
     font-weight: 600;
     color: #2c3e50;
@@ -1416,7 +1416,7 @@ export default {
     flex-direction: column;
 }
 
-.form-label {
+.block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 {
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 8px;
@@ -1634,13 +1634,13 @@ export default {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.stat-item .stat-number {
+.stat-item .text-2xl font-bold dark:text-white {
     font-size: 2rem;
     font-weight: 700;
     color: #667eea;
 }
 
-.stat-item .stat-label {
+.stat-item .text-sm text-gray-500 dark:text-gray-400 {
     font-size: 0.85rem;
     color: #6c757d;
     margin-top: 5px;

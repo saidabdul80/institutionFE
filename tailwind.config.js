@@ -1,6 +1,8 @@
+import { darkModeClassMappings } from './src/utils/darkModeUpdater';
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  
+  darkMode: 'class', // Enable class-based dark mode
   content: ['./public/**/*.html', './src/**/*.vue', './src/main.js'],
   theme: {
     extend: {
@@ -9,7 +11,8 @@ export default {
             name: 'primevue',
             order: 'tailwind-base, primevue, tailwind-utilities'
         }
-    }
+    },
+    safelist: Object.values(darkModeClassMappings).join(' ').split(' '),
       // colors: {
       //   'primary-50': 'rgb(var(--primary-50))',
       //   'primary-100': 'rgb(var(--primary-100))',

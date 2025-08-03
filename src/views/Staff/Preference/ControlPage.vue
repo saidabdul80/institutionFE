@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <div class="relative h-[84vh] overflow-y-auto p-5 bg-white">
-        <div v-for="config in configurations" :key="config.id" class="my-6 hover:bg-sky-100">
+    <div class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+        <div class="relative h-[84vh] overflow-y-auto p-5 bg-white dark:bg-gray-800 transition-colors duration-200">
+        <div v-for="config in configurations" :key="config.id" class="my-6 hover:bg-sky-100 dark:hover:bg-gray-700 transition-colors duration-200">
             <p class="m-0 w-full grid grid-cols-3">
-                <h2 class="font-semibold mb-2 text-lg" style="text-transform: capitalize;">Set {{ config.title }}:</h2>            
+                <h2 class="font-semibold mb-2 text-lg text-gray-800 dark:text-gray-200 transition-colors duration-200" style="text-transform: capitalize;">Set {{ config.title }}:</h2>
                 <InputText v-if="config.field_type=='input'" v-model="config.value" class="w-full" />
                 <div v-if="config.field_type=='select'" class="w-full">
                     

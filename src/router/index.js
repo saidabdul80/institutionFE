@@ -253,6 +253,12 @@ const router = createRouter({
           meta: { user_type: 'staff', require: true }
         },
         {
+          path: 'admission/publication',
+          name: 'staff-admission-publication',
+          component: () => import('../views/Staff/Admission/AdmissionPublication.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
+        {
           path: 'applicants/qualification',
           name: 'staff-qualification',
           component: () => import('../views/Staff/Applicants/QualificationManagement.vue'),

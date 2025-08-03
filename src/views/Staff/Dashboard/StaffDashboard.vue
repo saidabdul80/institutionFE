@@ -1,16 +1,16 @@
 <template>
-    <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
         <!-- Header Section -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1">
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mb-2 transition-colors duration-200">
                         Staff Dashboard
                     </h1>
-                    <p class="text-gray-600 text-sm sm:text-base">
+                    <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base transition-colors duration-200">
                         Welcome back, {{ staffInfo.first_name }} {{ staffInfo.last_name }}
                     </p>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-200">
                         {{ staffInfo.role || 'Staff Member' }} • {{ currentSession.name || 'No Active Session' }}
                     </p>
                 </div>
@@ -78,12 +78,12 @@
         <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
             <h3 class="text-lg sm:text-xl font-semibold mb-6 text-gray-800">Quick Actions</h3>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <button @click="$router.push({name: 'staff-students'})" 
-                        class="group flex flex-col items-center p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition-all duration-300 hover:shadow-md hover:scale-105">
-                    <div class="bg-blue-500 rounded-full p-3 mb-3 group-hover:bg-blue-600 transition-colors">
+                <button @click="$router.push({name: 'staff-students'})"
+                        class="group flex flex-col items-center p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800/40 dark:hover:to-blue-700/40 rounded-xl transition-all duration-300 hover:shadow-md hover:scale-105">
+                    <div class="bg-blue-500 dark:bg-blue-600 rounded-full p-3 mb-3 group-hover:bg-blue-600 dark:group-hover:bg-blue-700 transition-colors">
                         <i class="fa fa-graduation-cap text-lg sm:text-xl text-white"></i>
                     </div>
-                    <span class="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight">Manage Students</span>
+                    <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">Manage Students</span>
                 </button>
                 
                 <button @click="$router.push({name: 'staff-applicants'})" 
@@ -115,8 +115,8 @@
         <!-- Recent Activities & Charts -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <!-- Recent Activities -->
-            <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100">
-                <h3 class="text-lg sm:text-xl font-semibold mb-6 text-gray-800">Recent Activities</h3>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                <h3 class="text-lg sm:text-xl font-semibold mb-6 text-gray-800 dark:text-white transition-colors duration-200">Recent Activities</h3>
                 <div class="space-y-3 sm:space-y-4">
                     <div v-for="activity in recentActivities" :key="activity.id" 
                          class="flex items-center p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-gray-100 hover:to-gray-200 transition-all duration-200 border border-gray-200">

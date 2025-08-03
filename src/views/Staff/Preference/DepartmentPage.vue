@@ -1,10 +1,11 @@
 <template>
-    <div>
-        <div class="grid grid-cols-2 gap-4 place-content-between w-full" >
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+        <div class="grid grid-cols-2 gap-4 place-content-between w-full mb-6" >
             <div></div>
-            <Button label="New Department" icon="fa fa-plus" @click="openNewDepartmentDialog" class="p-mb-3 place-self-end" />
+            <Button label="New Department" icon="fa fa-plus" @click="openNewDepartmentDialog"
+                    class="p-mb-3 place-self-end bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors duration-200" />
         </div>
-        <div class="bg-white  relative">
+        <div class="bg-white dark:bg-gray-800 relative rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <DataTable ref="dtable" v-model:editingRows="editingRows" :value="departments.data" editMode="row" dataKey="id"
                 class="w-full mt-4 bg-white rounded-2xl shadow-lg" lazy
                 :paginator="true" :rows="6" :totalRecords="departments.total" :loading="tableloading"

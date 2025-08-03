@@ -34,10 +34,15 @@
         </div>
       </Transition>
 
-      <div class="px-8 bg-gray-100/25 h-[97vh] mt-0">
-        <Breadcrumb class="py-6" :home="$globals.route" :model="[$globals.route?.child || {}]"
-          :pt="{ root: { class: 'bg-transparent' } }" separator="/" />
-          <div class="!h-[93vh] overflow-auto">
+      <div class="px-8 bg-gray-100/25 dark:bg-gray-800/25 h-[97vh] mt-0 transition-colors duration-200">
+        <div class="flex items-center justify-between py-6">
+          <Breadcrumb :home="$globals.route" :model="[$globals.route?.child || {}]"
+            :pt="{ root: { class: 'bg-transparent' } }" separator="/" />
+          <div class="flex items-center">
+            <ThemeToggle variant="simple" :show-label="false" size="md" />
+          </div>
+        </div>
+          <div class="!h-[88vh] overflow-auto">
             <router-view></router-view>
           </div>
         <!-- Add your main content here -->
@@ -48,6 +53,7 @@
 
 <script>
 import SideBar from '@/components/Staff/SideBar.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 import Breadcrumb from 'primevue/breadcrumb';
 import { useAuthStore } from '@/stores/auth';
@@ -55,7 +61,8 @@ export default {
   name: 'SidebarDrawer',
   components: {
     Sidebar: SideBar,
-    Breadcrumb
+    Breadcrumb,
+    ThemeToggle
   },
   data() {
     return {

@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br flex items-center justify-center from-blue-50 via-white to-green-50">
+    <div class="min-h-screen bg-gradient-to-br flex items-center justify-center from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-200">
         <!-- Header Section -->
         <!-- <div class="bg-white shadow-sm border-b">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
                 <!-- Login Card -->
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-200">
                     <!-- Card Header -->
                     <div class="bg-gradient-to-r from-blue-500 to-green-500 px-6 py-8 text-center">
                         <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">

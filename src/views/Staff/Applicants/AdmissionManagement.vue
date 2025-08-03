@@ -1,12 +1,12 @@
 <template>
     <div class="p-4 sm:p-6 max-w-7xl mx-auto">
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1">
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mb-2">
                         Admission Management
                     </h1>
-                    <p class="text-gray-600 text-sm sm:text-base">
+                    <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                         Process admissions and manage qualified applicants
                     </p>
                 </div>
@@ -181,6 +181,18 @@
             <div v-if="activeTabMain === 'admitted'">
                 <Table title="Admitted Applicants" :headers="tableHeaders" :paginationData="admittedApplicants"
                     :loading="loading" @page-change="changeAdmittedPage" @search="handleAdmittedSearch">
+                    <template #td-publication_status="{ row }">
+                        <span v-if="row.published_at"
+                              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                            <i class="fa fa-check-circle mr-1"></i>
+                            Published
+                        </span>
+                        <span v-else
+                              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                            <i class="fa fa-clock mr-1"></i>
+                            Unpublished
+                        </span>
+                    </template>
                     <template #td-actions="{ row }">
                         <div class="flex gap-2">
                             <button @click="viewApplicant(row)" class="text-blue-600 hover:text-blue-900">
@@ -443,15 +455,15 @@
                                     <div class="flex items-center justify-between">
                                         <span>Application Fee:</span>
                                         <span
-                                            :class="selectedStudent.application_fee === 'Paid' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
-                                            {{ selectedStudent.application_fee || 'Unpaid' }}
+                                            :class="selectedStudent.application_fee === 'paid' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
+                                            {{ selectedStudent.application_fee  }}
                                         </span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <span>Registration Fee:</span>
                                         <span
-                                            :class="selectedStudent.registration_fee === 'Paid' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
-                                            {{ selectedStudent.registration_fee || 'Unpaid' }}
+                                            :class="selectedStudent.registration_fee === 'paid' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
+                                            {{ selectedStudent.registration_fee || 'unpaid' }}
                                         </span>
                                     </div>
                                     <div class="flex items-center justify-between">
@@ -819,6 +831,7 @@ export default {
                 { key: 'jamb_score', title: 'JAMB Score' },
                 { key: 'merit_score', title: 'Merit Score' },
                 { key: 'admission_status', title: 'Status' },
+                { key: 'publication_status', title: 'Publication' },
                 { key: 'actions', title: 'Actions' }
             ],
             filters: {
@@ -1390,32 +1403,19 @@ export default {
         },
 
         async viewApplicant(applicant) {
+            console.log(applicant,11232);
             try {
                 // If we have detailed data, use it directly
+                this.selectedStudent = applicant;
                 if (applicant.programme && applicant.session) {
-                    this.selectedStudent = applicant;
                     this.showStudentDialog = true;
                     this.activeTab = 'personal';
                     return;
                 }
 
-                // Otherwise, fetch detailed student data
-                this.loading = true;
-                const response = await post(this.$endpoints.staff.getApplicants.url, {
-                    applicant_id: applicant.id,
-                    detailed: true
-                });
-
-                if (response && response.data) {
-                    this.selectedStudent = response.data;
-                    this.showStudentDialog = true;
-                    this.activeTab = 'personal';
-                } else {
-                    // Use the existing applicant data as fallback
-                    this.selectedStudent = applicant;
-                    this.showStudentDialog = true;
-                    this.activeTab = 'personal';
-                }
+                this.selectedStudent = applicant;
+                this.showStudentDialog = true;
+                this.activeTab = 'personal';
             } catch (error) {
                 console.error("Error loading student details:", error);
                 // Use the existing applicant data as fallback

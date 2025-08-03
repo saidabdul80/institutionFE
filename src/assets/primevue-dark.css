@@ -1,0 +1,328 @@
+/* PrimeVue Dark Mode Enhancements */
+
+/* DataTable Dark Mode */
+.dark .p-datatable {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  border: 1px solid #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-header {
+  background: #374151 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #4b5563 !important;
+}
+
+.dark .p-datatable .p-datatable-thead > tr > th {
+  background: #374151 !important;
+  color: #d1d5db !important;
+  border-bottom: 1px solid #4b5563 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:hover {
+  background: #374151 !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr > td {
+  border-bottom: 1px solid #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark .p-datatable .p-paginator {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  border-top: 1px solid #374151 !important;
+}
+
+.dark .p-datatable .p-paginator .p-paginator-pages .p-paginator-page {
+  background: #374151 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-datatable .p-paginator .p-paginator-pages .p-paginator-page:hover {
+  background: #4b5563 !important;
+}
+
+.dark .p-datatable .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+/* Dialog Dark Mode */
+.dark .p-dialog {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  border: 1px solid #374151 !important;
+}
+
+.dark .p-dialog .p-dialog-header {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.dark .p-dialog .p-dialog-content {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+.dark .p-dialog .p-dialog-footer {
+  background: #1f2937 !important;
+  border-top: 1px solid #374151 !important;
+}
+
+/* Input Dark Mode */
+.dark .p-inputtext {
+  background: #374151 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-inputtext:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark .p-inputtext::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Dropdown Dark Mode */
+.dark .p-dropdown {
+  background: #374151 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-dropdown:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark .p-dropdown .p-dropdown-label {
+  color: #f9fafb !important;
+}
+
+.dark .p-dropdown .p-dropdown-trigger {
+  color: #f9fafb !important;
+}
+
+.dark .p-dropdown-panel {
+  background: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  color: #f9fafb !important;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: #4b5563 !important;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+/* Button Dark Mode */
+.dark .p-button {
+  background: #3b82f6 !important;
+  border: 1px solid #3b82f6 !important;
+  color: white !important;
+}
+
+.dark .p-button:hover {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+.dark .p-button.p-button-secondary {
+  background: #6b7280 !important;
+  border-color: #6b7280 !important;
+}
+
+.dark .p-button.p-button-secondary:hover {
+  background: #4b5563 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .p-button.p-button-text {
+  background: transparent !important;
+  color: #f9fafb !important;
+  border: 1px solid transparent !important;
+}
+
+.dark .p-button.p-button-text:hover {
+  background: #374151 !important;
+}
+
+/* Tag Dark Mode */
+.dark .p-tag {
+  background: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark .p-tag.p-tag-success {
+  background: #065f46 !important;
+  color: #d1fae5 !important;
+}
+
+.dark .p-tag.p-tag-info {
+  background: #1e40af !important;
+  color: #dbeafe !important;
+}
+
+.dark .p-tag.p-tag-warning {
+  background: #92400e !important;
+  color: #fef3c7 !important;
+}
+
+.dark .p-tag.p-tag-danger {
+  background: #991b1b !important;
+  color: #fee2e2 !important;
+}
+
+/* Checkbox Dark Mode */
+.dark .p-checkbox .p-checkbox-box {
+  background: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-checkbox .p-checkbox-box.p-highlight {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.dark .p-checkbox .p-checkbox-box .p-checkbox-icon {
+  color: white !important;
+}
+
+/* Toast Dark Mode */
+.dark .p-toast .p-toast-message {
+  background: #374151 !important;
+  border: 1px solid #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .p-toast .p-toast-message.p-toast-message-success {
+  background: #065f46 !important;
+  border-color: #047857 !important;
+}
+
+.dark .p-toast .p-toast-message.p-toast-message-error {
+  background: #991b1b !important;
+  border-color: #dc2626 !important;
+}
+
+.dark .p-toast .p-toast-message.p-toast-message-warn {
+  background: #92400e !important;
+  border-color: #d97706 !important;
+}
+
+.dark .p-toast .p-toast-message.p-toast-message-info {
+  background: #1e40af !important;
+  border-color: #2563eb !important;
+}
+
+/* Skeleton Dark Mode */
+.dark .p-skeleton {
+  background: #374151 !important;
+}
+
+.dark .p-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent) !important;
+}
+
+/* Menu Dark Mode */
+.dark .p-menu {
+  background: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-menu .p-menuitem-link {
+  color: #f9fafb !important;
+}
+
+.dark .p-menu .p-menuitem-link:hover {
+  background: #4b5563 !important;
+}
+
+/* Breadcrumb Dark Mode */
+.dark .p-breadcrumb {
+  background: transparent !important;
+}
+
+.dark .p-breadcrumb .p-breadcrumb-list li .p-menuitem-link {
+  color: #9ca3af !important;
+}
+
+.dark .p-breadcrumb .p-breadcrumb-list li.p-breadcrumb-home .p-menuitem-link {
+  color: #3b82f6 !important;
+}
+
+/* Calendar Dark Mode */
+.dark .p-calendar .p-inputtext {
+  background: #374151 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-datepicker {
+  background: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-datepicker .p-datepicker-header {
+  background: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .p-datepicker table td {
+  color: #f9fafb !important;
+}
+
+.dark .p-datepicker table td:hover {
+  background: #4b5563 !important;
+}
+
+.dark .p-datepicker table td.p-highlight {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+/* Multiselect Dark Mode */
+.dark .p-multiselect {
+  background: #374151 !important;
+  color: #f9fafb !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-multiselect .p-multiselect-label {
+  color: #f9fafb !important;
+}
+
+.dark .p-multiselect-panel {
+  background: #374151 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+.dark .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  color: #f9fafb !important;
+}
+
+.dark .p-multiselect-panel .p-multiselect-items .p-multiselect-item:hover {
+  background: #4b5563 !important;
+}
+
+.dark .p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+  background: #3b82f6 !important;
+  color: white !important;
+}

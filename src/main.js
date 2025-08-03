@@ -23,8 +23,10 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 
 import endpointRoutes  from './stores/endpointRoutes.js';
 import { useGlobalsStore } from './stores/globals';
+import { useThemeStore } from './stores/theme';
 import mitt from 'mitt';
 import { constants } from './helpers/constants';
+import darkMode from './plugins/darkMode';
 
 window.baseUrl = `http://localhost:8000/`;
 const emitter = mitt();
@@ -38,6 +40,7 @@ function initializeApp() {
           preset: Aura
       }
    });
+   app.use(darkMode)
     app.directive('tooltip', Tooltip);
 
     // Registering components globally
@@ -76,4 +79,14 @@ function initializeApp() {
     })
 }
 window.EmtyStorageEvent = new CustomEvent('EmtyStorage', { detail: { message: 'Storage is empty!' } });
+
+// Initialize theme system
+const initializeTheme = () => {
+    const themeStore = useThemeStore();
+    themeStore.initializeTheme();
+    themeStore.watchSystemTheme();
+};
+
+// Initialize app and theme
 initializeApp();
+initializeTheme();

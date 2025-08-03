@@ -1,5 +1,51 @@
 @import './base.css';
+@import './theme.css';
+@import './primevue-dark.css';
 
+/* Dark mode global styles */
+.dark {
+  /* CSS Variables for dark mode */
+  --bg-color: #1f2937;
+  --text-color: #f9fafb;
+  --border-color: #374151;
+  --hover-bg: #374151;
+}
+
+/* Global dark mode improvements */
+.dark body {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+/* Scrollbar dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Selection dark mode */
+.dark ::selection {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Focus ring dark mode */
+.dark *:focus {
+  outline-color: #3b82f6;
+}
 
 :root {
   --primary: "#F3F6FF";

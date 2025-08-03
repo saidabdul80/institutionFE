@@ -1,23 +1,23 @@
 <template>
-    <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+    <div class="p-4 sm:p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
         <!-- Header Section -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1">
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-white mb-2 transition-colors duration-200">
                         Grade Settings
                     </h1>
-                    <p class="text-gray-600 text-sm sm:text-base">
+                    <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base transition-colors duration-200">
                         Configure Nigerian Higher Institution grading system and degree classifications
                     </p>
                 </div>
                 <div class="flex gap-2">
-                    <button @click="showAddGradeModal = true" 
-                            class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    <button @click="showAddGradeModal = true"
+                            class="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors duration-200">
                         <i class="fa fa-plus mr-2"></i>Add Grade
                     </button>
-                    <button @click="resetToDefault" 
-                            class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    <button @click="resetToDefault"
+                            class="bg-gray-500 dark:bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors duration-200">
                         <i class="fa fa-refresh mr-2"></i>Reset to Default
                     </button>
                 </div>
@@ -25,35 +25,35 @@
         </div>
 
         <!-- Current Grading System -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100">
-            <h3 class="text-lg font-semibold mb-4 text-gray-800">Current Grading System</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white transition-colors duration-200">Current Grading System</h3>
             
             <!-- Grade Scale Table -->
             <div class="overflow-x-auto mb-6">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score Range</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade Point</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Grade</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Score Range</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Grade Point</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr v-for="grade in gradeScale" :key="grade.id" class="hover:bg-gray-50">
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200">
+                        <tr v-for="grade in gradeScale" :key="grade.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="text-2xl font-bold" :class="getGradeColor(grade.grade)">
                                     {{ grade.grade }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                 {{ grade.min_score }}% - {{ grade.max_score }}%
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-lg font-bold text-blue-600">{{ grade.point }}</span>
+                                <span class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ grade.point }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                 {{ grade.description }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
