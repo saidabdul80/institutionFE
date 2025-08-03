@@ -251,6 +251,17 @@ export default {
           ]
         },
         {
+          label: 'Financial Management',
+          route: 'sub',
+          icon: 'fa fa-money-bill-wave',
+          children:[
+            {label:'Payment Management', route:'/staff/payments'},
+            {label:'Invoice Management', route:'/staff/invoices'},
+            {label:'Payment Reports', route:'/staff/payments/reports'},
+            {label:'Revenue Analytics', route:'/staff/payments/analytics'},
+          ]
+        },
+        {
           label: 'Academic Setup',
           route: 'sub',
           icon: 'fa fa-cog',

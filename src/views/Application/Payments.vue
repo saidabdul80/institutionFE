@@ -177,7 +177,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">gateway</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -185,15 +185,15 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr v-for="payment in payments" :key="payment.id">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ payment.reference }}
+                            <tr v-for="payment in payments.responseBody" :key="payment.id">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 truncate w-[100px] ">
+                                    {{ payment.ourTrxRef }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ payment.description }}
+                                    {{ payment.gateway }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    ₦{{ formatMoney(payment.amount) }}
+                                    ₦{{ formatMoney(payment.paid_amount) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ formatDate(payment.created_at) }}
@@ -962,29 +962,39 @@ export default {
 
         async downloadReceipt(payment) {
             try {
-                // Create download URL for payment receipt PDF
-                const downloadUrl = `${this.$api.defaults.baseURL}/receipt-pdf`;
-                const response = await post(downloadUrl, {
-                    payment_id: payment.id,
-                    reference: payment.reference
-                }, { responseType: 'blob' });
+                const response = await post(this.$endpoints.applicant.printReceipt.url, {
+                    invoice_id: payment.invoice_id
+                }, false, true,{ responseType: 'blob' });
 
-                // Create blob and download
-                const blob = new Blob([response], { type: 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `Receipt-${payment.reference}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
+                if (response) {
+                    // Create blob and download
+                    const blob = new Blob([response], { type: 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `Receipt-${payment.reference}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+
+                    this.$globals.message = {
+                        text: "Receipt downloaded successfully",
+                        type: 'success'
+                    };
+                    setTimeout(() => {
+                        this.$globals.message.text = '';
+                    }, 3000);
+                }
             } catch (error) {
                 console.error('Error downloading receipt:', error);
                 this.$globals.message = {
-                    text: "Error downloading receipt",
+                    text: "Error downloading receipt. Please try again.",
                     type: 'error'
                 };
+                setTimeout(() => {
+                    this.$globals.message.text = '';
+                }, 3000);
             }
         },
         formatMoney(amount) {

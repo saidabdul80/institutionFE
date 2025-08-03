@@ -1,39 +1,70 @@
 <template>
     <div>        
-        <div class="bg-white  relative">
-            <DataTable ref="dtable" v-model:editingRows="editingRows" :value="levels" editMode="row" dataKey="id"
-                class="w-full mt-4 bg-white rounded-2xl shadow-lg" 
-                :paginator="true" :rows="6" scrollable
-                scrollHeight="400px" style="position:absolute !important; min-height: 70vh;" @row-edit-save="updateLevel">
-                <template #header>
-                    <div style="text-align: left">
-                        <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
-                    </div>
-                </template>
-                <template #paginatorstart>
-                    <Button @click="refresh()" type="button" icon="fa fa-refresh" text />
-                </template>
-                <Column header="Level">
-                    <template #body="slotProps">
-                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.title }}</span>
+        <div class="bg-white relative">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900">Levels</h2>
+                <div class="flex space-x-3">
+                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)"
+                            class="bg-gray-500 hover:bg-gray-600 text-white" />
+                    <Button @click="refresh()" type="button" icon="fa fa-refresh"
+                            class="bg-blue-500 hover:bg-blue-600 text-white" />
+                </div>
+            </div>
+            <div class="p-6">
+                <Table
+                    :headers="levelHeaders"
+                    :paginationData="levelsPagination"
+                    :loading="false"
+                    :showPagination="true"
+                    @page-change="handlePageChange"
+                    @page-length="handlePageLength">
+
+                    <!-- Level Title Column -->
+                    <template #td-title="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <InputText v-model="row.title" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else class="font-medium">{{ row.title }}</span>
+                        </div>
                     </template>
-                    <template #editor="{ data, field }">
-                        <InputText v-model="data.title" />
+
+                    <!-- Actions Column -->
+                    <template #td-actions="{ row }">
+                        <div class="flex space-x-2">
+                            <button v-if="!editingRows || !editingRows[row.id]"
+                                    @click="startEdit(row)"
+                                    class="text-blue-600 hover:text-blue-800 p-1 rounded"
+                                    title="Edit">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <div v-else class="flex space-x-2">
+                                <button @click="saveEdit(row)"
+                                        class="text-green-600 hover:text-green-800 p-1 rounded"
+                                        title="Save">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                                <button @click="cancelEdit(row)"
+                                        class="text-red-600 hover:text-red-800 p-1 rounded"
+                                        title="Cancel">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
                     </template>
-                </Column>                
-                <Column :rowEditor="true" style="width: 10%; min-width: 20px" bodyStyle="text-align:center" class="bg-white"></Column>              
-            </DataTable>
-        </div>      
+                </Table>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Row from 'primevue/row';     
 import { get, post } from '@/api/client';
 import { showModal } from '@/plugins/modal';
+import Table from '@/components/Table.vue';
+import SkeletonLoader from '@/components/SkeletonLoader.vue';
 
 export default {
     data() {
@@ -45,37 +76,78 @@ export default {
             tableloading: true,
             validation: {},
             dataTableloading: false,
-            editingRows:null
+            editingRows: {},
+            levelHeaders: [
+                { key: 'title', title: 'Level' },
+                { key: 'actions', title: 'Actions' }
+            ],
+            levelsPagination: {
+                data: [],
+                meta: {
+                    current_page: 1,
+                    last_page: 1,
+                    per_page: 6,
+                    total: 0,
+                    from: 1,
+                    to: 0
+                },
+                links: []
+            }
         }
     },
     components: {
         InputText,
         Button,
-        DataTable,
-        Column, 
-        Row       
+        Table,
+        SkeletonLoader
     },
     methods: {
         async fetchRecords() {
             this.tableloading = true;
             const res = await get(`${this.$endpoints.staff.getLevels.url}`);
             this.levels = res;
+
+            // Setup pagination data for Table component
+            this.levelsPagination.data = this.levels;
+            this.levelsPagination.meta.total = this.levels.length;
+            this.levelsPagination.meta.from = 1;
+            this.levelsPagination.meta.to = this.levels.length;
+
             this.tableloading = false;
         },
-        async updateLevel(event) {
-            let { newData, index } = event;
-            this.validation = {};                    
-            const res = await post(this.$endpoints.staff.updateLevel.url, newData);
+        async updateLevel(levelData) {
+            this.validation = {};
+            const res = await post(this.$endpoints.staff.updateLevel.url, levelData);
             if (res) {
                 this.fetchRecords();
                 this.editLevelDialog = false;
                 this.$globals.showMessage(this.$globals.updateMessage, 'success');
+                // Clear editing state
+                this.editingRows = {};
             } else {
                 const err = localStorage.getItem('error');
                 this.$globals.showMessage(err, 'error');
             }
         },
-        refresh(){            
+        startEdit(row) {
+            this.editingRows = { [row.id]: true };
+        },
+        async saveEdit(row) {
+            await this.updateLevel(row);
+        },
+        cancelEdit(row) {
+            this.editingRows = {};
+            this.fetchRecords(); // Refresh to restore original data
+        },
+        handlePageChange(url) {
+            // Handle pagination page change
+            console.log('Page change:', url);
+        },
+        handlePageLength(perPage) {
+            // Handle rows per page change
+            this.levelsPagination.meta.per_page = perPage;
+        },
+        refresh(){
             this.fetchRecords()
         },
     },

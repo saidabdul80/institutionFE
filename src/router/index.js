@@ -327,6 +327,31 @@ const router = createRouter({
           name: 'staff-dashboard',
           component: () => import('../views/Staff/Dashboard/StaffDashboard.vue'),
           meta: { user_type: 'staff', require: true }
+        },
+        // Payment Management Routes
+        {
+          path: 'payments',
+          name: 'staff-payments',
+          component: () => import('../views/Staff/Payments/PaymentManagement.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
+        {
+          path: 'invoices',
+          name: 'staff-invoices',
+          component: () => import('../views/Staff/Payments/InvoiceManagement.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
+        {
+          path: 'payments/reports',
+          name: 'staff-payment-reports',
+          component: () => import('../views/Staff/Payments/PaymentReports.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
+        {
+          path: 'payments/analytics',
+          name: 'staff-revenue-analytics',
+          component: () => import('../views/Staff/Payments/RevenueAnalytics.vue'),
+          meta: { user_type: 'staff', require: true }
         }
       ]
     },

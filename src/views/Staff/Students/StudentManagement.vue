@@ -12,14 +12,14 @@
                     </p>
                 </div>
                 <div class="flex gap-2">
-                    <button @click="showAddStudentModal = true" 
+                    <!-- <button @click="showAddStudentModal = true" 
                             class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
                         <i class="fa fa-plus mr-2"></i>Add Student
                     </button>
                     <button @click="showBulkUploadModal = true" 
                             class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
                         <i class="fa fa-upload mr-2"></i>Bulk Upload
-                    </button>
+                    </button> -->
                     <button @click="exportStudents" 
                             class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
                         <i class="fa fa-download mr-2"></i>Export
@@ -89,7 +89,6 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Session</label>
                     <select v-model="filters.session_id" @change="loadStudents" 
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">All Sessions</option>
                         <option v-for="session in sessions" :key="session.id" :value="session.id">
                             {{ session.name }}
                         </option>
@@ -118,16 +117,14 @@
                     </select>
                 </div>
                 
+                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                     <select v-model="filters.status" @change="loadStudents" 
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="graduated">Graduated</option>
-                        <option value="suspended">Suspended</option>
-                        <option value="withdrawn">Withdrawn</option>
+                        <option v-for="option in statusOptions" :key="option" :value="option">
+                            {{ option }}</option>
                     </select>
                 </div>
             </div>
@@ -349,6 +346,9 @@ export default {
                 type: 'all',
                 query: ''
             },
+            statusOptions: [
+                'active','expel','rusticated','voluntary withdraw','academic withdrawal','death','deferment','suspension','graduated','withdrawn'
+            ],
             searchResults: [],
             searchingStudents: false,
             filters: {

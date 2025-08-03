@@ -1,21 +1,15 @@
 <template>
-    <a @click.stop="copyToClipboard">
-        <i   class="text-sm fas fa-copy hover:text-green-600 cursor-pointer"></i>
-    </a>
-    <!-- <Button icon link  color="transparent" class="ml-0 p-0" size="small" variant="flat">
-    </Button> -->
+    <v-btn icon @click.stop="copyToClipboard" color="transparent" class="ml-0" size="small" variant="flat">
+        <v-icon class="tw-text-sm">mdi-content-copy</v-icon>
+    </v-btn>
 </template>
 
 <script>
 
 import { useNotificationStore } from '@/stores/notification';
-import Button from 'primevue/button';
 
 export default {
     name: 'CopyIconButton',
-    components: {
-        Button,
-    },
     props: {
         text: {
             type: String,

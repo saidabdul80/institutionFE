@@ -133,7 +133,7 @@ export default {
             exportStudents: { url: 'api/staff/student/export', method: 'post' },
             updateSession: { url: 'api/staff/session/update', method: 'post' },
             createSession: { url: 'api/staff/session/create', method: 'post' },
-            getSessions: { url: 'api/staff/session/sessions', method: 'get' },
+            getSessions: { url: 'api/staff/sessions/all', method: 'get' },
             createProgrammeType: { url: 'api/staff/programme_type/create', method: 'post' },
             updateProgrammeType: { url: 'api/staff/programme_type/update', method: 'post' },
             deleteProgrammeType: { url: 'api/staff/programme_type/delete', method: 'post' },
@@ -187,6 +187,7 @@ export default {
 
             // Applicant Management Endpoints
             getApplicants: { url: 'api/staff/applicants/all', method: 'post' },
+            getAdmissionApplicants: { url: 'api/staff/admission/applicants', method: 'post' },
             getApplicantStats: { url: 'api/staff/applicants/stats', method: 'get' },
             updateApplicantStatus: { url: 'api/staff/applicants/update_status', method: 'post' },
             processApplication: { url: 'api/staff/applicants/process', method: 'post' },
@@ -293,6 +294,28 @@ export default {
             confirmPayment: { url: 'api/staff/confirm_payment', method: 'post' },
             updateStudentInfo: { url: 'api/staff/update_student_info', method: 'post' },
             updateSchoolInfo: { url: 'api/staff/update_school_info', method: 'post' },
+
+            // Payment Management Endpoints
+            getPayments: { url: 'api/staff/payments/all', method: 'post' },
+            getPaymentStatistics: { url: 'api/staff/payments/statistics', method: 'post' },
+            printReceipt: { url: 'api/staff/receipt-pdf', method: 'post' },
+            requeryPayment: { url: 'api/staff/payments/requery/{payment_reference}', method: 'post' },
+            exportPayments: { url: 'api/staff/payments/export', method: 'post' },
+
+            // Invoice Management Endpoints
+            getInvoices: { url: 'api/staff/invoices/all', method: 'post' },
+            getInvoiceStatistics: { url: 'api/staff/invoices/statistics', method: 'post' },
+            getInvoiceTypes: { url: 'api/staff/invoice_types/all', method: 'post' },
+            createInvoice: { url: 'api/staff/invoices/create', method: 'post' },
+            printInvoice: { url: 'api/staff/invoice-pdf', method: 'post' },
+            sendPaymentLink: { url: 'api/staff/invoices/send_payment_link', method: 'post' },
+            exportInvoices: { url: 'api/staff/invoices/export', method: 'post' },
+
+            // Payment Reports & Analytics Endpoints
+            getPaymentCategories: { url: 'api/staff/payment_categories/all', method: 'post' },
+            generatePaymentReport: { url: 'api/staff/reports/payments', method: 'post' },
+            exportPaymentReport: { url: 'api/staff/reports/payments/export', method: 'post' },
+            getRevenueAnalytics: { url: 'api/staff/analytics/revenue', method: 'post' },
           },
         student:{
             login: { url: 'api/studentportal/login', method: 'post' },
@@ -319,7 +342,9 @@ export default {
             paymentDetails: { url: 'api/studentportal/student/payment_details', method: 'post' },
             initiatePayment: { url: 'api/studentportal/student/initiate_payment', method: 'post' },
             getWallet: { url: 'api/studentportal/student/wallet', method: 'get' },
-            pay: { url: 'api/studentportal/student/pay', method: 'post' }
+            pay: { url: 'api/studentportal/student/pay', method: 'post' },
+            printReceipt: { url: 'api/studentportal/student/receipt-pdf', method: 'post' },
+            printInvoice: { url: 'api/studentportal/student/invoice-pdf', method: 'post' }
         },
         applicant:{
           applicantLoginPost: {
@@ -440,6 +465,14 @@ export default {
           },
           payPayment: {
             url: "api/applicants/payments/pay",
+            method: "post"
+          },
+          printReceipt: {
+            url: "api/applicants/receipt-pdf",
+            method: "post"
+          },
+          printInvoice: {
+            url: "api/applicants/invoice-pdf",
             method: "post"
           },
           distinctPaymentDetails: {

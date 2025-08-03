@@ -335,9 +335,39 @@ export default {
         payInvoice(invoice) {
             this.$router.push({ name: 'student-payments', query: { invoice_id: invoice.id } });
         },
-        downloadInvoice(invoice) {
-            // Implement invoice download
-            console.log('Download invoice:', invoice.invoice_number);
+        async downloadInvoice(invoice) {
+            try {
+                const response = await post(this.$endpoints.student.printInvoice.url, {
+                    invoice_id: invoice.id
+                }, { responseType: 'blob' });
+
+                if (response) {
+                    const blob = new Blob([response], { type: 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `invoice_${invoice.invoice_number}.pdf`;
+                    link.click();
+                    window.URL.revokeObjectURL(url);
+
+                    this.$globals.message = {
+                        text: 'Invoice downloaded successfully',
+                        type: 'success'
+                    };
+                    setTimeout(() => {
+                        this.$globals.message.text = '';
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error downloading invoice:', error);
+                this.$globals.message = {
+                    text: 'Failed to download invoice',
+                    type: 'error'
+                };
+                setTimeout(() => {
+                    this.$globals.message.text = '';
+                }, 3000);
+            }
         },
         formatMoney(amount) {
             return new Intl.NumberFormat('en-NG').format(amount);

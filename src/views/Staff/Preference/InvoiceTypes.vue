@@ -5,49 +5,106 @@
             <div v-else ></div>
             <Button class="w-[100px] place-self-end" :pt="button" severity="info" type="button" label="Add" icon="fa fa-plus" @click="newRecordDialog = true" />            
         </div>             
-        <div class="bg-white  relative">                        
-            <DataTable ref="dtable" v-model:editingRows="editingRows" :value="invoice_types.data" editMode="row" dataKey="id" class="w-full mt-4 bg-white rounded-2xl shadow-lg"
-                :paginator="true" :rows="6" :totalRecords="invoice_types.total" :loading="tableloading" lazy                    
-                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"            
-                @page="onPage($event)" :currentPageReportTemplate="`${invoice_types.from} to ${invoice_types.to} of ${invoice_types.total}`"
-                scrollable scrollHeight="400px" style="position:absolute !important; min-height: 70vh;" @row-edit-save="updateRecord">
-                <template #header>
-                <div style="text-align: left">
-                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+        <div class="bg-white relative">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900">Invoice Types</h2>
+                <div class="flex space-x-3">
+                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)"
+                            class="bg-gray-500 hover:bg-gray-600 text-white" />
+                    <Button @click="refresh()" type="button" icon="fa fa-refresh"
+                            class="bg-blue-500 hover:bg-blue-600 text-white" />
                 </div>
-                </template>
-                <template #paginatorstart>
-                    <Button @click="refresh()" type="button" icon="fa fa-refresh" text />
-                </template>                
-                <Column header="Payment Name"  style="min-width: 200px" frozen class="font-bold  z-[10]">                
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.payment_name}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown v-model="data.payment_category_id" :options="paymentTypes" optionLabel="name" optionValue="id" placeholder="Select Payment Type"></Dropdown></template>
-                </Column>
-                <Column header="Name" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.name }}</span></template>
-                    <template #editor="{ data, field }"><InputText  v-model="data.name" /></template>            
-                </Column>
-                <Column header="Programme Type" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.programme_type}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.payment_type_id" :options="programmeTypes" optionLabel="name" optionValue="id" placeholder="Select Payment Type"></Dropdown></template>
-                </Column>
-                <Column header="Session" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.session}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.session_id" :options="sessions" optionLabel="name" optionValue="id" placeholder="Select Payment Type"></Dropdown></template>
-                </Column>
-                <Column header="Semester" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.semester}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.semester_id" :options="semesters" optionLabel="name" optionValue="id" placeholder="Select Payment Type"></Dropdown></template>            
-                </Column>
-                <Column header="Amount" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{ $globals.formatCurrency(slotProps.data.amount)}}</span></template>
-                    <template #editor="{ data, field }">                    
-                        <InputText  v-model="data.amount" /></template>            
-                </Column>
-                <Column header="Level" style="min-width: 200px">
-                    <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.level}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.level_id" :options="levels" optionLabel="title" optionValue="id" placeholder="Select Payment Type"></Dropdown></template>            
-                </Column>
+            </div>
+            <div class="p-6">
+                <Table
+                    :headers="invoiceTypeHeaders"
+                    :paginationData="invoiceTypesPagination"
+                    :loading="tableloading"
+                    :showPagination="true"
+                    @page-change="handlePageChange"
+                    @page-length="handlePageLength">
+
+                    <!-- Payment Name Column -->
+                    <template #td-payment_name="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <Dropdown v-model="row.payment_category_id" :options="paymentTypes"
+                                     optionLabel="name" optionValue="id" placeholder="Select Payment Type" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else class="font-medium">{{ row.payment_name }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Name Column -->
+                    <template #td-name="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <InputText v-model="row.name" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else>{{ row.name }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Programme Type Column -->
+                    <template #td-programme_type="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <Dropdown v-model="row.payment_type_id" :options="programmeTypes"
+                                     optionLabel="name" optionValue="id" placeholder="Select Payment Type" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else>{{ row.programme_type }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Session Column -->
+                    <template #td-session="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <Dropdown v-model="row.session_id" :options="sessions"
+                                     optionLabel="name" optionValue="id" placeholder="Select Session" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else>{{ row.session }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Semester Column -->
+                    <template #td-semester="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <Dropdown v-model="row.semester_id" :options="semesters"
+                                     optionLabel="name" optionValue="id" placeholder="Select Semester" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else>{{ row.semester }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Amount Column -->
+                    <template #td-amount="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <InputText v-model="row.amount" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else class="font-semibold text-green-600">{{ $globals.formatCurrency(row.amount) }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Level Column -->
+                    <template #td-level="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <Dropdown v-model="row.level_id" :options="levels"
+                                     optionLabel="title" optionValue="id" placeholder="Select Level" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else>{{ row.level }}</span>
+                        </div>
+                    </template>
                 <Column v-if="$globals.getConfiguration('enable_faculty')" header="Faculty" style="min-width: 200px">
                     <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.faculty}}</span></template>
                     <template #editor="{ data, field }"><Dropdown  v-model="data.faculty_id" @change="onSelectFaculty($event)" :options="faculties" optionLabel="name" optionValue="id" placeholder="Select faculty Type"></Dropdown></template>            
@@ -188,20 +245,16 @@
     </div>
 </template>
 <script>
-import Button from 'primevue/button'; 
+import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';            
 import Tag from 'primevue/Tag'
-
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { get,post } from '@/api/client'
 import { showModal } from '@/plugins/modal'
 import SkeletonLoader from '@/components/SkeletonLoader.vue'
+import Table from '@/components/Table.vue'
 export default {
     data(){
         return {            

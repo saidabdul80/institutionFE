@@ -4,59 +4,89 @@
             <div></div>
             <Button label="New Faculty" icon="fa fa-plus" @click="openNewFacultyDialog" class="p-mb-3 place-self-end" />
         </div>
-        <div class="bg-white  relative">
-            <DataTable ref="dtable" v-model:editingRows="editingRows" :value="faculties.data" editMode="row" dataKey="id"
-                class="w-full mt-4 bg-white rounded-2xl shadow-lg" lazy
-                :paginator="true" :rows="6" :totalRecords="faculties.total" :loading="tableloading"
-                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                @page="onPage($event)" :currentPageReportTemplate="`${faculties.from} to ${faculties.to} of ${faculties.total}`" scrollable
-                scrollHeight="400px" style="position:absolute !important; min-height: 70vh;" @row-edit-save="updateFaculty">
-                <template #header>
-                    <div style="text-align: left">
-                        <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
-                    </div>
-                </template>
-                <template #paginatorstart>
-                    <Button @click="refresh()" type="button" icon="fa fa-refresh" text />
-                </template>
-                <Column header="Name">
-                    <template #body="slotProps">
-                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.name }}</span>
-                    </template>
-                    <template #editor="{ data, field }">
-                        <InputText v-model="data.name" />
-                    </template>
-                </Column>
-                <Column header="Abbreviation">
-                    <template #body="slotProps">
-                        <SkeletonLoader v-if="dataTableloading" /><span v-else>{{ slotProps.data.abbr }}</span>
-                    </template>
-                    <template #editor="{ data, field }">
-                        <InputText v-model="data.abbr" />
-                    </template>
-                </Column>
-                <Column header="Status">
-                    <template #body="slotProps">
-                        <Tag :value="slotProps.data.deleted_at == null ? 'Active' : 'Inactive'"
-                            :severity="$globals.getStatus(slotProps.data.deleted_at == null, true)" />
-                    </template>
-                    <template #editor="{ data, field }">
-                        <Dropdown v-model="data.status" :options="['Active', 'Inactive']" placeholder="Change Status ">
-                        </Dropdown>
-                    </template>
-                </Column>
-                <Column :rowEditor="true" style="width: 10%; min-width: 20px" bodyStyle="text-align:center" class="bg-white"></Column>
-                <Column style="width: 100px; min-width: 100px" bodyStyle="text-align:center" class="bg-white">
-                    <template #body="slotProps">
-                        <div class="flex justify-between">
-                            <Button
-                                :pt="{ root: { class: 'h-8  w-8 rounded-full flex justify-center items-center hover:ring-[green] hover:bg-[green]/25 hover:text-[green] hover:ring-1 ' } }"
-                                icon="fa fa-clone" outlined rounded severity="danger"
-                                @click="duplicateRecord(slotProps.data)" />
+        <div class="bg-white relative">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900">Faculties</h2>
+                <div class="flex space-x-3">
+                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)"
+                            class="bg-gray-500 hover:bg-gray-600 text-white" />
+                    <Button @click="refresh()" type="button" icon="fa fa-refresh"
+                            class="bg-blue-500 hover:bg-blue-600 text-white" />
+                </div>
+            </div>
+            <div class="p-6">
+                <Table
+                    :headers="headers"
+                    :paginationData="faculties"
+                    :loading="tableloading"
+                    :showPagination="true"
+                    @page-change="handlePageChange"
+                    @page-length="handlePageLength">
+
+                    <!-- Name Column -->
+                    <template #td-name="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <InputText v-model="row.name" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else class="font-medium">{{ row.name }}</span>
                         </div>
                     </template>
-                </Column>
-            </DataTable>
+
+                    <!-- Abbreviation Column -->
+                    <template #td-abbr="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <InputText v-model="row.abbr" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <SkeletonLoader v-if="dataTableloading" />
+                            <span v-else class="text-gray-600">{{ row.abbr }}</span>
+                        </div>
+                    </template>
+
+                    <!-- Status Column -->
+                    <template #td-status="{ row }">
+                        <div v-if="editingRows && editingRows[row.id]">
+                            <Dropdown v-model="row.status" :options="['Active', 'Inactive']"
+                                     placeholder="Change Status" class="w-full" />
+                        </div>
+                        <div v-else>
+                            <Tag :value="row.deleted_at == null ? 'Active' : 'Inactive'"
+                                 :severity="$globals.getStatus(row.deleted_at == null, true)" />
+                        </div>
+                    </template>
+
+                    <!-- Actions Column -->
+                    <template #td-actions="{ row }">
+                        <div class="flex space-x-2">
+                            <button v-if="!editingRows || !editingRows[row.id]"
+                                    @click="startEdit(row)"
+                                    class="text-blue-600 hover:text-blue-800 p-1 rounded"
+                                    title="Edit">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <div v-else class="flex space-x-2">
+                                <button @click="saveEdit(row)"
+                                        class="text-green-600 hover:text-green-800 p-1 rounded"
+                                        title="Save">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                                <button @click="cancelEdit(row)"
+                                        class="text-red-600 hover:text-red-800 p-1 rounded"
+                                        title="Cancel">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                            <button @click="duplicateRecord(row)"
+                                    class="text-green-600 hover:text-green-800 p-1 rounded ml-2"
+                                    title="Duplicate">
+                                <i class="fa fa-clone"></i>
+                            </button>
+                        </div>
+                    </template>
+                </Table>
+            </div>
         </div>
         <Dialog header="New Faculty" v-model:visible="newFacultyDialog" class="w-[45%]" :modal="true">
             <div class="p-fluid">
@@ -86,6 +116,7 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';     
 import { get, post } from '@/api/client';
 import { showModal } from '@/plugins/modal';
+import Table from '@/components/Table.vue';
 
 export default {
     data() {
@@ -97,17 +128,26 @@ export default {
             tableloading: true,
             validation: {},
             dataTableloading: false,
-            editingRows:null
+            editingRows:null,
+            headers: [
+                { key: 'name', title: 'Name' },
+                { key: 'abbr', title: 'Abbreviation' },
+                { key: 'status', title: 'Status' },
+                { key: 'actions', title: 'Actions' }
+            ],
         }
     },
     components: {
         InputText,
         Button,
-        DataTable,
+        Table,
         Column, 
         Row       
     },
     methods: {
+        startEdit(row) {
+            this.editingRows = { [row.id]: true };
+        },
         async fetchRecords() {
             this.tableloading = true;
             const res = await get(`${this.$endpoints.staff.getFaculties.url}`);

@@ -97,74 +97,66 @@
             </div>
 
             <!-- Import History Table -->
-            <div v-else class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Batch ID
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Import Date
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Total Imported
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Fee Paid
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr v-for="import_batch in importHistory" :key="import_batch.import_batch_id"
-                            class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ import_batch.import_batch_id }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">
-                                    {{ formatDate(import_batch.imported_at) }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ import_batch.total_imported }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">
-                                    {{ import_batch.paid_count }} / {{ import_batch.total_imported }}
-                                </div>
-                                <div class="text-xs text-gray-500">
-                                    {{ Math.round((import_batch.paid_count / import_batch.total_imported) * 100) }}% paid
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getImportStatusColor(import_batch)"
-                                      class="px-2 py-1 text-xs font-semibold rounded-full">
-                                    {{ getImportStatusText(import_batch) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center space-x-2">
-                                    <Button @click="viewImportDetails(import_batch)" 
-                                            class="bg-blue-500 hover:bg-blue-600 text-white text-xs">
-                                        <i class="fa fa-eye mr-1"></i>
-                                        View Details
-                                    </Button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div v-else>
+                <Table
+                    :headers="importHistoryHeaders"
+                    :paginationData="importHistoryPagination"
+                    :loading="false"
+                    :showPagination="true"
+                    @row-click="viewImportDetails"
+                    @page-change="handlePageChange"
+                    @page-length="handlePageLength">
+
+                    <!-- Batch ID Column -->
+                    <template #td-import_batch_id="{ row }">
+                        <div class="text-sm font-medium text-gray-900">
+                            {{ row.import_batch_id }}
+                        </div>
+                    </template>
+
+                    <!-- Import Date Column -->
+                    <template #td-imported_at="{ row }">
+                        <div class="text-sm text-gray-900">
+                            {{ formatDate(row.imported_at) }}
+                        </div>
+                    </template>
+
+                    <!-- Total Imported Column -->
+                    <template #td-total_imported="{ row }">
+                        <div class="text-sm font-medium text-gray-900">
+                            {{ row.total_imported }}
+                        </div>
+                    </template>
+
+                    <!-- Fee Paid Column -->
+                    <template #td-fee_paid="{ row }">
+                        <div class="text-sm text-gray-900">
+                            {{ row.paid_count }} / {{ row.total_imported }}
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            {{ Math.round((row.paid_count / row.total_imported) * 100) }}% paid
+                        </div>
+                    </template>
+
+                    <!-- Status Column -->
+                    <template #td-status="{ row }">
+                        <span :class="getImportStatusColor(row)"
+                              class="px-2 py-1 text-xs font-semibold rounded-full">
+                            {{ getImportStatusText(row) }}
+                        </span>
+                    </template>
+
+                    <!-- Actions Column -->
+                    <template #td-actions="{ row }">
+                        <div class="flex items-center space-x-2">
+                            <Button @click.stop="viewImportDetails(row)"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white text-xs">
+                                <i class="fa fa-eye mr-1"></i>
+                                View Details
+                            </Button>
+                        </div>
+                    </template>
+                </Table>
             </div>
 
             <!-- Pagination -->
@@ -421,13 +413,15 @@ import { get, post } from "@/api/client";
 import { userDataMixin } from "@/mixins/userDataMixin";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import Table from "@/components/Table.vue";
 
 export default {
     name: "ApplicantImportManagement",
     mixins: [userDataMixin],
     components: {
         Button,
-        Dialog
+        Dialog,
+        Table
     },
 
     data() {
@@ -436,6 +430,28 @@ export default {
             currentPage: 1,
             itemsPerPage: 20,
             totalImports: 0,
+
+            // Table Configuration
+            importHistoryHeaders: [
+                { key: 'import_batch_id', title: 'Batch ID' },
+                { key: 'imported_at', title: 'Import Date', formatDate: true },
+                { key: 'total_imported', title: 'Total Imported' },
+                { key: 'fee_paid', title: 'Fee Paid' },
+                { key: 'status', title: 'Status' },
+                { key: 'actions', title: 'Actions' }
+            ],
+            importHistoryPagination: {
+                data: [],
+                meta: {
+                    current_page: 1,
+                    last_page: 1,
+                    per_page: 20,
+                    total: 0,
+                    from: 1,
+                    to: 0
+                },
+                links: []
+            },
 
             // Import Dialog
             showImportDialog: false,
@@ -517,6 +533,18 @@ export default {
                 if (response && response.data) {
                     this.importHistory = response.data || [];
                     this.totalImports = response.total || 0;
+
+                    // Setup pagination data for Table component
+                    this.importHistoryPagination.data = this.importHistory;
+                    this.importHistoryPagination.meta = {
+                        current_page: this.currentPage,
+                        last_page: Math.ceil(this.totalImports / this.itemsPerPage),
+                        per_page: this.itemsPerPage,
+                        total: this.totalImports,
+                        from: ((this.currentPage - 1) * this.itemsPerPage) + 1,
+                        to: Math.min(this.currentPage * this.itemsPerPage, this.totalImports)
+                    };
+
                     this.updateImportStats();
                 }
             } catch (error) {
@@ -817,6 +845,19 @@ export default {
 
     async mounted() {
         await this.loadImportHistory();
+    },
+
+    // Pagination handlers for Table component
+    handlePageChange(url) {
+        // Handle pagination page change
+        console.log('Page change:', url);
+        // You can implement API call with the new page URL here
+    },
+
+    handlePageLength(perPage) {
+        // Handle rows per page change
+        this.itemsPerPage = perPage;
+        this.loadImportHistory();
     }
 };
 </script>

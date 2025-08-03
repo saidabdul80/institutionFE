@@ -24,6 +24,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 import endpointRoutes  from './stores/endpointRoutes.js';
 import { useGlobalsStore } from './stores/globals';
 import mitt from 'mitt';
+import { constants } from './helpers/constants';
 
 window.baseUrl = `http://localhost:8000/`;
 const emitter = mitt();
@@ -50,6 +51,7 @@ function initializeApp() {
     app.config.globalProperties.emitter = emitter;
     const global = useGlobalsStore();
     app.config.globalProperties.$globals = global;
+    app.config.globalProperties.$constants = constants;
 
     // Mounting the app immediately
     app.mount('#app');

@@ -81,6 +81,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Search Applicants</label>
                     <PInput
+                        label=""
                         v-model="searchQuery"
                         placeholder="Search by name, email, or application number"
                         class="w-full"
@@ -117,6 +118,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">JAMB Score Range</label>
                     <PSelect
+                        label=""
                         v-model="filters.jamb_range"
                         :options="jambRangeOptions"
                         option-value="value"
@@ -243,8 +245,8 @@
                                 <div class="text-sm text-gray-500">{{ applicant.programme_type }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium" :class="getJambScoreColor(applicant.jamb_score)">
-                                    {{ applicant.jamb_score || 'N/A' }}
+                                <div class="text-sm font-medium" :class="getJambScoreColor(Object.values(applicant?.jamb_subject_scores ||{}).reduce((a, b) => a + b, 0) )">
+                                    {{ Object.values(applicant.jamb_subject_scores||{}).reduce((a, b) => a + b, 0) || 'N/A' }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -273,11 +275,11 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-2">
-                                    <Button @click="viewApplicant(applicant)" 
+                                    <!-- <Button @click="viewApplicant(applicant)" 
                                             class="bg-blue-500 hover:bg-blue-600 text-white text-xs">
                                         <i class="fa fa-eye mr-1"></i>
                                         View
-                                    </Button>
+                                    </Button> -->
                                     <Button v-if="applicant.qualified_status !== 'qualified'"
                                             @click="qualifyApplicant(applicant)" 
                                             class="bg-green-500 hover:bg-green-600 text-white text-xs">
@@ -449,7 +451,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="p-3 bg-gray-50 rounded-lg">
                             <div class="text-sm text-gray-700">
-                                <strong>JAMB Score:</strong> {{ selectedApplicantForRequirements.jamb_score || 'N/A' }}
+                                <strong>JAMB Score:</strong> {{Object.values(selectedApplicantForRequirements.jamb_subject_scores).reduce((a, b) => a + b, 0) || 'N/A' }}
                             </div>
                             <div class="text-xs text-gray-500 mt-1">
                                 Required: Check programme requirements
@@ -459,10 +461,30 @@
                         <div class="p-3 bg-gray-50 rounded-lg">
                             <div class="text-sm text-gray-700">
                                 <strong>O'Level Results:</strong>
-                                <span class="text-blue-600">View Details</span>
+                                <span @click="toggle" class="cursor-pointer text-blue-600">View Details</span>
+                                 <Popover  ref="op" >
+
+                                        <div v-for="olevel in selectedApplicantForRequirements.olevel" >
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">{{ olevel.exam_type }} - {{olevel.month }}/{{ olevel.year}}</div>
+                                                <div class="text-sm text-gray-500">Ex No:
+                                                    {{ olevel.examination_number }}
+                                                    <CopyButton :text="olevel.examination_number" class="ml-1" />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-2 md:grid-cols-3  gap-1">
+                                                <div v-for="(grade, subject) in olevel.subjects_grades" :key="subject" 
+                                                    class="bg-white rounded px-3 py-2 text-sm">
+                                                    <span class="font-medium">{{ subject }}:</span>
+                                                    <span class="ml-1 text-blue-600 font-semibold">{{ grade }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                </Popover>
                             </div>
                             <div class="text-xs text-gray-500 mt-1">
-                                Required: 5 credits including English & Math
+                                Required {{ selectedApplicantForRequirements.programme?.subjects.join(',') }} credits with any other 3 subjects
                             </div>
                         </div>
                     </div>
@@ -497,6 +519,8 @@ import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import PInput from "@/components/PInput.vue";
 import PSelect from "@/components/PSelect.vue";
+import Popover from "primevue/popover";
+import CopyButton from "@/components/CopyButton.vue";
 
 export default {
     name: "QualificationManagement",
@@ -505,7 +529,9 @@ export default {
         Button,
         Dialog,
         PInput,
-        PSelect
+        PSelect,
+        Popover,
+        CopyButton
     },
     data() {
         return {
@@ -653,7 +679,9 @@ export default {
     },
 
     methods: {
-        // Data Loading Methods
+        toggle(event) {
+            this.$refs.op.toggle(event);
+        },
         async loadApplicants() {
             try {
                 this.loading = true;
@@ -729,7 +757,7 @@ export default {
             try {
                 const response = await post(this.$endpoints.staff.updateQualifiedStatus.url, {
                     applicant_ids: [applicant.id],
-                    qualified_status: 'qualified',
+                    status: 'qualified',
                     notes: 'Qualified by staff review',
                     session_id: this.currentSessionId
                 });
@@ -766,7 +794,7 @@ export default {
             try {
                 const response = await post(this.$endpoints.staff.updateQualifiedStatus.url, {
                     applicant_ids: [applicant.id],
-                    qualified_status: 'not_qualified',
+                    status: 'not_qualified',
                     notes: 'Not qualified by staff review',
                     session_id: this.currentSessionId
                 });
