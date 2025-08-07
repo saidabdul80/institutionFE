@@ -12,14 +12,14 @@
                     </h1>
                     <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base transition-colors duration-200">{{ applicantInfo.email }}</p>
                     <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-200">
-                        Application ID: {{ applicantInfo.application_id || 'N/A' }}
+                        Application ID: {{ applicantInfo.application_number || 'N/A' }}
                     </p>
                 </div>
                 <div class="flex-shrink-0 text-left sm:text-right">
                     <p class="text-xs sm:text-sm text-gray-500 mb-2">Application Status</p>
-                    <span :class="getStatusColor(applicantInfo.status)"
+                    <span :class="getStatusColor(applicantInfo.admission_status)"
                           class="inline-block px-3 py-2 rounded-full text-xs sm:text-sm font-medium">
-                        {{ applicantInfo.status || 'Pending' }}
+                        {{ applicantInfo.admission_status || 'Pending' }}
                     </span>
                 </div>
             </div>
@@ -147,6 +147,16 @@
                     </div>
                     <span class="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight">View Profile</span>
                 </button>
+
+                <!-- Acknowledgment Slip Button -->
+                <button @click="$router.push({name: 'applicant-acknowledgment-slip'})"
+                        v-if="applicantInfo.is_final_submitted"
+                        class="group flex flex-col items-center p-4 sm:p-6 bg-gradient-to-br from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 rounded-xl transition-all duration-300 hover:shadow-md hover:scale-105">
+                    <div class="bg-indigo-500 rounded-full p-3 mb-3 group-hover:bg-indigo-600 transition-colors">
+                        <i class="fa fa-file-alt text-lg sm:text-xl text-white"></i>
+                    </div>
+                    <span class="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight">Acknowledgment Slip</span>
+                </button>
             </div>
         </div>
 
@@ -257,8 +267,8 @@ export default {
     methods: {
         getStatusColor(status) {
             const colors = {
-                'pending': 'bg-yellow-100 text-yellow-800',
-                'approved': 'bg-green-100 text-green-800',
+                'not admitted': 'bg-yellow-100 text-yellow-800',
+                'admitted': 'bg-green-100 text-green-800',
                 'rejected': 'bg-red-100 text-red-800',
                 'under_review': 'bg-blue-100 text-blue-800'
             };

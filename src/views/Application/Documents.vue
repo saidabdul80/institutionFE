@@ -6,10 +6,22 @@
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">Documents</h2>
                     <p class="text-gray-600">Upload and manage your application documents</p>
+                    <div v-if="applicationData?.is_final_submitted" class="mt-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <i class="fa fa-lock mr-1"></i>
+                            Application final submitted - uploads disabled
+                        </span>
+                    </div>
                 </div>
-                <button @click="showUploadModal = true" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+                <button v-if="!applicationData?.is_final_submitted"
+                        @click="showUploadModal = true"
+                        class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
                     <i class="fa fa-upload mr-2"></i>Upload Document
                 </button>
+                <div v-else class="text-gray-500 text-sm">
+                    <i class="fa fa-lock mr-2"></i>
+                    Uploads disabled
+                </div>
             </div>
         </div>
 
@@ -103,20 +115,21 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex gap-2">
-                                    <button @click="viewDocument(document)" 
+                                    <button @click="viewDocument(document)"
                                             class="text-blue-600 hover:text-blue-900">
                                         <i class="fa fa-eye"></i> View
                                     </button>
-                                    <button @click="downloadDocument(document)" 
+                                    <button @click="downloadDocument(document)"
                                             class="text-green-600 hover:text-green-900">
                                         <i class="fa fa-download"></i> Download
                                     </button>
-                                    <button v-if="document.status === 'rejected'" 
-                                            @click="replaceDocument(document)" 
+                                    <button v-if="document.status === 'rejected' && !applicationData?.is_final_submitted"
+                                            @click="replaceDocument(document)"
                                             class="text-orange-600 hover:text-orange-900">
                                         <i class="fa fa-refresh"></i> Replace
                                     </button>
-                                    <button @click="deleteDocument(document)" 
+                                    <button v-if="!applicationData?.is_final_submitted"
+                                            @click="deleteDocument(document)"
                                             class="text-red-600 hover:text-red-900">
                                         <i class="fa fa-trash"></i> Delete
                                     </button>
@@ -201,7 +214,7 @@ export default {
     },
     data() {
         return {
-               showPreviewModal: false,
+            showPreviewModal: false,
             previewImage: null,
             loading: false,
             showUploadModal: false,
@@ -210,6 +223,7 @@ export default {
             selectedFile: null,
             filterStatus: '',
             searchQuery: '',
+            applicationData: {},
             uploadForm: {
                 document_type: '',
                 name: '',
@@ -253,6 +267,17 @@ export default {
                 console.error('Error loading documents:', error);
             } finally {
                 this.loading = false;
+            }
+        },
+
+        async loadApplicationData() {
+            try {
+                const response = await get(this.$endpoints.applicant.applicantSelf.url);
+                if (response && !response.error) {
+                    this.applicationData = response;
+                }
+            } catch (error) {
+                console.error('Error loading application data:', error);
             }
         },
         updateRequirements() {
@@ -432,7 +457,10 @@ export default {
         }
     },
     async mounted() {
-        await this.loadDocuments();
-    }
+        await Promise.all([
+            this.loadDocuments(),
+          //  this.loadApplicationData()
+        ]);
+    },
 }
 </script>

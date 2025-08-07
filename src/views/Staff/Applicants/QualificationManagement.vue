@@ -209,6 +209,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr v-for="applicant in paginatedApplicants" :key="applicant.id"
+                            :data-applicant-id="applicant.id"
                             class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -471,9 +472,14 @@
                                                     {{ olevel.examination_number }}
                                                     <CopyButton :text="olevel.examination_number" class="ml-1" />
                                                 </div>
+                                                <div v-if="olevel.pin || olevel.serial_number" class="text-xs text-gray-500 mt-1">
+                                                    <span v-if="olevel.pin">PIN: {{ olevel.pin }}</span>
+                                                    <span v-if="olevel.pin && olevel.serial_number"> | </span>
+                                                    <span v-if="olevel.serial_number">Serial: {{ olevel.serial_number }}</span>
+                                                </div>
                                             </div>
                                             <div class="grid grid-cols-2 md:grid-cols-3  gap-1">
-                                                <div v-for="(grade, subject) in olevel.subjects_grades" :key="subject" 
+                                                <div v-for="(grade, subject) in olevel.subjects_grades" :key="subject"
                                                     class="bg-white rounded px-3 py-2 text-sm">
                                                     <span class="font-medium">{{ subject }}:</span>
                                                     <span class="ml-1 text-blue-600 font-semibold">{{ grade }}</span>
@@ -567,6 +573,9 @@ export default {
                 { value: "pending", label: "Pending Review" },
                 { value: "under_review", label: "Under Review" }
             ],
+
+            // Auto-selection tracking
+            autoSelectionProcessed: false,
             
             jambRangeOptions: [
                 { value: "", label: "All Scores" },
@@ -607,7 +616,7 @@ export default {
             // Programme filter
             if (this.filters.programme_id) {
                 filtered = filtered.filter(applicant =>
-                    applicant.applied_programme_id == this.filters.programme_id
+                    applicant.applied_programme_curriculum_id == this.filters.programme_id
                 );
             }
 
@@ -686,6 +695,7 @@ export default {
             try {
                 this.loading = true;
                 const response = await post(this.$endpoints.staff.getApplicants.url, {
+                    application_fee_paid:1,
                     paginateBy: 1000, // Load all for client-side filtering
                     mode: 1,
                     search: {},
@@ -981,6 +991,47 @@ export default {
             if (typeof page === 'number') {
                 this.currentPage = page;
             }
+        },
+        async handleAutoSelection() {
+            const applicantId = this.$route.query.applicant_id;
+            const autoSelect = this.$route.query.auto_select;
+            if(applicantId){
+
+                const res = await get(this.$endpoints.staff.getApplicantById.url+applicantId,false,true, true)
+                if(res){
+                    this.selectedApplicants = [res];
+                    this.viewRequirements(res) 
+                    
+                }
+            }
+        }
+    },
+
+    watch: {
+        // Watch for applicants data to be loaded for auto-selection
+        applicants: {
+            handler(newApplicants) {
+                if (newApplicants && newApplicants.length > 0) {
+                    // Check if we have pending auto-selection
+                    const applicantId = this.$route.query.applicant_id;
+                    const autoSelect = this.$route.query.auto_select;
+
+                    if (applicantId && autoSelect === 'true') {
+                        this.$nextTick(() => {
+                            this.handleAutoSelection();
+                        });
+                    }
+                }
+            },
+            immediate: false
+        },
+        showRequirementsDialog: {
+            handler(newValue, oldValue) {
+                if (!newValue) {
+                    this.selectedApplicantForRequirements = null;
+                    this.selectedApplicants = [];
+                }
+            }
         }
     },
 
@@ -989,7 +1040,12 @@ export default {
             this.loadApplicants(),
             this.loadProgrammes()
         ]);
-    }
+
+        // Check if we need to auto-select an applicant
+        this.handleAutoSelection();
+    },
+
+      
 };
 </script>
 

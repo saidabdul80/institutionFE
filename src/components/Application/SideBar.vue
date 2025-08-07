@@ -46,10 +46,10 @@
                         <span class="line-clamp-2">{{ menuItem.label }}</span>
                         <i v-if="isMenuItemDisabled(menuItem)" class="fa fa-lock ml-auto text-xs opacity-60"></i>
                     </div>
-                    <!-- Payment Required Tooltip -->
+                    <!-- Disabled Menu Item Tooltip -->
                     <div v-if="isMenuItemDisabled(menuItem)"
                          class="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
-                        Payment required to access
+                        {{ getDisabledTooltip(menuItem) }}
                     </div>
                 </li>
             </ul>
@@ -131,6 +131,18 @@ export default {
                     icon: 'fa fa-credit-card'
                 },
                 {
+                    label: 'Acknowledgment Slip',
+                    route: 'applicant-acknowledgment-slip',
+                    icon: 'fa fa-file-alt',
+                    requiresFinalSubmission: true
+                },
+                {
+                    label: 'Admission Letter',
+                    route: 'applicant-admission-letter',
+                    icon: 'fa fa-graduation-cap',
+                    requiresAdmission: true
+                },
+                {
                     label: 'Profile',
                     route: 'applicant-profile',
                     icon: 'fa fa-user-circle'
@@ -210,7 +222,29 @@ export default {
                 const allowedRoutes = ['applicant-index', 'applicant-payments'];
                 return !allowedRoutes.includes(menuItem.route);
             }
+
+            // If menu item requires final submission, check if user has final submitted
+            if (menuItem.requiresFinalSubmission) {
+                const userInfo = this.userInfo;
+                return !userInfo.is_final_submitted;
+            }
+
+            // If menu item requires admission, check if user is admitted and published
+            if (menuItem.requiresAdmission) {
+                const userInfo = this.userInfo;
+                return !(userInfo.admission_status === 'admitted' && userInfo.published_at);
+            }
+
             return false;
+        },
+        getDisabledTooltip(menuItem) {
+            if (menuItem.requiresFinalSubmission) {
+                return 'Final submission required to access';
+            }
+            if (menuItem.requiresAdmission) {
+                return 'Admission required to access';
+            }
+            return 'Payment required to access';
         },
         selectMenu(e, routeName) {
             e.preventDefault();

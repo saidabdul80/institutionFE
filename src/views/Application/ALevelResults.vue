@@ -32,11 +32,11 @@
                                 </p>
                             </div>
                             <div class="flex space-x-2">
-                                <button @click="editResult(result, index)" 
+                                <button v-if="canEdit" @click="editResult(result, index)"
                                         class="text-blue-500 hover:text-blue-700">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <button @click="deleteResult(index)" 
+                                <button v-if="canEdit" @click="deleteResult(index)"
                                         class="text-red-500 hover:text-red-700">
                                     <i class="fa fa-trash"></i>
                                 </button>
@@ -163,7 +163,7 @@
                             class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                         Cancel
                     </button>
-                    <button @click="saveResult" 
+                    <button @click="saveResult"  v-if="canEdit"
                             :disabled="loading"
                             class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400">
                         <i v-show="loading" class="fa fa-spinner fa-spin mr-2"></i>
@@ -182,6 +182,12 @@ import { useGlobalsStore } from '@/stores/globals';
 
 export default {
     name: 'ALevelResults',
+    props: {
+        canEdit: {
+            type: Boolean,
+            default: true
+        },
+    },
     setup() {
         const authStore = useAuthStore();
         const globalsStore = useGlobalsStore();

@@ -61,6 +61,18 @@ const router = createRouter({
           name: 'applicant-profile',
           component: () => import('../views/Application/Profile.vue'),
           meta: { user_type: 'applicant', require: true }
+        },
+        {
+          path: 'acknowledgment-slip',
+          name: 'applicant-acknowledgment-slip',
+          component: () => import('../views/Application/AcknowledgmentSlip.vue'),
+          meta: { user_type: 'applicant', require: true }
+        },
+        {
+          path: 'admission-letter',
+          name: 'applicant-admission-letter',
+          component: () => import('../views/Application/AdmissionLetter.vue'),
+          meta: { user_type: 'applicant', require: true }
         }
       ]
     },
@@ -84,6 +96,12 @@ const router = createRouter({
         {
           path: 'courses',
           name: 'student-courses',
+          component: () => import('../views/Student/CourseRegistration.vue'),
+          meta: { user_type: 'student', require: true }
+        },
+        {
+          path: 'course-registration',
+          name: 'student-course-registration',
           component: () => import('../views/Student/CourseRegistration.vue'),
           meta: { user_type: 'student', require: true }
         },
@@ -185,6 +203,12 @@ const router = createRouter({
           meta: { user_type: 'staff', require: true }
         },
         {
+          path: 'curriculum',
+          name: 'staff-curriculum',
+          component: () => import('../views/Staff/Curriculum/CurriculumManagement.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
+        {
           path: 'staff',
           name: 'staff-staff',
           component: () => import('../views/Staff/Staff.vue'),
@@ -256,6 +280,12 @@ const router = createRouter({
           path: 'admission/publication',
           name: 'staff-admission-publication',
           component: () => import('../views/Staff/Admission/AdmissionPublication.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
+        {
+          path: 'admission/document-verification',
+          name: 'staff-document-verification',
+          component: () => import('../views/Staff/Admission/DocumentVerification.vue'),
           meta: { user_type: 'staff', require: true }
         },
         {

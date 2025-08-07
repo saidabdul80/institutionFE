@@ -159,6 +159,9 @@
                     :loading="loading" :showCheckboxes="true" @page-change="changeNotAdmittedPage"
                     @selected-rows="selectedApplicants = $event"
                     @search="handleNotAdmittedSearch" @bulk-action="handleBulkAction">
+                    <template v-slot:td-first_name="{ row }">
+                        {{ row.first_name }} {{ row.middle_name }} {{ row.surname }}
+                    </template>
                     <template #td-actions="{ row }">
                         <div class="flex gap-2">
                             <button @click="admitApplicant(row)" :disabled="row.admission_status === 'admitted'"
@@ -493,8 +496,8 @@
                                     <div class="flex items-center justify-between">
                                         <span>Final Submission:</span>
                                         <span
-                                            :class="selectedStudent.final_submission === '1' ? 'text-green-600' : 'text-red-600'">
-                                            {{ selectedStudent.final_submission === '1' ? 'Submitted' : 'Not Submitted'
+                                            :class="selectedStudent.is_final_submitted  ? 'text-green-600' : 'text-red-600'">
+                                            {{ selectedStudent.is_final_submitted ? 'Submitted' : 'Not Submitted'
                                             }}
                                         </span>
                                     </div>
@@ -540,7 +543,7 @@
                 </div>
 
                 <!-- Dialog Actions -->
-                <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                <div class="flex justify-between items-center mt-1 pt-2 border-t border-gray-200">
                     <div class="flex flex-wrap gap-3">
                         <Button v-if="selectedStudent.admission_status !== 'admitted'"
                             @click="showAdmissionDialog = true" class="bg-green-500 hover:bg-green-600 text-white">
@@ -920,6 +923,9 @@ export default {
                 { value: 'under_review', label: 'Under Review' }
             ],
             programmes: [],
+
+            // Auto-selection tracking
+            autoSelectionProcessed: false,
         };
     },
     computed: {
@@ -1234,7 +1240,6 @@ export default {
                 "performBulkReject"
             );
         },
-
         async performBulkReject() {
             try {
                 const response = await post(
@@ -1264,7 +1269,6 @@ export default {
                 throw error;
             }
         },
-
         processAllQualified() {
             this.showConfirmation(
                 "Process All Qualified",
@@ -1277,7 +1281,6 @@ export default {
             console.log("Process all qualified applicants");
             // Implement your automatic admission processing logic here
         },
-    
         async loadProgrammes() {
             try {
                 const response = await get(this.$endpoints.staff.getAllPrograms.url);
@@ -1403,7 +1406,6 @@ export default {
         },
 
         async viewApplicant(applicant) {
-            console.log(applicant,11232);
             try {
                 // If we have detailed data, use it directly
                 this.selectedStudent = applicant;
@@ -1675,6 +1677,7 @@ export default {
                 const response = await post(this.$endpoints.staff.getAdmissionBatches.url, {
                     session_id: this.currentSessionId
                 });
+                console.log(response,22300000)
                 if (response && response.data) {
                     this.admissionBatches = response.data;
                 }
@@ -1829,14 +1832,87 @@ export default {
         goToPage(page) {
             this.currentPage = page;
         },
+        async handleAutoSelection() {
+            const applicantId = this.$route.query.applicant_id;
+            const autoSelect = this.$route.query.auto_select;
+            if(applicantId){
+                const res = await get(this.$endpoints.staff.getApplicantById.url+applicantId,false,true, true)
+                if(res){
+                    const applicant = res; 
+                    this.viewApplicant(applicant) 
+                    this.selectedApplicants = [applicant.id];
+
+                }
+            }
+        }
     },
+
+    watch: {
+        notAdmittedApplicants: {
+            handler(newData) {
+                if (newData && newData.data && newData.data.length > 0) {
+                    const applicantId = this.$route.query.applicant_id;
+                    const autoSelect = this.$route.query.auto_select;
+
+                    if (applicantId && autoSelect === 'true') {
+                        this.$nextTick(() => {
+                            this.handleAutoSelection();
+                        });
+                    }
+                }
+            },
+            immediate: false
+        },
+        admittedApplicants: {
+            handler(newData) {
+                if (newData && newData.data && newData.data.length > 0) {
+                    const applicantId = this.$route.query.applicant_id;
+                    const autoSelect = this.$route.query.auto_select;
+
+                    if (applicantId && autoSelect === 'true') {
+                        this.$nextTick(() => {
+                            this.handleAutoSelection();
+                        });
+                    }
+                }
+            },
+            immediate: false
+        },
+        rejectedApplicants: {
+            handler(newData) {
+                if (newData && newData.data && newData.data.length > 0) {
+                    const applicantId = this.$route.query.applicant_id;
+                    const autoSelect = this.$route.query.auto_select;
+
+                    if (applicantId && autoSelect === 'true') {
+                        this.$nextTick(() => {
+                            this.handleAutoSelection();
+                        });
+                    }
+                }
+            },
+            immediate: false
+        },
+        showStudentDialog: {
+            handler(newValue, oldValue) {
+                if (!newValue) {
+                    this.selectedApplicants = [];
+                }
+            }
+        }
+    },
+
     async mounted() {
         this.sessions = this.schoolSessions
         this.levels = this.schoolLevels;
         this.programmes = this.schoolProgrammes
         this.filters.session_id = this.currentSessionId
         await this.getNotAdmittedApplicants();
+        this.loadAdmissionBatches()
         this.loadAdmissionStats()
+
+        // Check if we need to auto-select an applicant
+        this.handleAutoSelection();
     },
 };
 </script>
@@ -1844,13 +1920,12 @@ export default {
 <style scoped>
 /* Student Details Dialog Styling */
 .student-details-container {
-    max-height: 80vh;
     overflow-y: auto;
 }
 
 /* Tab styling */
 .tab-content {
-    min-height: 400px;
+    min-height: 300px;
 }
 
 /* Custom scrollbar for dialog */
@@ -1874,10 +1949,7 @@ export default {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .student-details-container {
-        max-height: 70vh;
-    }
-
+  
     .tab-content {
         min-height: 300px;
     }

@@ -23,7 +23,7 @@ export default {
             deassignRole: { url: 'api/staff/staff/deassign_role', method: 'post' },
             assignRole: { url: 'api/staff/staff/assign_role', method: 'post' },
             staffByRole: { url: 'api/staff/staff/staff_by_role', method: 'post' },
-            staffs: { url: 'api/staff/staff/staffs', method: 'post' },
+            staffs: { url: 'api/staff/staffs', method: 'post' },
             uploadPicture: { url: 'api/staff/staff/uploadPicture', method: 'post' },
             applicationFees: { url: 'api/staff/staff/application_fees', method: 'post' },
             getStaffById: { url: 'api/staff/staff/{id?}', method: 'get' },
@@ -72,6 +72,29 @@ export default {
             updateProgrammeCourse: { url: 'api/staff/programme_course/update_programme_course', method: 'post' },
             unassignProgrammeCourse: { url: 'api/staff/programme_course/unassign_course', method: 'post' },
             getProgrammeCourses: { url: 'api/staff/programme_course/programme_courses', method: 'get' },
+
+            // Curriculum Management Endpoints
+            curriculum: {
+                index: { url: 'api/staff/curriculum', method: 'get' },
+                store: { url: 'api/staff/curriculum', method: 'post' },
+                show: { url: 'api/staff/curriculum', method: 'get' },
+                update: { url: 'api/staff/curriculum', method: 'put' },
+                destroy: { url: 'api/staff/curriculum', method: 'delete' },
+                activate: { url: 'api/staff/curriculum', method: 'post' },
+                getActive: { url: 'api/staff/curriculum/active', method: 'get' },
+                getApplicationsByProgramme: { url: 'api/staff/curriculum/applications-by-programme', method: 'get' }
+            },
+
+            // Programme Curriculum Management Endpoints
+            programmeCurriculum: {
+                index: { url: 'api/staff/programme_curriculum', method: 'get' },
+                store: { url: 'api/staff/programme_curriculum', method: 'post' },
+                show: { url: 'api/staff/programme_curriculum', method: 'get' },
+                update: { url: 'api/staff/programme_curriculum', method: 'put' },
+                destroy: { url: 'api/staff/programme_curriculum', method: 'delete' },
+                activate: { url: 'api/staff/programme_curriculum', method: 'post' },
+                getActiveForFrontend: { url: 'api/staff/programme_curriculum/active_frontend', method: 'get' }
+            },
             createAdmissionBatch: { url: 'api/staff/admission_batch/create', method: 'post' },
             updateAdmissionBatch: { url: 'api/staff/admission_batch/update', method: 'post' },
             deleteAdmissionBatch: { url: 'api/staff/admission_batch/delete', method: 'post' },
@@ -187,6 +210,7 @@ export default {
 
             // Applicant Management Endpoints
             getApplicants: { url: 'api/staff/applicants/all', method: 'post' },
+            getApplicantById: { url: 'api/staff/applicants/', method: 'get' },
             getAdmissionApplicants: { url: 'api/staff/admission/applicants', method: 'post' },
             getApplicantStats: { url: 'api/staff/applicants/stats', method: 'get' },
             updateApplicantStatus: { url: 'api/staff/applicants/update_status', method: 'post' },
@@ -254,6 +278,22 @@ export default {
             getAdmissionBatches: { url: 'api/staff/admission/get_batches', method: 'post' },
             getAdmissionTemplate: { url: 'api/staff/admission/template', method: 'get' },
             changeApplicantProgramme: { url: 'api/staff/admission/change_programme', method: 'post' },
+
+            // Document Verification Endpoints
+            getDocumentVerificationApplicants: { url: 'api/staff/admission/document_verification/applicants', method: 'get' },
+            getVerificationStats: { url: 'api/staff/admission/document_verification/stats', method: 'get' },
+            getApplicantDocuments: { url: 'api/staff/admission/applicants/{applicantId}/documents', method: 'get' },
+            getDocumentPreview: { url: 'api/staff/admission/applicants/{applicantId}/documents/{documentId}/preview', method: 'get' },
+            verifyDocument: { url: 'api/staff/admission/documents/verify', method: 'post' },
+            completeDocumentVerification: { url: 'api/staff/admission/documents/complete_verification', method: 'post' },
+
+            // Admission Letter Management Endpoints
+            generateAdmissionLetterPreview: { url: 'api/staff/admission/letters/preview', method: 'post' },
+            issueAdmissionLetter: { url: 'api/staff/admission/letters/issue', method: 'post' },
+
+            // Admission Configuration Endpoints
+            getAdmissionConfiguration: { url: 'api/staff/admission/configuration', method: 'get' },
+            saveAdmissionConfiguration: { url: 'api/staff/admission/configuration', method: 'post' },
 
             // Applicant Import Endpoints
             uploadApplicantFile: { url: 'api/staff/applicant-import/upload', method: 'post' },
@@ -334,6 +374,16 @@ export default {
             getInvoiceTypesByCategory: { url: 'api/studentportal/student/by_payment_category', method: 'post' },
             getPaymentStatus: { url: 'api/studentportal/student/payment_status', method: 'post' },
             getAllInvoiceTypes: { url: 'api/studentportal/student/invoice_types/all', method: 'post' },
+
+            // New endpoints for improved student portal
+            checkRegistrationPayment: { url: 'api/studentportal/student/check_registration_payment', method: 'get' },
+            getCurrentSession: { url: 'api/studentportal/student/current_session', method: 'get' },
+            getAllSessions: { url: 'api/studentportal/student/sessions', method: 'get' },
+            getStudentCourses: { url: 'api/studentportal/student/courses', method: 'get' },
+            getRegisteredCourses: { url: 'api/studentportal/student/registered_courses', method: 'get' },
+            getResults: { url: 'api/studentportal/student/results', method: 'get' },
+            getDocuments: { url: 'api/studentportal/student/documents', method: 'get' },
+            uploadDocument: { url: 'api/studentportal/student/upload_document', method: 'post' },
             getRegisteredCourses: { url: 'api/studentportal/student/registered_courses', method: 'post' },
             getResult: { url: 'api/studentportal/student/result', method: 'post' },
             getCoursesResult: { url: 'api/studentportal/student/courses_result', method: 'post' },
@@ -426,6 +476,26 @@ export default {
           getWallet: {
             url: "api/applicants/wallet",
             method: "post"
+          },
+          finalSubmit: {
+            url: "api/applicants/final_submit",
+            method: "post"
+          },
+          downloadAcknowledgmentSlip: {
+            url: "api/applicants/acknowledgment_slip/download",
+            method: "get"
+          },
+          downloadVerificationSlip: {
+            url: "api/applicants/verification_slip/download",
+            method: "get"
+          },
+          getAdmissionLetter: {
+            url: "api/applicants/admission_letter",
+            method: "get"
+          },
+          downloadAdmissionLetter: {
+            url: "api/applicants/admission_letter/download",
+            method: "get"
           },
           storePayment: {
             url: "api/applicants/payment",

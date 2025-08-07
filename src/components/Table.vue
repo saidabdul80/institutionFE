@@ -4,7 +4,7 @@
     <div class="border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h3 class="text-lg font-semibold text-gray-800 dark:text-white transition-colors duration-200">
-          {{ title }} ({{ paginationData?.meta?.total || 0 }})
+          {{ title }} ({{ totalItems }})
         </h3>
         <div class="flex gap-2">
           <input v-model="searchQuery" @input="handleSearch" type="text"
@@ -12,7 +12,7 @@
             class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-200" />
           <button v-if="showCheckboxes" @click="selectAll"
             class="bg-gray-500 dark:bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors duration-200">
-            {{ allSelected ? "Deselect All" : "Select All" }}
+            {{ allOnPageSelected ? "Deselect All" : "Select All" }}
           </button>
         </div>
       </div>
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="paginationData?.data?.length === 0" class="p-6 text-center">
+    <div v-else-if="tableData.length === 0" class="p-6 text-center">
       <i class="fa fa-users text-4xl text-gray-400 dark:text-gray-500 mb-4"></i>
       <p class="text-gray-600 dark:text-gray-300 transition-colors duration-200">No records found</p>
     </div>
@@ -48,7 +48,9 @@
           </tr>
         </thead>
         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200">
-          <tr v-for="(row, index) in paginationData.data" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+          <tr v-for="(row, index) in tableData" :key="row.id || index"
+              :data-row-id="row.id"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
             <td v-if="showCheckboxes" class="px-6 py-4 whitespace-nowrap">
               <input type="checkbox"
                 :checked="selectedRows.includes(row.id)"
@@ -63,8 +65,7 @@
                 'font-bold text-gray-900 dark:text-white': header.bold
               }">
               <span v-if="header.key === 'sn'">
-                
-                {{ index + (paginationData?.meta?.from || paginationData?.from  ) }}
+                {{ getRowNumber(index) }}
               </span>
               <span v-else>
                 <span v-if="$slots[`td-${header.key}`]">
@@ -111,9 +112,9 @@
       <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
         <div>
           <p class="text-sm text-gray-700 dark:text-gray-300 transition-colors duration-200">
-            Showing <span class="font-medium">{{ paginationData?.meta?.from }}</span> to
-            <span class="font-medium">{{ paginationData?.meta?.to }}</span> of
-            <span class="font-medium">{{ paginationData?.meta?.total }}</span>
+            Showing <span class="font-medium">{{ showingFrom }}</span> to
+            <span class="font-medium">{{ showingTo }}</span> of
+            <span class="font-medium">{{ totalItems }}</span>
             records
           </p>
         </div>
@@ -171,7 +172,7 @@ export default {
       required: true,
     },
     paginationData: {
-      type: Object,
+      type: [Object, Array],
       required: true,
       default: () => ({ data: [], meta: {} }) 
     },
@@ -199,18 +200,58 @@ export default {
   components: {
     CopyButton,
   },
-  watch: {
-    selectedRows(newValue, oldValue) {
-      this.$emit('selected-rows', newValue);
-    }
-  },
   computed: {
+    // Normalize the data structure for both array and paginated responses
+    tableData() {
+      if (Array.isArray(this.paginationData)) {
+        return this.paginationData;
+      }
+      return this.paginationData?.data || [];
+    },
+    
+    // Support both Laravel-style pagination and custom meta structure
+    meta() {
+      if (Array.isArray(this.paginationData)) {
+        return {
+          current_page: 1,
+          from: 1,
+          to: this.paginationData.length,
+          total: this.paginationData.length,
+          last_page: 1,
+          per_page: this.paginationData.length
+        };
+      }
+      const isMeta = Object.keys(this.paginationData?.meta||{}).length > 0;
+      return isMeta? this.paginationData?.meta : {
+        current_page:this.paginationData?.current_page || 1,
+        from: this.paginationData?.from,
+        to: this.paginationData?.to || 0,
+        total: this.paginationData.total || 0,
+        last_page: this.paginationData?.last_page || 1,
+        per_page: this.paginationData?.per_page || 0
+      };
+    },
+    
+    totalItems() {
+      return this.meta?.total || this.tableData.length;
+    },
+    
+    showingFrom() {
+      return this.meta?.from || 1;
+    },
+    
+    showingTo() {
+      return this.meta?.to || this.tableData.length;
+    },
+    
     totalPages() {
-      return this.paginationData?.meta?.last_page || 1;
+      return this.meta?.last_page || 1;
     },
+    
     currentPage() {
-      return this.paginationData?.meta?.current_page || 1;
+      return this.meta?.current_page || 1;
     },
+    
     visiblePages() {
       const pages = [];
       const maxVisible = 5;
@@ -226,17 +267,26 @@ export default {
       }
       return pages;
     },
+    
     allOnPageSelected() {
-      if (!this.paginationData?.data?.length) return false;
-      return this.paginationData.data.every(row => 
+      if (!this.tableData.length) return false;
+      return this.tableData.every(row => 
         this.selectedRows.includes(row.id)
       );
     }
   },
   methods: {
+    getRowNumber(index) {
+      if (this.meta?.from) {
+        return index + this.meta.from;
+      }
+      return index + 1;
+    },
+    
     getNestedValue(obj, key) {
       return key.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), obj);
     },
+    
     formatDate(date) {
       if (!date) return '';
       const dateObj = new Date(date);
@@ -246,7 +296,9 @@ export default {
         day: 'numeric'
       });
     },
+    
     toggleRowSelection(row) {
+      if (!row.id) return;
       const index = this.selectedRows.indexOf(row.id);
       if (index === -1) {
         this.selectedRows = [...this.selectedRows, row.id];
@@ -254,10 +306,11 @@ export default {
         this.selectedRows = this.selectedRows.filter(id => id !== row.id);
       }
     },
+    
     selectAll() {
       if (this.allOnPageSelected) {
         // Deselect all by filtering out the current page's rows
-        const currentPageIds = this.paginationData.data.map(row => row.id);
+        const currentPageIds = this.tableData.map(row => row.id).filter(Boolean);
         this.selectedRows = this.selectedRows.filter(
           id => !currentPageIds.includes(id)
         );
@@ -266,33 +319,39 @@ export default {
         this.selectedRows = [
           ...new Set([
             ...this.selectedRows,
-            ...this.paginationData.data.map(row => row.id)
+            ...this.tableData.map(row => row.id).filter(Boolean)
           ])
         ];
       }
     },
+    
     handleSearch() {
       this.$emit('search', this.searchQuery);
     },
+    
     handleBulkAction(action) {
       this.$emit('bulk-action', {
         action,
         ids: this.selectedRows
       });
     },
+    
     previousPage() {
       if (this.currentPage > 1) {
         this.$emit('page-change', this.currentPage - 1);
       }
     },
+    
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.$emit('page-change', this.currentPage + 1);
       }
     },
+    
     goToPage(page) {
       this.$emit('page-change', page);
     },
+    
     changeRowsPerPage(perPage) {
       this.$emit('page-length', perPage);
     }

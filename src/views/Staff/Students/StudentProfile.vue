@@ -211,22 +211,71 @@
                     <div v-if="activeTab === 'results'">
                         <h4 class="text-lg font-semibold mb-4">Academic Results</h4>
                         <div class="space-y-4">
-                            <div v-for="session in studentResults" :key="session.id" 
+                            <div v-for="session in studentResults" :key="session.id"
                                  class="border border-gray-200 rounded-lg p-4">
                                 <h5 class="font-medium text-gray-900 mb-2">{{ session.name }}</h5>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <p class="text-sm text-gray-600">First Semester GPA: 
+                                        <p class="text-sm text-gray-600">First Semester GPA:
                                             <span class="font-medium">{{ session.first_semester_gpa || 'N/A' }}</span>
                                         </p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-600">Second Semester GPA: 
+                                        <p class="text-sm text-gray-600">Second Semester GPA:
                                             <span class="font-medium">{{ session.second_semester_gpa || 'N/A' }}</span>
                                         </p>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- O-Level Results Tab -->
+                    <div v-if="activeTab === 'olevel'">
+                        <h4 class="text-lg font-semibold mb-4">O-Level Results</h4>
+                        <div v-if="student.olevel && student.olevel.length > 0" class="space-y-4">
+                            <div v-for="(olevel, index) in student.olevel" :key="index"
+                                 class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                                <div class="mb-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-semibold text-gray-800">{{ olevel.exam_type }}</h5>
+                                        <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                            {{ olevel.month }}/{{ olevel.year }}
+                                        </span>
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-2">
+                                        <span class="font-medium">Examination Number:</span>
+                                        <span class="font-mono">{{ olevel.examination_number }}</span>
+                                    </div>
+                                    <div v-if="olevel.pin || olevel.serial_number" class="text-sm text-gray-500">
+                                        <span v-if="olevel.pin" class="mr-4">
+                                            <span class="font-medium">PIN:</span>
+                                            <span class="font-mono">{{ olevel.pin }}</span>
+                                        </span>
+                                        <span v-if="olevel.serial_number">
+                                            <span class="font-medium">Serial Number:</span>
+                                            <span class="font-mono">{{ olevel.serial_number }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Subjects and Grades -->
+                                <div>
+                                    <h6 class="font-medium text-gray-700 mb-3">Subjects & Grades</h6>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                        <div v-for="(grade, subject) in olevel.subjects_grades" :key="subject"
+                                             class="bg-gray-50 rounded-lg px-3 py-2 text-sm border">
+                                            <div class="font-medium text-gray-800">{{ subject }}</div>
+                                            <div class="text-blue-600 font-bold text-lg">{{ grade }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-8">
+                            <i class="fa fa-graduation-cap text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">No O-Level results available</p>
+                            <p class="text-sm text-gray-400">O-Level results will appear here when available</p>
                         </div>
                     </div>
 
@@ -291,6 +340,7 @@ export default {
             tabs: [
                 { id: 'courses', name: 'Courses', icon: 'fa fa-book' },
                 { id: 'results', name: 'Results', icon: 'fa fa-chart-bar' },
+                { id: 'olevel', name: 'O-Level Results', icon: 'fa fa-graduation-cap' },
                 { id: 'contact', name: 'Contact', icon: 'fa fa-address-card' }
             ]
         }

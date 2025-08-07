@@ -853,7 +853,7 @@ export default {
 
         if (!response.data.error) {
           const result = response.data
-          this.showToast(result.message, 'success')
+          this.$globals.showMessage(result.message, 'success')
 
           // Refresh data
           await Promise.all([
@@ -863,11 +863,11 @@ export default {
 
           this.selectedApplicants = []
         } else {
-          this.showToast(response.data.message || `Error performing ${action}`, 'error')
+          this.$globals.showMessage(response.data.message || `Error performing ${action}`, 'error')
         }
       } catch (error) {
         console.error(`Error performing ${action}:`, error)
-        this.showToast(`Error performing ${action}`, 'error')
+        this.$globals.showMessage(`Error performing ${action}`, 'error')
       } finally {
         this.publishing = false
       }
@@ -875,23 +875,23 @@ export default {
     
     async publishBatch() {
       if (!this.filters.batch_id) {
-        this.showToast('Please select a batch first', 'error')
+        this.$globals.showMessage('Please select a batch first', 'error')
         return
       }
 
       this.batchPublishing = true
-      try {
         const payload = {
           batch_id: this.filters.batch_id,
           send_emails: this.batchPublishForm.send_emails,
           notes: this.batchPublishForm.notes
         }
 
-        const response = await axios.post('/api/staff/admission/publish_batch', payload)
+        const response = await post('api/staff/admission/publish_batch', payload)
+          this.batchPublishing = false
 
-        if (!response.data.error) {
-          const result = response.data.data
-          this.showToast(result.message, 'success')
+        if (response) {
+          const result = response.data
+          this.$globals.showMessage(result.message, 'success')
 
           // Reset form and close dialog
           this.batchPublishForm = {
@@ -899,22 +899,12 @@ export default {
             notes: ''
           }
           this.showBatchPublishDialog = false
-
-          // Refresh data
           await Promise.all([
             this.loadUnpublishedAdmissions(),
             this.loadStats()
           ])
-
-        } else {
-          this.showToast(response.data.message || 'Error publishing batch', 'error')
-        }
-      } catch (error) {
-        console.error('Error publishing batch:', error)
-        this.showToast('Error publishing batch', 'error')
-      } finally {
-        this.batchPublishing = false
-      }
+          
+        } 
     },
     
     async unpublishBatch() {

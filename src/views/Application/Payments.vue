@@ -20,6 +20,26 @@
             </div>
         </div>
 
+        <!-- Acceptance/Registration Fee Payment Alert -->
+        <div v-if="showAcceptanceOrRegistrationFeeAlert" class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-400 p-6 rounded-lg shadow-lg mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-blue-100 rounded-full p-3 mr-4">
+                        <i class="fa fa-exclamation-circle text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-800">{{ currentFeeAlertTitle }} Payment Required</h3>
+                        <p class="text-blue-700 text-sm">You need to pay your {{ currentFeeAlertTitle.toLowerCase() }} to proceed with your admission.</p>
+                    </div>
+                </div>
+                <button @click="quickPayCurrentFee"
+                        class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fa fa-credit-card mr-2"></i>
+                    Pay {{ currentFeeAlertTitle }}
+                </button>
+            </div>
+        </div>
+        
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <div class="flex justify-between items-center">
@@ -565,7 +585,10 @@ export default {
                     color: 'bg-orange-500'
                 }
             },
-              paymentStatus: null, 
+            paymentStatus: null, 
+            showAcceptanceOrRegistrationFeeAlert: false,
+            currentFeeAlertTitle: '',
+            currentFeeType: null,
         }
     },
     computed: {
@@ -574,6 +597,93 @@ export default {
         }
     },
     methods: {
+
+        checkFeeRequirements() {
+                // First check if acceptance_fee exists in invoice_types
+                const acceptanceFeeType = this.invoice_types.find(type => 
+                    type.payment_short_name === 'acceptance_fee'
+                );
+                
+                // If acceptance_fee exists, check if it's paid
+                if (acceptanceFeeType) {
+                    const hasPaidAcceptanceFee = this.invoices.some(invoice => 
+                        invoice.invoice_type_id === acceptanceFeeType.id && 
+                        invoice.status === 'paid'
+                    );
+                    
+                    if (!hasPaidAcceptanceFee) {
+                        this.showAcceptanceOrRegistrationFeeAlert = true;
+                        this.currentFeeAlertTitle = 'Acceptance Fee';
+                        this.currentFeeType = acceptanceFeeType;
+                        return;
+                    }
+                }
+                
+                // If no acceptance_fee or it's paid, check for registration_fee
+                const registrationFeeType = this.invoice_types.find(type => 
+                    type.payment_short_name === 'registration_fee'
+                );
+                
+                if (registrationFeeType) {
+                    const hasPaidRegistrationFee = this.invoices.some(invoice => 
+                        invoice.invoice_type_id === registrationFeeType.id && 
+                        invoice.status === 'paid'
+                    );
+                    
+                    if (!hasPaidRegistrationFee) {
+                        this.showAcceptanceOrRegistrationFeeAlert = true;
+                        this.currentFeeAlertTitle = 'Registration Fee';
+                        this.currentFeeType = registrationFeeType;
+                        return;
+                    }
+                }
+                
+                // If both are paid or don't exist, hide the alert
+                this.showAcceptanceOrRegistrationFeeAlert = false;
+            },
+            
+            async quickPayCurrentFee() {
+                if (!this.currentFeeType) return;
+                
+                try {
+                    this.paymentForm.loading = true;
+                    const res = await post(this.$endpoints.applicant.generateInvoice.url, {
+                        invoice_type_id: this.currentFeeType.id
+                    });
+
+                    if (res && !res.error) {
+                        // Reload invoices to get the newly generated one
+                        await this.loadInvoices();
+                        
+                        // Find the newly generated unpaid invoice
+                        const newInvoice = res.data;
+                        
+                        if (newInvoice) {
+                            // Automatically open payment modal for this invoice
+                            this.payInvoice(newInvoice);
+                        } else {
+                            this.$globals.message = {
+                                text: "Invoice generated but not found. Please check your invoices.",
+                                type: "warning"
+                            };
+                        }
+                    } else {
+                        this.$globals.message = {
+                            text: res?.message || `Failed to generate ${this.currentFeeAlertTitle.toLowerCase()} invoice`,
+                            type: 'error'
+                        };
+                    }
+                } catch (error) {
+                    console.error(`Error processing ${this.currentFeeAlertTitle.toLowerCase()} payment:`, error);
+                    this.$globals.message = {
+                        text: `Error processing payment. Please try again.`,
+                        type: "error"
+                    };
+                } finally {
+                    this.paymentForm.loading = false;
+                }
+            },
+            
         async loadInvoices() {
             this.loading = true;
             try {
@@ -583,6 +693,7 @@ export default {
                     this.invoices = res.responseBody;
                     this.calculateSummary();
                 }
+                this.checkFeeRequirements();
             } catch (error) {
                 console.error('Error loading invoices:', error);
             } finally {
@@ -1157,10 +1268,11 @@ export default {
         // }
     },
     async mounted() {
+        await this.loadInvoicesTypes();
         await this.loadInvoices();
         await this.loadPayments();
-        await this.loadInvoicesTypes();
         this.checkApplicationFeeRequirement();
+        
         this.checkPaymentStatusFromUrl();
 
         // Check for query parameters and show message

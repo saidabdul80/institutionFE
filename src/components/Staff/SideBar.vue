@@ -205,6 +205,7 @@ export default {
             {label:'UTME Candidates', route:'/staff/applicants/import'},
             {label:'Admission Management', route:'/staff/applicants/admission'},
             {label:'Admission Publication', route:'/staff/admission/publication'},
+            {label:'Document Verification', route:'/staff/admission/document-verification'},
             {label:'Qualified/Not Qualified', route:'/staff/applicants/qualification'},
           ]
         },
@@ -276,6 +277,7 @@ export default {
             {label:"Faculty", route:"/staff/faculty"},
             {label:"Department", route:"/staff/department"},
             {label:"Programmes", route:"/staff/programme"},
+            {label:"Curriculum", route:"/staff/curriculum"},
             {label:"Courses", route:"/staff/courses"},
             {label:"Course Categories", route:"/staff/course_category"},
             {label:"Programme Courses", route:"/staff/programme_courses"},

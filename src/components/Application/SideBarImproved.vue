@@ -113,13 +113,18 @@ export default {
           route: 'applicant-documents',
           icon: 'fa fa-folder'
         },
-        { 
-          label: 'Payments', 
+        {
+          label: 'Payments',
           route: 'applicant-payments',
           icon: 'fa fa-credit-card'
         },
-        { 
-          label: 'Profile', 
+        {
+          label: 'Admission Letter',
+          route: 'applicant-admission-letter',
+          icon: 'fa fa-graduation-cap'
+        },
+        {
+          label: 'Profile',
           route: 'applicant-profile',
           icon: 'fa fa-user'
         }

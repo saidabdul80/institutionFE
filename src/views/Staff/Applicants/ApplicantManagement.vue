@@ -215,18 +215,18 @@
                                 {{ applicant.programme?.name || 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="font-medium">{{ applicant.jamb_score || 'N/A' }}</span>
+                                <span class="font-medium">{{ Object.values(applicant.jamb_subject_scores ||{}).reduce((a, b) => a + b, 0) || 'N/A' }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getApplicationStatusColor(applicant.application_status)" 
+                                <span :class="getApplicationStatusColor(applicant.qualified_status)" 
                                       class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                                    {{ formatStatus(applicant.application_status) }}
+                                    {{ formatStatus(applicant.qualified_status) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getPaymentStatusColor(applicant.payment_status)" 
+                                <span :class="getPaymentStatusColor(applicant.application_fee)" 
                                       class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                                    {{ formatStatus(applicant.payment_status) }}
+                                    {{ formatStatus(applicant.application_fee) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -289,14 +289,190 @@
                 </div>
             </div>
         </div>
+
+        <!-- Applicant Details Modal -->
+        <Dialog v-model:visible="showApplicantDetailsModal"
+                :style="{ width: '90vw', maxWidth: '1200px' }"
+                header="Applicant Details"
+                :modal="true"
+                class="p-fluid">
+
+            <div v-if="loadingDetails" class="flex justify-center items-center py-8">
+                <i class="fa fa-spinner fa-spin text-2xl text-blue-500"></i>
+                <span class="ml-2">Loading applicant details...</span>
+            </div>
+
+            <div v-else-if="selectedApplicant" class="space-y-6">
+                <!-- Personal Information -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Personal Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Full Name</label>
+                            <p class="text-gray-900">{{ selectedApplicant.full_name || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Email</label>
+                            <p class="text-gray-900">{{ selectedApplicant.email || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Phone Number</label>
+                            <p class="text-gray-900">{{ selectedApplicant.phone_number || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">JAMB Number</label>
+                            <p class="text-gray-900">{{ selectedApplicant.jamb_number || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Gender</label>
+                            <p class="text-gray-900">{{ selectedApplicant.gender || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Date of Birth</label>
+                            <p class="text-gray-900">{{ selectedApplicant.date_of_birth || 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Information -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Academic Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Applied Programme</label>
+                            <p class="text-gray-900">{{ selectedApplicant.programme_name || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Programme Type</label>
+                            <p class="text-gray-900">{{ selectedApplicant.programme_type || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Faculty</label>
+                            <p class="text-gray-900">{{ selectedApplicant.faculty || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Department</label>
+                            <p class="text-gray-900">{{ selectedApplicant.department || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Entry Mode</label>
+                            <p class="text-gray-900">{{ selectedApplicant.entry_mode || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Previous Qualification</label>
+                            <p class="text-gray-900">{{ selectedApplicant.qualification || 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Information -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Application Status</label>
+                            <span :class="getStatusClass(selectedApplicant.application_status)"
+                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                {{ formatStatus(selectedApplicant.application_status) }}
+                            </span>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Qualification Status</label>
+                            <span :class="getQualificationStatusClass(selectedApplicant.qualified_status)"
+                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                {{ formatQualificationStatus(selectedApplicant.qualified_status) }}
+                            </span>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Admission Status</label>
+                            <span :class="getAdmissionStatusClass(selectedApplicant.admission_status)"
+                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                {{ formatAdmissionStatus(selectedApplicant.admission_status) }}
+                            </span>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Payment Status</label>
+                            <span :class="getPaymentStatusClass(selectedApplicant.application_fee_paid)"
+                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                {{ selectedApplicant.application_fee_paid ? 'Paid' : 'Unpaid' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JAMB Scores (if available) -->
+                <div v-if="selectedApplicant.jamb_subject_scores" class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">JAMB Subject Scores</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div v-for="(score, subject) in selectedApplicant.jamb_subject_scores" :key="subject">
+                            <label class="text-sm font-medium text-gray-600">{{ subject }}</label>
+                            <p class="text-gray-900 font-semibold">{{ score }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O-Level Results (if available) -->
+                <div v-if="selectedApplicant.olevel && selectedApplicant.olevel.length > 0" class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">O-Level Results</h3>
+                    <div class="space-y-4">
+                        <div v-for="(olevel, index) in selectedApplicant.olevel" :key="index"
+                             class="bg-white rounded-lg p-4 border border-gray-200">
+                            <div class="mb-3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-800">{{ olevel.exam_type }}</h4>
+                                    <span class="text-sm text-gray-500">{{ olevel.month }}/{{ olevel.year }}</span>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    <span class="font-medium">Exam Number:</span> {{ olevel.examination_number }}
+                                </div>
+                                <div v-if="olevel.pin || olevel.serial_number" class="text-xs text-gray-500 mt-1">
+                                    <span v-if="olevel.pin" class="font-medium">PIN:</span>
+                                    <span v-if="olevel.pin">{{ olevel.pin }}</span>
+                                    <span v-if="olevel.pin && olevel.serial_number"> | </span>
+                                    <span v-if="olevel.serial_number" class="font-medium">Serial:</span>
+                                    <span v-if="olevel.serial_number">{{ olevel.serial_number }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Subjects and Grades -->
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                <div v-for="(grade, subject) in olevel.subjects_grades" :key="subject"
+                                     class="bg-gray-50 rounded px-3 py-2 text-sm">
+                                    <span class="font-medium">{{ subject }}:</span>
+                                    <span class="ml-1 text-blue-600 font-semibold">{{ grade }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-3 pt-4 border-t">
+                    <Button label="Process Application"
+                            icon="fa fa-cogs"
+                            @click="processApplication(selectedApplicant); showApplicantDetailsModal = false"
+                            class="p-button-primary" />
+                    <Button label="Close"
+                            icon="fa fa-times"
+                            @click="showApplicantDetailsModal = false"
+                            class="p-button-secondary" />
+                </div>
+            </div>
+        </Dialog>
     </div>
 </template>
 
 <script>
 import { get, post } from '@/api/client';
 import { userDataMixin } from '@/mixins/userDataMixin';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
 
 export default {
+    components: {
+        Dialog,
+        Button
+    },
     mixins: [userDataMixin],
     data() {
         return {
@@ -320,7 +496,12 @@ export default {
                 underReview: 0,
                 admitted: 0,
                 notQualified: 0
-            }
+            },
+            // Modal data
+            showApplicantDetailsModal: false,
+            selectedApplicant: null,
+            applicantDetails: null,
+            loadingDetails: false
         }
     },
     computed: {
@@ -475,11 +656,54 @@ export default {
         },
         viewApplicant(applicant) {
             console.log('View applicant:', applicant);
-            // This would navigate to applicant profile page
+            this.selectedApplicant = applicant;
+            this.showApplicantDetailsModal = true;
         },
+
         processApplication(applicant) {
             console.log('Process application:', applicant);
-            // This would open application processing modal
+
+            // Check qualification status to determine where to navigate
+            const qualificationStatus = applicant.qualified_status || applicant.qualification_status;
+
+            console.log('ApplicantManagement - processApplication', {
+                applicantId: applicant.id,
+                applicantName: applicant.full_name || applicant.first_name + ' ' + applicant.surname,
+                qualificationStatus: qualificationStatus,
+                navigatingTo: qualificationStatus === 'qualified' ? 'admission' : 'qualification'
+            });
+
+            if (qualificationStatus === 'not_qualified' || qualificationStatus === 'pending' || !qualificationStatus) {
+                // Navigate to qualification page and auto-select this applicant
+                console.log('Navigating to qualification page with applicant ID:', applicant.id);
+                this.$router.push({
+                    name: 'staff-qualification',
+                    query: {
+                        applicant_id: applicant.id,
+                        auto_select: 'true'
+                    }
+                });
+            } else if (qualificationStatus === 'qualified') {
+                // Navigate to admission page and auto-select this applicant
+                console.log('Navigating to admission page with applicant ID:', applicant.id);
+                this.$router.push({
+                    name: 'staff-admission',
+                    query: {
+                        applicant_id: applicant.id,
+                        auto_select: 'true'
+                    }
+                });
+            } else {
+                // Default to qualification page for review
+                console.log('Defaulting to qualification page with applicant ID:', applicant.id);
+                this.$router.push({
+                    name: 'staff-qualification',
+                    query: {
+                        applicant_id: applicant.id,
+                        auto_select: 'true'
+                    }
+                });
+            }
         },
         updateStatus(applicant) {
             console.log('Update status:', applicant);
@@ -501,6 +725,74 @@ export default {
         },
         goToPage(page) {
             this.currentPage = page;
+        },
+
+        // Status formatting methods
+        formatStatus(status) {
+            const statuses = {
+                'submitted': 'Submitted',
+                'under_review': 'Under Review',
+                'approved': 'Approved',
+                'rejected': 'Rejected',
+                'pending': 'Pending'
+            };
+            return statuses[status] || status || 'Pending';
+        },
+
+        formatQualificationStatus(status) {
+            const statuses = {
+                'qualified': 'Qualified',
+                'not_qualified': 'Not Qualified',
+                'pending': 'Pending Review',
+                'under_review': 'Under Review'
+            };
+            return statuses[status] || status || 'Pending';
+        },
+
+        formatAdmissionStatus(status) {
+            const statuses = {
+                'admitted': 'Admitted',
+                'not_admitted': 'Not Admitted',
+                'pending': 'Pending',
+                'rejected': 'Rejected'
+            };
+            return statuses[status] || status || 'Pending';
+        },
+
+        // Status styling methods
+        getStatusClass(status) {
+            const classes = {
+                'submitted': 'bg-blue-100 text-blue-800',
+                'under_review': 'bg-yellow-100 text-yellow-800',
+                'approved': 'bg-green-100 text-green-800',
+                'rejected': 'bg-red-100 text-red-800',
+                'pending': 'bg-gray-100 text-gray-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        },
+
+        getQualificationStatusClass(status) {
+            const classes = {
+                'qualified': 'bg-green-100 text-green-800',
+                'not_qualified': 'bg-red-100 text-red-800',
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'under_review': 'bg-blue-100 text-blue-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        },
+
+        getAdmissionStatusClass(status) {
+            const classes = {
+                'admitted': 'bg-green-100 text-green-800',
+                'not_admitted': 'bg-red-100 text-red-800',
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'rejected': 'bg-red-100 text-red-800'
+            };
+            return classes[status] || 'bg-gray-100 text-gray-800';
+        },
+
+        getPaymentStatusClass(isPaid) {
+            return isPaid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
         }
     },
     async mounted() {

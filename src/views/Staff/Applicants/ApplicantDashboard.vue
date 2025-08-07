@@ -103,17 +103,21 @@
             <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100">
                 <h3 class="text-lg font-semibold mb-4 text-gray-800">Applications by Programme</h3>
                 <div class="space-y-3">
-                    <div v-for="programme in programmeDistribution" :key="programme.id" 
-                         class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div v-for="programme in programmeDistribution" :key="programme.id"
+                         class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                         <div class="flex-1">
                             <p class="font-medium text-gray-800">{{ programme.name }}</p>
+                            <p v-if="programme.curriculum_name" class="text-xs text-gray-500 mt-1">
+                                {{ programme.curriculum_name }}
+                            </p>
                             <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                                <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+                                <div :class="getProgressBarColor(programme.percentage)"
+                                     class="h-2 rounded-full transition-all duration-300"
                                      :style="`width: ${programme.percentage}%`"></div>
                             </div>
                         </div>
                         <div class="ml-4 text-right">
-                            <span class="text-lg font-bold text-gray-900">{{ programme.count }}</span>
+                            <span class="text-lg font-bold text-gray-900">{{ formatNumber(programme.count) }}</span>
                             <p class="text-xs text-gray-500">{{ programme.percentage }}%</p>
                         </div>
                     </div>
@@ -361,6 +365,21 @@ export default {
         },
         async loadProgrammeDistribution() {
             try {
+                // Try the new curriculum endpoint first for more accurate data
+                const curriculumResponse = await get(this.$endpoints.staff.curriculum.getApplicationsByProgramme.url);
+
+                if (curriculumResponse && !curriculumResponse.error && curriculumResponse.programmes) {
+                    this.programmeDistribution = curriculumResponse.programmes.map(programme => ({
+                        id: programme.programme_curriculum_id || programme.id,
+                        name: programme.programme_name,
+                        count: programme.total_applications,
+                        percentage: programme.percentage,
+                        curriculum_name: programme.curriculum_name
+                    }));
+                    return; // Success, exit early
+                }
+
+                // Fallback to original dashboard endpoint
                 const response = await post(this.$endpoints.staff.infoDashboard.url, {
                     session_id: this.currentSessionId,
                     type: 'programme_distribution'
@@ -440,6 +459,18 @@ export default {
             const first = firstName ? firstName.charAt(0).toUpperCase() : '';
             const last = lastName ? lastName.charAt(0).toUpperCase() : '';
             return first + last || 'N/A';
+        },
+
+        formatNumber(number) {
+            return new Intl.NumberFormat('en-NG').format(number)
+        },
+
+        getProgressBarColor(percentage) {
+            if (percentage >= 30) return 'bg-blue-500'
+            if (percentage >= 20) return 'bg-green-500'
+            if (percentage >= 15) return 'bg-yellow-500'
+            if (percentage >= 10) return 'bg-orange-500'
+            return 'bg-red-500'
         },
         getStatusColor(status) {
             const colors = {

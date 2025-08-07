@@ -28,16 +28,21 @@
                             <div>
                                 <h4 class="font-semibold text-gray-800">{{ result.exam_type }}</h4>
                                 <p class="text-sm text-gray-600">
-                                    Exam Number: {{ result.examination_number }} | 
+                                    Exam Number: {{ result.examination_number }} |
                                     {{ result.month }}/{{ result.year }}
                                 </p>
+                                <div v-if="result.pin || result.serial_number" class="text-xs text-gray-500 mt-1">
+                                    <span v-if="result.pin">PIN: {{ result.pin }}</span>
+                                    <span v-if="result.pin && result.serial_number"> | </span>
+                                    <span v-if="result.serial_number">Serial: {{ result.serial_number }}</span>
+                                </div>
                             </div>
                             <div class="flex space-x-2">
-                                <button @click="editResult(result, index)" 
+                                <button v-if="canEdit" @click="editResult(result, index)"
                                         class="text-blue-500 hover:text-blue-700">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <button @click="deleteResult(index)" 
+                                <button v-if="canEdit" @click="deleteResult(index)"
                                         class="text-red-500 hover:text-red-700">
                                     <i class="fa fa-trash"></i>
                                 </button>
@@ -89,15 +94,31 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Examination Number *</label>
-                            <input v-model="currentResult.examination_number" 
-                                   type="text" 
+                            <input v-model="currentResult.examination_number"
+                                   type="text"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                    placeholder="Enter examination number">
                         </div>
-                        
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">PIN</label>
+                            <input v-model="currentResult.pin"
+                                   type="text"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Enter PIN (if available)">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Serial Number</label>
+                            <input v-model="currentResult.serial_number"
+                                   type="text"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Enter serial number (if available)">
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Month *</label>
-                            <select v-model="currentResult.month" 
+                            <select v-model="currentResult.month"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Select Month</option>
                                 <option v-for="month in months" :key="month.value" :value="month.value">
@@ -185,6 +206,7 @@
                         Cancel
                     </button>
                     <button @click="saveResult" 
+                            v-if="canEdit"
                             :disabled="loading"
                             class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400">
                         <i v-show="loading" class="fa fa-spinner fa-spin mr-2"></i>
@@ -204,6 +226,12 @@ import Select from 'primevue/select';
 
 export default {
     name: 'OLevelResults',
+     props: {
+        canEdit: {
+            type: Boolean,
+            default: true
+        },
+    },
     setup() {
         const authStore = useAuthStore();
         const globalsStore = useGlobalsStore();
@@ -224,6 +252,8 @@ export default {
             currentResult: {
                 exam_type_id: '',
                 examination_number: '',
+                pin: '',
+                serial_number: '',
                 month: '',
                 year: '',
                 subjects: []
@@ -399,6 +429,8 @@ export default {
             this.currentResult = {
                 exam_type_id: result.exam_type_id,
                 examination_number: result.examination_number,
+                pin: result.pin || '',
+                serial_number: result.serial_number || '',
                 month: result.month,
                 year: result.year,
                 subjects: Object.entries(result.subjects_grades || {}).map(([name, grade]) => ({
@@ -452,6 +484,8 @@ export default {
                 const payload = {
                     exam_type_id: this.currentResult.exam_type_id,
                     examination_number: this.currentResult.examination_number,
+                    pin: this.currentResult.pin,
+                    serial_number: this.currentResult.serial_number,
                     month: this.currentResult.month,
                     year: this.currentResult.year,
                     subjects_grades: subjects_grades,
@@ -492,6 +526,8 @@ export default {
             this.currentResult = {
                 exam_type_id: '',
                 examination_number: '',
+                pin: '',
+                serial_number: '',
                 month: '',
                 year: '',
                 subjects: []

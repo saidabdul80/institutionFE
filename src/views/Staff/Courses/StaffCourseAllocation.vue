@@ -856,8 +856,8 @@ export default {
 
         async loadStaffMembers() {
             try {
-                const res = await post(this.$endpoints.staff.staffs.url);
-                console.log(res,323)
+                const res = await post(this.$endpoints.staff.staffs.url,{});
+                console.log(res,322333)
                 if (res && res.data) {
                     this.staffMembers = res.data.map(staff => ({
                         ...staff,

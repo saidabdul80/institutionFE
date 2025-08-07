@@ -79,7 +79,45 @@
                 </Column>
                 <Column v-if="$globals.getConfiguration('enable_department')" header="Department" style="min-width: 200px">
                     <template #body="slotProps"><SkeletonLoader v-if="dataTableloading" /><span v-else>{{slotProps.data.department}}</span></template>
-                    <template #editor="{ data, field }"><Dropdown  v-model="data.department_id"  :options="departments" optionLabel="name" optionValue="id" placeholder="Select department Type"></Dropdown></template>            
+                    <template #editor="{ data, field }"><Dropdown  v-model="data.department_id"  :options="departments" optionLabel="name" optionValue="id" placeholder="Select department Type"></Dropdown></template>
+                </Column>
+                <Column header="Roles & Permissions" style="min-width: 250px">
+                    <template #body="slotProps">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex flex-wrap gap-1">
+                                <Tag v-for="role in slotProps.data.roles" :key="role.id"
+                                     :value="role.name"
+                                     :severity="getRoleSeverity(role.name)"
+                                     class="text-xs" />
+                                <span v-if="!slotProps.data.roles || slotProps.data.roles.length === 0"
+                                      class="text-xs text-gray-400">No roles assigned</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1 text-xs text-gray-500">
+                                    <i class="fa fa-key"></i>
+                                    <span>{{ slotProps.data.all_permissions ? slotProps.data.all_permissions.length : 0 }} permissions</span>
+                                </div>
+                                <div class="flex gap-1">
+                                    <Button
+                                        v-tooltip.top="'Manage Roles'"
+                                        icon="fa fa-users-cog"
+                                        size="small"
+                                        outlined
+                                        severity="info"
+                                        @click="openRoleManagementModal(slotProps.data)"
+                                        class="h-6 w-6 text-xs" />
+                                    <Button
+                                        v-tooltip.top="'Manage Permissions'"
+                                        icon="fa fa-key"
+                                        size="small"
+                                        outlined
+                                        severity="secondary"
+                                        @click="openPermissionManagementModal(slotProps.data)"
+                                        class="h-6 w-6 text-xs" />
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </Column>
                 <Column :rowEditor="true" style="width: 10%; min-width: 20px" v-tooltip.top="'Edit'" bodyStyle="text-align:center" class="bg-white"></Column>
                 <Column style="width: 100px; min-width: 100px" bodyStyle="text-align:center" class="bg-white">
@@ -100,7 +138,7 @@
                         </div>
                     </template>
                 </Column>
-                <template #expansion="slotProps">
+                <!-- <template #expansion="slotProps">
                     <div class="p-3">                                            
                         <div class="grid grid-col">                            
                             <PickList v-model="staffPermissions[slotProps.data.staff_number]"  listStyle="height:342px" dataKey="name" breakpoint="1400px"
@@ -134,7 +172,7 @@
                             </PickList>
                         </div>
                     </div>
-                </template>
+                </template> -->
             </DataTable>
         </div>
         <Dialog header="New staff" v-model:visible="newStaffDialog" class="w-[45%]" :modal="true">
@@ -195,6 +233,148 @@
                 @click="createStaff" />
             </template>
         </Dialog>
+
+        <!-- Role Management Modal -->
+        <Dialog header="Manage Staff Roles" v-model:visible="roleManagementModal" class="w-[60%]" :modal="true">
+            <div v-if="selectedStaff" class="p-fluid">
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold mb-2">{{ selectedStaff.full_name }}</h4>
+                    <p class="text-sm text-gray-600">{{ selectedStaff.email }} • {{ selectedStaff.staff_number }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Available Roles -->
+                    <div>
+                        <h5 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fa fa-users"></i>
+                            Available Roles
+                        </h5>
+                        <div class="space-y-2 max-h-80 overflow-y-auto">
+                            <div v-for="role in availableRoles" :key="role.id"
+                                 class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                                 @click="assignRoleToStaff(role)">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium">{{ role.name }}</div>
+                                        <div class="text-sm text-gray-500">{{ role.permissions_count }} permissions</div>
+                                    </div>
+                                    <Button icon="fa fa-plus" size="small" outlined severity="success" />
+                                </div>
+                            </div>
+                            <div v-if="availableRoles.length === 0" class="text-center text-gray-500 py-4">
+                                All roles have been assigned
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Roles -->
+                    <div>
+                        <h5 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fa fa-user-check"></i>
+                            Assigned Roles
+                        </h5>
+                        <div class="space-y-2 max-h-80 overflow-y-auto">
+                            <div v-for="role in selectedStaff.roles" :key="role.id"
+                                 class="p-3 border rounded-lg bg-blue-50 border-blue-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium">{{ role.name }}</div>
+                                        <div class="text-sm text-gray-500">Active role</div>
+                                    </div>
+                                    <Button icon="fa fa-times"
+                                            size="small"
+                                            outlined
+                                            severity="danger"
+                                            @click="removeRoleFromStaff(role)" />
+                                </div>
+                            </div>
+                            <div v-if="!selectedStaff.roles || selectedStaff.roles.length === 0"
+                                 class="text-center text-gray-500 py-4">
+                                No roles assigned
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <Button label="Close" icon="fa fa-times" @click="roleManagementModal = false" />
+            </template>
+        </Dialog>
+
+        <!-- Permission Management Modal -->
+        <Dialog header="Manage Staff Permissions" v-model:visible="permissionManagementModal" class="w-[80%]" :modal="true">
+            <div v-if="selectedStaff" class="p-fluid">
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold mb-2">{{ selectedStaff.full_name }}</h4>
+                    <p class="text-sm text-gray-600">{{ selectedStaff.email }} • {{ selectedStaff.staff_number }}</p>
+                </div>
+
+                <!-- Permission Categories -->
+                <div class="mb-4">
+                    <div class="flex flex-wrap gap-2">
+                        <Button v-for="category in permissionCategories" :key="category.category"
+                                :label="category.name"
+                                :severity="selectedCategory === category.category ? 'primary' : 'secondary'"
+                                :outlined="selectedCategory !== category.category"
+                                size="small"
+                                @click="selectedCategory = category.category" />
+                    </div>
+                </div>
+
+                <!-- Permissions List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Available Permissions -->
+                    <div>
+                        <h5 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fa fa-key"></i>
+                            Available Permissions
+                            <span class="text-sm font-normal text-gray-500">({{ filteredAvailablePermissions.length }})</span>
+                        </h5>
+                        <div class="space-y-1 max-h-96 overflow-y-auto">
+                            <div v-for="permission in filteredAvailablePermissions" :key="permission.name"
+                                 class="p-2 border rounded hover:bg-gray-50 cursor-pointer text-sm"
+                                 @click="assignPermissionToStaff(permission)">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium">{{ formatPermissionName(permission.name) }}</div>
+                                        <div class="text-xs text-gray-500">{{ permission.description }}</div>
+                                    </div>
+                                    <Button icon="fa fa-plus" size="small" outlined severity="success" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Permissions -->
+                    <div>
+                        <h5 class="font-semibold mb-3 flex items-center gap-2">
+                            <i class="fa fa-check-circle"></i>
+                            Assigned Permissions
+                            <span class="text-sm font-normal text-gray-500">({{ filteredAssignedPermissions.length }})</span>
+                        </h5>
+                        <div class="space-y-1 max-h-96 overflow-y-auto">
+                            <div v-for="permission in filteredAssignedPermissions" :key="permission"
+                                 class="p-2 border rounded bg-green-50 border-green-200 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-medium">{{ formatPermissionName(permission) }}</div>
+                                        <div class="text-xs text-gray-500">Active permission</div>
+                                    </div>
+                                    <Button icon="fa fa-times"
+                                            size="small"
+                                            outlined
+                                            severity="danger"
+                                            @click="removePermissionFromStaff(permission)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <Button label="Close" icon="fa fa-times" @click="permissionManagementModal = false" />
+            </template>
+        </Dialog>
     </div>
 </template>
 <script>
@@ -202,13 +382,16 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Row from 'primevue/row';     
+import Row from 'primevue/row';
 import { get, post } from '@/api/client';
 import { showModal } from '@/plugins/modal';
 import ColumnGroup from 'primevue/columngroup';
 import PickList from 'primevue/picklist';
 import InputIcon from 'primevue/inputicon'
 import IconField from 'primevue/iconfield'
+import Tag from 'primevue/Tag';
+import Dialog from 'primevue/dialog';
+import Select from 'primevue/select';
 
 export default {
     data() {
@@ -231,19 +414,75 @@ export default {
             loadingStates:{},
             savingState: false,
             faculties:[],
-            departments:[]
+            departments:[],
+
+            // Role and Permission Management
+            roleManagementModal: false,
+            permissionManagementModal: false,
+            selectedStaff: null,
+            allRoles: [],
+            permissionCategories: [],
+            selectedCategory: 'all',
+            roleAssignmentLoading: false,
+            permissionAssignmentLoading: false
+        }
+    },
+    computed: {
+        availableRoles() {
+            if (!this.selectedStaff || !this.allRoles) return [];
+            const assignedRoleIds = this.selectedStaff.roles?.map(role => role.id) || [];
+            return this.allRoles.filter(role => !assignedRoleIds.includes(role.id));
+        },
+
+        filteredAvailablePermissions() {
+            if (!this.permissionCategories || !this.selectedStaff) return [];
+
+            const assignedPermissions = this.selectedStaff.all_permissions || [];
+            let allPermissions = [];
+
+            if (this.selectedCategory === 'all') {
+                this.permissionCategories.forEach(category => {
+                    allPermissions = allPermissions.concat(category.permissions);
+                });
+            } else {
+                const category = this.permissionCategories.find(cat => cat.category === this.selectedCategory);
+                if (category) {
+                    allPermissions = category.permissions;
+                }
+            }
+
+            return allPermissions.filter(permission => !assignedPermissions.includes(permission.name));
+        },
+
+        filteredAssignedPermissions() {
+            if (!this.selectedStaff || !this.selectedStaff.all_permissions) return [];
+
+            if (this.selectedCategory === 'all') {
+                return this.selectedStaff.all_permissions;
+            }
+
+            const category = this.permissionCategories.find(cat => cat.category === this.selectedCategory);
+            if (!category) return [];
+
+            const categoryPermissionNames = category.permissions.map(p => p.name);
+            return this.selectedStaff.all_permissions.filter(permission =>
+                categoryPermissionNames.includes(permission)
+            );
         }
     },
     components: {
         InputText,
         Button,
         DataTable,
-        Column, 
+        Column,
         Row,
         PickList,
         ColumnGroup,
         InputIcon,
-        IconField
+        IconField,
+        Tag,
+        Dialog,
+        Select
     },
     methods: {
         onRowExpand(data){
@@ -405,10 +644,198 @@ export default {
         searchStaff(e){
         this.search = e.target.value;
         setTimeout(() => {
-            
+
             this.fetchRecords(search);
         }, 2500);
-    }
+        },
+
+        // Role and Permission Management Methods
+        async openRoleManagementModal(staff) {
+            this.selectedStaff = staff;
+            this.roleManagementModal = true;
+            await this.loadAllRoles();
+        },
+
+        async openPermissionManagementModal(staff) {
+            this.selectedStaff = staff;
+            this.permissionManagementModal = true;
+            this.selectedCategory = 'all';
+            await this.loadPermissionCategories();
+        },
+
+        async loadAllRoles() {
+            try {
+                const response = await get(this.$endpoints.staff.getPermissionRoles.url);
+                if (response) {
+                    this.allRoles = response;
+                }
+            } catch (error) {
+                console.error('Error loading roles:', error);
+                this.$globals.showMessage('Failed to load roles', 'error');
+            }
+        },
+
+        async loadPermissionCategories() {
+            try {
+                const response = await get(this.$endpoints.staff.getPermissionsList.url);
+                if (response) {
+                    this.permissionCategories = response;
+                    // Add 'all' category
+                    this.permissionCategories.unshift({
+                        category: 'all',
+                        name: 'All Categories',
+                        permissions: []
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading permissions:', error);
+                this.$globals.showMessage('Failed to load permissions', 'error');
+            }
+        },
+
+        async assignRoleToStaff(role) {
+            if (this.roleAssignmentLoading) return;
+
+            this.roleAssignmentLoading = true;
+            try {
+                const response = await post(this.$endpoints.staff.assignUserRole.url, {
+                    user_id: this.selectedStaff.id,
+                    role_name: role.name
+                });
+
+                if (response) {
+                    // Update the selected staff's roles
+                    if (!this.selectedStaff.roles) {
+                        this.selectedStaff.roles = [];
+                    }
+                    this.selectedStaff.roles.push(role);
+
+                    // Update the staff in the main list
+                    const staffIndex = this.staffs.data.findIndex(s => s.id === this.selectedStaff.id);
+                    if (staffIndex !== -1) {
+                        this.staffs.data[staffIndex].roles = [...this.selectedStaff.roles];
+                    }
+
+                    this.$globals.showMessage(`Role "${role.name}" assigned successfully`, 'success');
+                }
+            } catch (error) {
+                console.error('Error assigning role:', error);
+                this.$globals.showMessage('Failed to assign role', 'error');
+            } finally {
+                this.roleAssignmentLoading = false;
+            }
+        },
+
+        async removeRoleFromStaff(role) {
+            if (this.roleAssignmentLoading) return;
+
+            this.roleAssignmentLoading = true;
+            try {
+                const response = await post(this.$endpoints.staff.removeUserRole.url, {
+                    user_id: this.selectedStaff.id,
+                    role_name: role.name
+                });
+
+                if (response) {
+                    // Remove the role from selected staff
+                    this.selectedStaff.roles = this.selectedStaff.roles.filter(r => r.id !== role.id);
+
+                    // Update the staff in the main list
+                    const staffIndex = this.staffs.data.findIndex(s => s.id === this.selectedStaff.id);
+                    if (staffIndex !== -1) {
+                        this.staffs.data[staffIndex].roles = [...this.selectedStaff.roles];
+                    }
+
+                    this.$globals.showMessage(`Role "${role.name}" removed successfully`, 'success');
+                }
+            } catch (error) {
+                console.error('Error removing role:', error);
+                this.$globals.showMessage('Failed to remove role', 'error');
+            } finally {
+                this.roleAssignmentLoading = false;
+            }
+        },
+
+        async assignPermissionToStaff(permission) {
+            if (this.permissionAssignmentLoading) return;
+
+            this.permissionAssignmentLoading = true;
+            try {
+                const response = await post(this.$endpoints.staff.givePermission.url, {
+                    staff_id: this.selectedStaff.id,
+                    permissions: [permission.name]
+                });
+
+                if (response) {
+                    // Update the selected staff's permissions
+                    if (!this.selectedStaff.all_permissions) {
+                        this.selectedStaff.all_permissions = [];
+                    }
+                    this.selectedStaff.all_permissions.push(permission.name);
+
+                    // Update the staff in the main list
+                    const staffIndex = this.staffs.data.findIndex(s => s.id === this.selectedStaff.id);
+                    if (staffIndex !== -1) {
+                        this.staffs.data[staffIndex].all_permissions = [...this.selectedStaff.all_permissions];
+                    }
+
+                    this.$globals.showMessage(`Permission "${this.formatPermissionName(permission.name)}" assigned successfully`, 'success');
+                }
+            } catch (error) {
+                console.error('Error assigning permission:', error);
+                this.$globals.showMessage('Failed to assign permission', 'error');
+            } finally {
+                this.permissionAssignmentLoading = false;
+            }
+        },
+
+        async removePermissionFromStaff(permissionName) {
+            if (this.permissionAssignmentLoading) return;
+
+            this.permissionAssignmentLoading = true;
+            try {
+                const response = await post(this.$endpoints.staff.revokePermission.url, {
+                    staff_id: this.selectedStaff.id,
+                    permissions: [permissionName]
+                });
+
+                if (response) {
+                    // Remove the permission from selected staff
+                    this.selectedStaff.all_permissions = this.selectedStaff.all_permissions.filter(p => p !== permissionName);
+
+                    // Update the staff in the main list
+                    const staffIndex = this.staffs.data.findIndex(s => s.id === this.selectedStaff.id);
+                    if (staffIndex !== -1) {
+                        this.staffs.data[staffIndex].all_permissions = [...this.selectedStaff.all_permissions];
+                    }
+
+                    this.$globals.showMessage(`Permission "${this.formatPermissionName(permissionName)}" removed successfully`, 'success');
+                }
+            } catch (error) {
+                console.error('Error removing permission:', error);
+                this.$globals.showMessage('Failed to remove permission', 'error');
+            } finally {
+                this.permissionAssignmentLoading = false;
+            }
+        },
+
+        // Utility Methods
+        getRoleSeverity(roleName) {
+            const severityMap = {
+                'super-admin': 'danger',
+                'admin': 'warning',
+                'registrar': 'info',
+                'admission-officer': 'success',
+                'academic-officer': 'info',
+                'lecturer': 'secondary',
+                'accountant': 'warning'
+            };
+            return severityMap[roleName.toLowerCase()] || 'secondary';
+        },
+
+        formatPermissionName(permissionName) {
+            return permissionName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
     },
     async created() {
         this.getPermissions();

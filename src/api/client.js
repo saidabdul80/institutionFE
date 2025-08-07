@@ -115,10 +115,15 @@ async function excludeLogin(callback=()=>{}){
   }  
   window.modalOpened = false
 }
-export const get = async (resource,fullPath=false, except= true) => {  
+export const get = async (resource,fullPath=false, except= true, loader= false) => {  
   const authToken  = token();
   //alert(authToken)
   const store = useAuthStore();
+
+  if(loader){
+    store.isLoading = true;
+  }
+
   const globals = useGlobalsStore();
   const session_id = globals.getConfiguration('current_session');
     let url = fullPath ? resource : window.baseUrl + resource;
@@ -137,6 +142,8 @@ export const get = async (resource,fullPath=false, except= true) => {
       { headers: {        
         Authorization: authToken  ? `Bearer ${authToken }` : "",
       }});
+
+      store.isLoading = false;
     //store.isLoading = false;
     return response.data.data;    
   } catch (e) {
@@ -171,7 +178,7 @@ function dispatchToast(type, message) {
   }));
 }
 export const post = async (resource, data, fullPath=false, loader= false, type={}, options={}) => {
-  
+ 
   const authToken  = token();
   const store = useAuthStore();
   if(loader){
@@ -194,9 +201,10 @@ export const post = async (resource, data, fullPath=false, loader= false, type={
         },
         ...options
     });      
-    store.isLoading = false;   
-      return response.data
+    store.isLoading = false;  
+    return response.data
   } catch (e) {    
+    useGlobalsStore().showMessage(e.response?.data?.message || e.response?.data?.data || e.response?.data, 'error')
   //console.log(e.response?.data,43848)
     store.isLoading = false;        
     if (e?.message?.includes("Network Error")) {                            

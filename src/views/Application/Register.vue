@@ -138,11 +138,11 @@
                                 :options="globalStore.programmes"
                                 option-value="id"
                                 option-label="name"
-                                v-model="form.applied_programme_id"
+                                v-model="form.applied_programme_curriculum_id"
                                 label="Programme *"
                                 class="mb-2"
                                 fluid
-                                :error_messages="errors.applied_programme_id"
+                                :error_messages="errors.applied_programme_curriculum_id"
                                 placeholder="Select programme"
                             />
                         </div>
@@ -342,7 +342,7 @@ export default {
                 email: '',
                 phone_number: '',
                 programme_type_id: '',
-                applied_programme_id: '',
+                applied_programme_curriculum_id: '',
                 faculty_id: '',
                 department_id: '',
                 mode_of_entry_id: '',
@@ -373,7 +373,7 @@ export default {
                    this.form.email &&
                    this.form.phone_number &&
                    this.form.programme_type_id &&
-                   this.form.applied_programme_id &&
+                   this.form.applied_programme_curriculum_id &&
                    this.form.password &&
                    this.form.password_confirmation &&
                    this.form.password === this.form.password_confirmation &&

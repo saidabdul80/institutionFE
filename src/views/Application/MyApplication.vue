@@ -6,13 +6,39 @@
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">My Application</h2>
                     <p class="text-gray-600">Complete and manage your admission application</p>
+                    <div v-if="applicationData.is_final_submitted" class="mt-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <i class="fa fa-lock mr-1"></i>
+                            Final Submitted on {{ formatDate(applicationData.final_submitted_at) }}
+                        </span>
+                    </div>
                 </div>
                 <div class="text-right">
-                    <p class="text-sm text-gray-500">Application Status</p>
-                    <span :class="getStatusColor(applicationData.admission_status)" 
-                          class="px-3 py-1 rounded-full text-sm font-medium">
-                        {{ applicationData.admission_status || 'Draft' }}
-                    </span>
+                    <div class="mb-2">
+                        <p class="text-sm text-gray-500">Application Status</p>
+                        <span :class="getStatusColor(applicationData.admission_status)"
+                              class="px-3 py-1 rounded-full text-sm font-medium">
+                            {{ applicationData.admission_status || 'Draft' }}
+                        </span>
+                    </div>
+
+                    <!-- Admission Letter Button -->
+                    <div v-if="applicationData.admission_status === 'admitted' && applicationData.published_at" class="mb-2">
+                        <router-link to="/application/admission-letter"
+                                     class="inline-block bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm">
+                            <i class="fa fa-graduation-cap mr-2"></i>
+                            View Admission Letter
+                        </router-link>
+                    </div>
+
+                    <!-- Final Submit Button -->
+                    <div v-if="!applicationData.is_final_submitted && canFinalSubmit">
+                        <button @click="showFinalSubmitDialog = true"
+                                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 text-sm">
+                            <i class="fa fa-check-circle mr-2"></i>
+                            Final Submit
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,20 +91,20 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                            <input v-model="form.email" type="email" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input v-model="form.email" type="email" required :disabled="!canEdit"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-                            <input v-model="form.phone_number" type="tel" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input v-model="form.phone_number" type="tel" required :disabled="!canEdit"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
-                            <input v-model="form.date_of_birth" type="date" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input v-model="form.date_of_birth" type="date" required :disabled="!canEdit"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed">
                         </div>
                         
                         <div>
@@ -152,11 +178,15 @@
                     </div>
 
                     <div class="mt-6 flex justify-end">
-                        <button type="submit" :disabled="loading"
+                        <button v-if="canEdit" type="submit" :disabled="loading"
                                 class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50">
                             <i v-show="loading" class="fa fa-spinner fa-spin mr-2"></i>
                             Save Personal Information
                         </button>
+                        <div v-else class="text-gray-500 text-sm">
+                            <i class="fa fa-lock mr-2"></i>
+                            Application has been final submitted and cannot be edited
+                        </div>
                     </div>
                 </form>
             </div>
@@ -224,12 +254,12 @@
 
             <!-- O-Level Results Tab -->
             <div v-show="activeTab === 2" class="p-6">
-                <OLevelResults />
+                <OLevelResults :canEdit="canEdit" />
             </div>
 
             <!-- A-Level Results Tab -->
             <div v-show="activeTab === 3" class="p-6">
-                <ALevelResults />
+                <ALevelResults :canEdit="canEdit" />
             </div>
 
             <!-- Guardian Information Tab -->
@@ -277,7 +307,7 @@
                     </div>
                     
                     <div class="mt-6 flex justify-end">
-                        <button type="submit" :disabled="loading"
+                        <button v-if="canEdit" type="submit" :disabled="loading"
                                 class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50">
                             <i v-show="loading" class="fa fa-spinner fa-spin mr-2"></i>
                             Save Guardian Information
@@ -286,6 +316,96 @@
                 </form>
             </div>
         </div>
+
+        <!-- Final Submission Dialog -->
+        <div v-if="showFinalSubmitDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Final Submit Application</h3>
+
+                <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="fa fa-exclamation-triangle text-yellow-600 mr-3 mt-1"></i>
+                        <div class="text-sm text-yellow-800">
+                            <p class="font-medium mb-1">Important Notice:</p>
+                            <p>Once you final submit your application, you will no longer be able to edit any information. Please ensure all your details are correct before proceeding.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
+                    <textarea v-model="finalSubmissionNotes" rows="3"
+                              placeholder="Add any additional notes..."
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button @click="showFinalSubmitDialog = false"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button @click="performFinalSubmit" :disabled="finalSubmitting"
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50">
+                        <i v-if="finalSubmitting" class="fa fa-spinner fa-spin mr-2"></i>
+                        {{ finalSubmitting ? 'Submitting...' : 'Final Submit' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acknowledgment Slip Modal -->
+        <div v-if="showAcknowledgmentSlipModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        <i class="fa fa-file-alt mr-2 text-blue-600"></i>
+                        Application Acknowledgment Slip
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button @click="downloadAcknowledgmentSlip"
+                                class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600">
+                            <i class="fa fa-download mr-1"></i>
+                            Download PDF
+                        </button>
+                        <button @click="printAcknowledgmentSlip"
+                                class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600">
+                            <i class="fa fa-print mr-1"></i>
+                            Print
+                        </button>
+                        <button @click="showAcknowledgmentSlipModal = false"
+                                class="text-gray-400 hover:text-gray-600">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-4 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div v-if="acknowledgmentSlipHtml"
+                         v-html="acknowledgmentSlipHtml"
+                         class="acknowledgment-slip-content">
+                    </div>
+                    <div v-else class="text-center py-8">
+                        <i class="fa fa-spinner fa-spin text-2xl text-gray-400"></i>
+                        <p class="text-gray-600 mt-2">Loading acknowledgment slip...</p>
+                    </div>
+                </div>
+
+                <div class="p-4 border-t bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-600">
+                            <i class="fa fa-info-circle mr-1"></i>
+                            Keep this acknowledgment slip for your records
+                        </div>
+                        <button @click="showAcknowledgmentSlipModal = false"
+                                class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
@@ -323,7 +443,7 @@ export default {
                 address: '',
                 nationality: '',
                 religion: '',
-                applied_programme_id: '',
+                applied_programme_curriculum_id: '',
                 mode_of_entry_id: '',
                 jamb_number: '',
                 jamb_score: ''
@@ -339,7 +459,16 @@ export default {
                 { title: 'Guardian Information' }
             ],
             modeOfEntryOptions:[],
-            store: useAuthStore()
+            store: useAuthStore(),
+
+            // Final submission
+            showFinalSubmitDialog: false,
+            finalSubmitting: false,
+            finalSubmissionNotes: '',
+
+            // Acknowledgment slip
+            showAcknowledgmentSlipModal: false,
+            acknowledgmentSlipHtml: null
         }
     },
     computed: {
@@ -348,6 +477,15 @@ export default {
             if (!this.form) return false;
             const requiredFields = ['first_name', 'surname', 'email', 'phone_number'];
             return requiredFields.every(field => this.form[field]?.trim());
+        },
+
+        canEdit() {
+            return !this.applicationData?.is_final_submitted;
+        },
+
+        canFinalSubmit() {
+            // Can final submit if form is valid and not already submitted
+            return this.isFormValid && !this.applicationData?.is_final_submitted;
         },
 
         // Safe array access for templates
@@ -420,7 +558,7 @@ export default {
                         address: res.address || '',
                         nationality: res.nationality || '',
                         religion: res.religion || '',
-                        applied_programme_id: res.applied_programme_id || '',
+                        applied_programme_curriculum_id: res.applied_programme_curriculum_id || '',
                         mode_of_entry_id: res.mode_of_entry_id || '',
                         jamb_number: res.jamb_number || '',
                         jamb_score: res.jamb_score || ''
@@ -599,6 +737,104 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+
+        // Final submission methods
+        async performFinalSubmit() {
+            this.finalSubmitting = true;
+            try {
+                const response = await post(this.$endpoints.applicant.finalSubmit.url, {
+                    notes: this.finalSubmissionNotes
+                });
+
+                if (response && !response.error) {
+                    this.applicationData.is_final_submitted = true;
+                    this.applicationData.final_submitted_at = response.final_submitted_at;
+
+                    this.$globals.message = {
+                        text: 'Application has been final submitted successfully',
+                        type: 'success'
+                    };
+
+                    this.showFinalSubmitDialog = false;
+                    this.finalSubmissionNotes = '';
+
+                    // Show acknowledgment slip if available
+                    if (response.acknowledgment_slip) {
+                        this.showAcknowledgmentSlip(response.acknowledgment_slip);
+                    }
+
+                    setTimeout(() => {
+                        this.$globals.message.text = '';
+                    }, 5000);
+                } else {
+                    this.$globals.message = {
+                        text: response?.message || 'Error submitting application',
+                        type: 'error'
+                    };
+                }
+            } catch (error) {
+                console.error('Error in final submission:', error);
+                this.$globals.message = {
+                    text: error.response?.data?.message || 'Error submitting application',
+                    type: 'error'
+                };
+            } finally {
+                this.finalSubmitting = false;
+            }
+        },
+
+        // Acknowledgment slip methods
+        showAcknowledgmentSlip(acknowledgmentSlipData) {
+            if (acknowledgmentSlipData && acknowledgmentSlipData.html) {
+                this.acknowledgmentSlipHtml = acknowledgmentSlipData.html;
+                this.showAcknowledgmentSlipModal = true;
+            }
+        },
+
+        async downloadAcknowledgmentSlip() {
+            try {
+                const response = await get(this.$endpoints.applicant.downloadAcknowledgmentSlip.url);
+                if (response && !response.error && response.html) {
+                    // Create a blob and download
+                    const blob = new Blob([response.html], { type: 'text/html' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = response.filename || 'acknowledgment_slip.html';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                }
+            } catch (error) {
+                console.error('Error downloading acknowledgment slip:', error);
+                this.$globals.message = {
+                    text: 'Failed to download acknowledgment slip',
+                    type: 'error'
+                };
+            }
+        },
+
+        printAcknowledgmentSlip() {
+            if (this.acknowledgmentSlipHtml) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(this.acknowledgmentSlipHtml);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+            }
+        },
+
+        formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
     },
     async mounted() {
@@ -627,3 +863,89 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.tab-button {
+    @apply px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200;
+}
+
+.tab-button.active {
+    @apply bg-blue-500 text-white;
+}
+
+.tab-button:not(.active) {
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+}
+
+/* Admission Letter Styles */
+.admission-letter-content {
+    font-family: "Times New Roman", serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.admission-letter-content .header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 20px;
+}
+
+.admission-letter-content .school-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-transform: uppercase;
+}
+
+.admission-letter-content .letter-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 30px 0;
+    text-decoration: underline;
+}
+
+.admission-letter-content .details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.admission-letter-content .details-table th,
+.admission-letter-content .details-table td {
+    border: 1px solid #333;
+    padding: 8px;
+    text-align: left;
+}
+
+.admission-letter-content .details-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.admission-letter-content .signature-section {
+    margin-top: 50px;
+}
+
+.admission-letter-content .signature-box {
+    display: inline-block;
+    width: 200px;
+    text-align: center;
+    margin: 0 50px;
+}
+
+.admission-letter-content .signature-line {
+    border-bottom: 1px solid #333;
+    margin-bottom: 5px;
+    height: 50px;
+}
+
+.admission-letter-content .footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+</style>
