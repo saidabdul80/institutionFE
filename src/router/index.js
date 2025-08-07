@@ -337,6 +337,12 @@ const router = createRouter({
           component: () => import('../views/Staff/Results/StudentGpaTracking.vue'),
           meta: { user_type: 'staff', require: true }
         },
+        {
+          path: 'results/grade-settings',
+          name: 'staff-grade-settings',
+          component: () => import('../views/Staff/Results/GradeSettingsSimple.vue'),
+          meta: { user_type: 'staff', require: true }
+        },
         // Score Input Routes
         {
           path: 'scores',
@@ -350,13 +356,7 @@ const router = createRouter({
           component: () => import('../views/Staff/Scores/BatchScoreInput.vue'),
           meta: { user_type: 'staff', require: true }
         },
-        // Grade Settings Route
-        {
-          path: 'grade-settings',
-          name: 'staff-grade-settings',
-          component: () => import('../views/Staff/Preference/GradeSettings.vue'),
-          meta: { user_type: 'staff', require: true }
-        },
+
         // Dashboard Route
         {
           path: 'dashboard',

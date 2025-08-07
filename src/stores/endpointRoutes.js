@@ -185,14 +185,7 @@ export default {
             getStudentsWithScores: { url: 'api/staff/scores/students_with_scores', method: 'get' },
             getCoursesByProgram: { url: 'api/staff/courses/by_program', method: 'get' },
 
-            // Grade Settings Endpoints
-            getGradeSettings: { url: 'api/staff/grade_settings/all', method: 'get' },
-            createGrade: { url: 'api/staff/grade_settings/create_grade', method: 'post' },
-            updateGrade: { url: 'api/staff/grade_settings/update_grade', method: 'post' },
-            deleteGrade: { url: 'api/staff/grade_settings/delete_grade', method: 'post' },
-            createDegreeClass: { url: 'api/staff/grade_settings/create_degree_class', method: 'post' },
-            updateDegreeClass: { url: 'api/staff/grade_settings/update_degree_class', method: 'post' },
-            deleteDegreeClass: { url: 'api/staff/grade_settings/delete_degree_class', method: 'post' },
+
 
             // Student Management Endpoints
             getStudentStats: { url: 'api/staff/students/stats', method: 'get' },
@@ -231,9 +224,9 @@ export default {
             getResultCompilationLogs: { url: 'api/results/compilation-logs', method: 'get' },
 
             // Grade Settings Management
-            getGradeSettings: { url: 'api/grade-settings', method: 'get' },
-            getGeneralGradeSettings: { url: 'api/grade-settings/general', method: 'get' },
-            saveGradeSetting: { url: 'api/grade-settings', method: 'post' },
+            getGradeSettings: { url: 'api/results/grade-settings', method: 'get' },
+            getGeneralGradeSettings: { url: 'api/results/grade-settings/general', method: 'get' },
+            saveGradeSetting: { url: 'api/results/grade-settings', method: 'post' },
 
             // Staff Course Allocations
             getStaffCourseAllocations: { url: 'api/staff/staff-course-allocations', method: 'get' },

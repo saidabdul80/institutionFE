@@ -1,188 +1,182 @@
 <template>
-    <div class="advanced-result-compilation">
-        <div class="page-header">
-            <h2><i class="fas fa-calculator"></i> Advanced Result Compilation</h2>
-            <p class="text-muted">Compile student results with comprehensive GPA/CGPA calculations</p>
-        </div>
-
-        <!-- Compilation Form -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5><i class="fas fa-cogs"></i> Compilation Parameters</h5>
-            </div>
-            <div class="card-body">
-                <form @submit.prevent="compileResults">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Session <span class="text-danger">*</span></label>
-                                <select v-model="compilationForm.session_id" class="form-control" required>
-                                    <option value="">Select Session</option>
-                                    <option v-for="session in schoolSessions" :key="session.id" :value="session.id">
-                                        {{ session.name }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Semester <span class="text-danger">*</span></label>
-                                <select v-model="compilationForm.semester" class="form-control" required>
-                                    <option value="">Select Semester</option>
-                                    <option v-for="semester in schoolSemesters" :key="semester.id" :value="semester.id">
-                                        {{ formatSemesterName(semester.name) }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Level <span class="text-danger">*</span></label>
-                                <select v-model="compilationForm.level_id" class="form-control" required>
-                                    <option value="">Select Level</option>
-                                    <option v-for="level in schoolLevels" :key="level.id" :value="level.id">
-                                        {{ level.title }} Level
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Programme (Optional)</label>
-                                <select v-model="compilationForm.programme_id" class="form-control">
-                                    <option value="">All Programmes</option>
-                                    <option v-for="programme in schoolProgrammes" :key="programme.id" :value="programme.id">
-                                        {{ programme.name }}
-                                    </option>
-                                </select>
-                            </div>
+    <div class="min-h-screen bg-gray-50 p-4">
+        <div class="max-w-7xl mx-auto space-y-6">
+            <!-- Header Section -->
+            <Card class="shadow-sm">
+                <template #content>
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div class="flex-1">
+                            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                                <i class="pi pi-calculator mr-2"></i>Advanced Result Compilation
+                            </h1>
+                            <p class="text-gray-600">
+                                Compile student results with comprehensive GPA/CGPA calculations
+                            </p>
                         </div>
                     </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Department (Optional)</label>
-                                <select v-model="compilationForm.department_id" class="form-control">
-                                    <option value="">All Departments</option>
-                                    <option v-for="department in schoolDepartments" :key="department.id" :value="department.id">
-                                        {{ department.name }}
-                                    </option>
-                                </select>
+                </template>
+            </Card>
+
+            <!-- Compilation Form -->
+            <Card class="shadow-sm">
+                <template #title>
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-cog text-primary"></i>
+                        <span>Compilation Parameters</span>
+                    </div>
+                </template>
+                <template #content>
+                    <form @submit.prevent="compileResults" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="flex flex-col gap-2">
+                                <label class="text-sm font-medium text-gray-700">
+                                    Session <span class="text-red-500">*</span>
+                                </label>
+                                <Dropdown v-model="compilationForm.session_id" :options="schoolSessions"
+                                    optionLabel="name" optionValue="id" placeholder="Select Session" class="w-full"
+                                    required />
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <label class="text-sm font-medium text-gray-700">
+                                    Semester <span class="text-red-500">*</span>
+                                </label>
+                                <Dropdown v-model="compilationForm.semester" :options="semesterOptions"
+                                    optionLabel="label" optionValue="value" placeholder="Select Semester" class="w-full"
+                                    required />
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <label class="text-sm font-medium text-gray-700">
+                                    Level <span class="text-red-500">*</span>
+                                </label>
+                                <Dropdown v-model="compilationForm.level_id" :options="schoolLevels" optionLabel="title"
+                                    optionValue="id" placeholder="Select Level" class="w-full" required />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-sm font-medium text-gray-700">Programme (Optional)</label>
+                                <Dropdown v-model="compilationForm.programme_id" :options="schoolProgrammes"
+                                    optionLabel="name" optionValue="id" placeholder="All Programmes" class="w-full"
+                                    :showClear="true" />
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>&nbsp;</label>
-                                <div>
-                                    <button type="submit" class="btn btn-primary" :disabled="compiling">
-                                        <i class="fas fa-play" v-if="!compiling"></i>
-                                        <i class="fas fa-spinner fa-spin" v-else></i>
-                                        {{ compiling ? 'Compiling...' : 'Start Compilation' }}
-                                    </button>
-                                    <button type="button" class="btn btn-secondary ml-2" @click="resetForm">
-                                        <i class="fas fa-redo"></i> Reset
-                                    </button>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-2">
+                                <label class="text-sm font-medium text-gray-700">Department (Optional)</label>
+                                <Dropdown v-model="compilationForm.department_id" :options="schoolDepartments"
+                                    optionLabel="name" optionValue="id" placeholder="All Departments" class="w-full"
+                                    :showClear="true" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-sm font-medium text-gray-700">&nbsp;</label>
+                                <div class="flex gap-3">
+                                    <Button type="submit" :disabled="compiling" :loading="compiling" icon="pi pi-play"
+                                        :label="compiling ? 'Compiling...' : 'Start Compilation'"
+                                        class="p-button-primary" />
+                                    <Button type="button" @click="resetForm" icon="pi pi-refresh" label="Reset"
+                                        class="p-button-secondary" />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+                    </form>
+                </template>
+            </Card>
 
-        <!-- Compilation Progress -->
-        <div v-if="compilationProgress.show" class="card mb-4">
-            <div class="card-header">
-                <h5><i class="fas fa-chart-line"></i> Compilation Progress</h5>
+            <!-- Compilation Progress -->
+            <div v-if="compilationProgress.show" class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> Compilation Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3">
+                        <div class="progress-bar" :class="progressBarClass"
+                            :style="{ width: compilationProgress.percentage + '%' }">
+                            {{ compilationProgress.percentage }}%
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ compilationProgress.studentsProcessed }}</div>
+                                <div class="stat-label">Students Processed</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ compilationProgress.resultsProcessed }}</div>
+                                <div class="stat-label">Results Processed</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ compilationProgress.status }}</div>
+                                <div class="stat-label">Status</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="compilationProgress.message" :class="compilationProgress.alertClass" class="mt-3 alert">
+                        {{ compilationProgress.message }}
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="progress mb-3">
-                    <div class="progress-bar" :class="progressBarClass" :style="{width: compilationProgress.percentage + '%'}">
-                        {{ compilationProgress.percentage }}%
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="stat-card">
-                            <div class="stat-value">{{ compilationProgress.studentsProcessed }}</div>
-                            <div class="stat-label">Students Processed</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="stat-card">
-                            <div class="stat-value">{{ compilationProgress.resultsProcessed }}</div>
-                            <div class="stat-label">Results Processed</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="stat-card">
-                            <div class="stat-value">{{ compilationProgress.status }}</div>
-                            <div class="stat-label">Status</div>
-                        </div>
-                    </div>
-                </div>
-                <div v-if="compilationProgress.message"  :class="compilationProgress.alertClass" class="mt-3 alert">
-                    {{ compilationProgress.message }}
-                </div>
-            </div>
-        </div>
 
-        <!-- Recent Compilation Logs -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5><i class="fas fa-history"></i> Recent Compilations</h5>
-                <button class="btn btn-sm btn-outline-primary" @click="loadCompilationLogs">
-                    <i class="fas fa-refresh"></i> Refresh
-                </button>
-            </div>
-            <div class="card-body">
-                <div v-if="loadingLogs" class="text-center py-4">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p class="mt-2">Loading compilation logs...</p>
+            <!-- Recent Compilation Logs -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-history"></i> Recent Compilations</h5>
+                    <button class="btn btn-sm btn-outline-primary" @click="loadCompilationLogs">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
                 </div>
-                
-                <div v-else-if="compilationLogs.length === 0" class="text-center py-4">
-                    <i class="fas fa-inbox fa-2x text-muted"></i>
-                    <p class="mt-2 text-muted">No compilation logs found</p>
-                </div>
-                
-                <div v-else class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Session/Semester</th>
-                                <th>Level</th>
-                                <th>Programme</th>
-                                <th>Status</th>
-                                <th>Students</th>
-                                <th>Results</th>
-                                <th>Duration</th>
-                                <th>Compiled By</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="log in compilationLogs" :key="log.id">
-                                <td>
-                                    <strong>{{ log.session?.name }}</strong><br>
-                                    <small class="text-muted">{{ log.semester_name }}</small>
-                                </td>
-                                <td>{{ log.level?.title }} Level</td>
-                                <td>{{ log.programme?.name || 'All Programmes' }}</td>
-                                <td>
-                                    <span class="badge" :class="getStatusBadgeClass(log.status)">
-                                        {{ log.status_display }}
-                                    </span>
-                                </td>
-                                <td>{{ log.students_processed || 0 }}</td>
-                                <td>{{ log.results_processed || 0 }}</td>
-                                <td>{{ log.processing_time_human || 'N/A' }}</td>
-                                <td>{{ log.compiled_by?.first_name }} {{ log.compiled_by?.last_name }}</td>
-                                <td>{{ formatDate(log.created_at) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="card-body">
+                    <div v-if="loadingLogs" class="text-center py-4">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p class="mt-2">Loading compilation logs...</p>
+                    </div>
+
+                    <div v-else-if="compilationLogs.length === 0" class="text-center py-4">
+                        <i class="fas fa-inbox fa-2x text-muted"></i>
+                        <p class="mt-2 text-muted">No compilation logs found</p>
+                    </div>
+
+                    <div v-else class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Session/Semester</th>
+                                    <th>Level</th>
+                                    <th>Programme</th>
+                                    <th>Status</th>
+                                    <th>Students</th>
+                                    <th>Results</th>
+                                    <th>Duration</th>
+                                    <th>Compiled By</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="log in compilationLogs" :key="log.id">
+                                    <td>
+                                        <strong>{{ log.session?.name }}</strong><br>
+                                        <small class="text-muted">{{ log.semester_name }}</small>
+                                    </td>
+                                    <td>{{ log.level?.title }} Level</td>
+                                    <td>{{ log.programme?.name || 'All Programmes' }}</td>
+                                    <td>
+                                        <span class="badge" :class="getStatusBadgeClass(log.status)">
+                                            {{ log.status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ log.students_processed || 0 }}</td>
+                                    <td>{{ log.results_processed || 0 }}</td>
+                                    <td>{{ log.processing_time_human || 'N/A' }}</td>
+                                    <td>{{ log.compiled_by?.first_name }} {{ log.compiled_by?.last_name }}</td>
+                                    <td>{{ formatDate(log.created_at) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -192,11 +186,19 @@
 <script>
 import { userDataMixin } from '@/mixins/userDataMixin';
 import { post, get } from '@/api/client';
+import Card from 'primevue/card';
+import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
 
 export default {
     name: 'AdvancedResultCompilation',
+    components: {
+        Card,
+        Button,
+        Dropdown
+    },
     mixins: [userDataMixin],
-    
+
     data() {
         return {
             compilationForm: {
@@ -217,10 +219,15 @@ export default {
                 alertClass: 'alert-info'
             },
             compilationLogs: [],
-            loadingLogs: false
+            loadingLogs: false,
+            semesterOptions: [
+                { label: 'First Semester', value: '1' },
+                { label: 'Second Semester', value: '2' },
+                { label: 'Third Semester', value: '3' }
+            ]
         };
     },
-    
+
     computed: {
         progressBarClass() {
             switch (this.compilationProgress.status.toLowerCase()) {
@@ -235,26 +242,26 @@ export default {
             }
         }
     },
-    
+
     async mounted() {
         await this.waitForSchoolInfo();
         await this.loadCompilationLogs();
     },
-    
+
     methods: {
         async compileResults() {
             if (!this.validateForm()) return;
-            
+
             this.compiling = true;
             this.compilationProgress.show = true;
             this.compilationProgress.percentage = 0;
             this.compilationProgress.status = 'Starting';
             this.compilationProgress.message = 'Initializing compilation process...';
             this.compilationProgress.alertClass = 'alert-info';
-            
+
             try {
                 const response = await post(this.$endpoints.staff.compileAdvancedResults.url, this.compilationForm);
-                
+
                 if (response.success) {
                     this.compilationProgress.percentage = 100;
                     this.compilationProgress.status = 'Completed';
@@ -262,7 +269,7 @@ export default {
                     this.compilationProgress.resultsProcessed = response.data.results_processed;
                     this.compilationProgress.message = response.data.message;
                     this.compilationProgress.alertClass = 'alert-success';
-                    
+
                     this.$globals.showMessage('Results compiled successfully!', 'success');
                     await this.loadCompilationLogs();
                 } else {
@@ -273,13 +280,13 @@ export default {
                 this.compilationProgress.status = 'Failed';
                 this.compilationProgress.message = error.message || 'An error occurred during compilation';
                 this.compilationProgress.alertClass = 'alert-danger';
-                
+
                 this.$globals.showMessage('Compilation failed: ' + error.message, 'error');
             } finally {
                 this.compiling = false;
             }
         },
-        
+
         async loadCompilationLogs() {
             this.loadingLogs = true;
             try {
@@ -294,7 +301,7 @@ export default {
                 this.loadingLogs = false;
             }
         },
-        
+
         validateForm() {
             if (!this.compilationForm.session_id) {
                 this.$globals.showMessage('Please select a session', 'error');
@@ -310,7 +317,7 @@ export default {
             }
             return true;
         },
-        
+
         resetForm() {
             this.compilationForm = {
                 session_id: '',
@@ -321,7 +328,7 @@ export default {
             };
             this.compilationProgress.show = false;
         },
-        
+
         getStatusBadgeClass(status) {
             switch (status?.toLowerCase()) {
                 case 'completed':
@@ -334,7 +341,7 @@ export default {
                     return 'badge-secondary';
             }
         },
-        
+
         formatDate(dateString) {
             if (!dateString) return 'N/A';
             return new Date(dateString).toLocaleString();
